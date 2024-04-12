@@ -1,0 +1,108 @@
+
+
+.multimodal .mm-close {
+	--color-gray-rich: white;
+	--close-stroke-width: 1.2;
+	--close-hover-ratio: 1.2;
+
+	--close-mainlength: 16px;
+	--close-hovarratio: 1.2;
+
+	// transform: scale(1.25);
+
+	padding: 0;
+	border-radius: 50%;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	z-index: 2;
+
+	background: rgba(black, 0.28);
+
+	padding: 2px;
+	position: absolute;
+
+	right: 1em;
+	top: 1em;
+
+	width: 28px;
+	height: 28px;
+
+	&:before {
+		content: '';
+		position: absolute;
+		width: 40px;
+		height: 40px;
+		border-radius: 20px;
+		background: transparent;
+		transition: background-color .12s ease-in-out;
+		pointer-events: none;
+		z-index: -1;
+	}
+	&.sm:before {
+		width: 32px;
+		height: 32px;
+	}
+
+	svg {
+		width: 24px;
+		height: 24px;
+		line {
+      transition: all .0675s linear;
+			stroke: var(--color-gray-rich);
+			stroke-linecap: round;
+			stroke-width: 1.25;
+		}
+	}
+
+
+	svg,
+	&:active:hover svg {
+		line {
+			stroke-dasharray: 16 8;
+			stroke-dashoffset: -4;
+		}
+	}
+	&.sm svg,
+	&.sm:active:hover svg {
+		line {
+			stroke-dasharray: 12 12;
+			stroke-dashoffset: -6;
+		}
+	}
+
+	&:hover:before,
+	&:focus:before {
+		background: rgba(black, 20%);
+	}
+	&:active:before {
+		background: rgba(#005765, 10%);
+	}
+	&:hover svg {
+		line {
+			stroke-dasharray: 20 4;
+			stroke-dashoffset: -2;
+		}
+	}
+	&.sm:hover svg {
+		line {
+			stroke-dasharray: 16 8;
+			stroke-dashoffset: -4;
+		}
+	}
+
+	&:focus {
+		outline: 3px solid #00C6CB;
+		outline-offset: 4px;
+	}
+	&.sm:focus {
+		outline-offset: 0;
+	}
+	&:focus:not(:focus-visible) {
+		outline: 0;
+		box-shadow: none;
+	}
+
+}

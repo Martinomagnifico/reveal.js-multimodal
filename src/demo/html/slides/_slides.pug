@@ -1,0 +1,575 @@
+section.center(data-modal-type="html", data-modal-url="#titlediv")
+	h1 Multimodal
+	h2 for Reveal.js
+
+	#titlediv.mm-content
+		.textcenter
+			h1 Multimodal
+			h2 for Reveal.js
+
+section
+	section.center
+		h2 What can you use it for?
+
+	section.center
+		p Multimodal can be used as a lightbox or actual modal to showcase images, video or HTML content. It can be triggered from text links, images, or buttons, or automatically when a slide is shown. 
+
+	section.center
+		ul
+			li Use it to show #[a(href="#", data-modal-type="image", data-modal-url="assets/img/1.jpg") an image] in a window
+			li Use it to show #[a(href="#", data-modal-type="video", data-modal-url="assets/vid/radar.mp4") a video] in a window
+			li Use it to show #[a(href="#", data-modal-type="html", data-modal-url="#somehiddendiv") HTML content] in a window
+
+		#somehiddendiv.mm-content
+			h2 Example of HTML content
+			p(style="margin-bottom: 0") This is just content that is normally hidden. 
+
+
+section.center
+	section.center
+		h2 Modal behaviour
+
+	section.center
+		h3 Modal size
+		ul
+			li Content in modals will display at its original size, but is constrained to the maximum size of the modal.
+			li The maximum size of modals is the size to the viewport, #[em minus the margin] as set in the Reveal config.
+			li The minimum size of HTML modals is 300x200 pixels. This can be set in the config.
+
+
+	section.center
+		h3 Triggers
+		p A triggering element needs at least a #[code data-modal-type].
+		ul
+			li From #[a(href="#" data-modal-type="image", data-modal-url="assets/img/1.jpg") a data-modal-url] in an anchor tag
+			li From #[a(href="assets/img/2.jpg" data-modal-type="image", ) an href attribute] in an anchor tag
+			li From #[a(href="#" data-modal-type="image", data-modal-url="assets/img/3.jpg") a data-modal-url] in a button tag
+
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/1.jpg">a data-modal-url</a>
+				<a href="assets/img/2.jpg" data-modal-type="image">an href attribute</a>
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg">a data-modal-url</a>
+		//-
+
+		p.small Note: If the modal-content is not valid or can’t be found, #[em no modal will be opened].
+
+	section.center
+		h3 Navigation changes
+		ul
+			li The #[code arrow keys] will close the modal #[em and] go to the next slide
+			li The #[code space bar] or #[code escape key] will only close the modal
+		br
+		br
+
+		.example
+			a(href="#", data-modal-type="image", data-modal-url="assets/img/2.jpg") Show modal
+		p.small Click the link above and then the #[code arrow keys], #[code space bar] or #[code escape key]: the modal will be closed in all cases, but only arrow keys will navigate.
+
+
+	section.center(data-background="#260505")
+		h3 Override navigation
+		p To prevent the user from accidentally navigating to another slide while the modal is open, you can add the #[code data-modal-navblock] attribute to the triggering element. 
+
+		.example
+			a(href="#", data-modal-type="image", data-modal-url="assets/img/3.jpg", data-modal-navblock="true") Show modal
+		pre
+			code.hljs.html.
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a>
+		//-
+
+		p.small Note that this blocks all keyboard navigation, but the #[code escape] key or any close buttons will still close the modal.
+
+
+	section(data-modal-type="image", data-modal-url="assets/img/4.jpg")
+		h2 Slide modals
+		p To automatically open a modal when a slide is shown, add the #[code data-modal-type] and #[code data-modal-url] attributes to the section element.
+		pre
+			code.hljs.html(data-line-numbers).
+				<section data-modal-type="image" data-modal-url="assets/img/4.jpg">
+					<h2>Slide modals</h2>
+					<!-- Slide content here -->
+				</section>
+		//-
+
+	section.center
+		h2 Events
+		p There are four events that may help you do things in your modals: #[code multimodal:show], #[code multimodal:shown], #[code multimodal:hide], and #[code multimodal:hidden]. Details about the trigger are in #[code event.detail.trigger]. Use it like this:
+
+		pre
+			code.hljs.js(data-line-numbers).
+				deck.addEventListener("multimodal:shown", async (event) => {
+				    const triggerInfo = event.detail.trigger;
+				    console.log("Trigger type:", triggerInfo.dataset.modalType);
+				    console.log("Trigger URL:", triggerInfo.dataset.modalUrl);
+				});
+		//-
+
+		p.small A #[code .multimodal-open] class is also added to the #[code .reveal] element so that you can hook into this with CSS.
+
+
+section.center
+	section.center
+		h2 Styling
+
+	section.center
+		p The modal is styled with CSS variables, which are controlled through the Reveal.js options (see #[a(href="#globaloptions") Global options]). Some of these options can also be set per trigger:
+		
+
+	section(data-background="white")
+		h3 Overlay
+		p Add a #[code data-modal-overlaycolor] attribute to the trigger to change the overlay color on a per-trigger basis. 
+		p.small You may want to do this on slides that have a different background color.
+
+		.example
+			a(href="#", data-modal-type="image", data-modal-url="assets/img/5.jpg", data-modal-overlaycolor="rgba(150, 50, 0, 0.5)") Show modal
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/5.jpg" data-modal-overlaycolor="rgba(150, 50, 0, 0.5)">Show modal</a>
+		//-
+
+	section.center
+		h3 Background and padding
+		.example
+			a(href="#", data-modal-type="image", data-modal-background="gray", data-modal-padding="1em")
+				img.small(src="assets/img/svgexample.svg" alt="Graph")
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="image" data-modal-background="gray" data-modal-padding="1em">
+				    <img class="small" src="assets/img/svgexample.svg" alt="Graph">
+				</a>
+		//-
+		p.small The background color and padding can be set with the #[code data-modal-background] and #[code data-modal-padding] attributes. When using SVG's, this may come in handy. Both attributes can also be globally set in the options.
+
+
+
+
+section.center
+	section.center
+		h2 Image modals
+
+	section.center
+		h3 Image modal from a text link
+
+		.example
+			a(href="#", data-modal-type="image", data-modal-url="assets/img/2.jpg") Show modal
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/2.jpg">Show modal</a>
+		//-
+		p.small As shown before, the #[code href] attribute can also be used. 
+
+	section.center
+		h3 Image modal from a clickable image
+		p.small Both data-attribute and href attribute methods are shown.
+
+		.example
+			a(href="#", data-modal-type="image", data-modal-url="assets/img/3.jpg")
+				img.small(src="assets/img/3-small.jpg" alt="Some glasses")
+
+			a(href="assets/img/4.jpg", data-modal-type="image")
+				img.small(src="assets/img/4-small.jpg" alt="Leaves")
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg">
+					<img class="small" src="assets/img/3-small.jpg" alt="Some glasses">
+				</a>
+				<a href="assets/img/4.jpg" data-modal-type="image">
+					<img class="small" src="assets/img/4-small.jpg" alt="Leaves">
+				</a>
+		//-
+		p.small In this example, a small image is linked to a (different) large image in the modal.
+
+
+	section.center
+		h3 Image modal from a clickable image, with the same image used
+		.example.small
+			a(href="#", data-modal-type="image")
+				img(src="assets/img/5.jpg" alt="Mountain")
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="image"><img src="assets/img/5.jpg" alt="Mountain"></a>
+		//-
+		p.small When a #[code data-modal-url] attribute is #[em not added], and the link has an image as direct child of it, then that image will be used for the modal. This example limits the size of the image inside the outlined box.
+
+
+section.center
+	section.center
+		h2 Video modals
+
+	section.center
+		h3 Video modal from a text link
+		.example
+			a(href="#", data-modal-type="video", data-modal-url="assets/vid/abstract.mp4") Show video
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="video" data-modal-url="assets/vid/abstract.mp4">Show video</a>
+		//-
+
+		p.small Video modals will play when opened, close when finished, and finish when closed. Set this with #[code videoautoplay] and #[code videoautohide] settings in the options.
+
+
+section.center
+	section.center
+		h2 HTML modals
+
+	section.center
+		h3 HTML modal from a local ID
+
+		.example
+			a(href="#", data-modal-type="html", data-modal-url="#somehiddendiv") Link to an ID
+
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="html" data-modal-url="#somehiddendiv">Link to an ID</a>
+
+				<div class="mm-content hidden" id="somehiddendiv">
+					<h2>Example of HTML content</h2>
+					<p>This is just content that is normally hidden.</p>
+				</div>
+		//-
+		p Long content #[a(href="#", data-modal-type="html", data-modal-url="#longhiddendiv") like this] will be scrollable in the modal.
+
+
+		#longhiddendiv.mm-content.hidden
+			h2 Example of long HTML content
+			p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis pretium cursus. Sed vel tincidunt dui. Aenean accumsan eget lectus eget aliquam. Vivamus risus neque, finibus at ex at, lobortis dignissim sem. Nunc euismod euismod justo, eget condimentum urna efficitur eleifend. Quisque ornare velit ac lectus mollis eleifend. Quisque faucibus id velit at eleifend. Sed sed nunc dui. Nullam eget tempor dolor.
+
+			p Etiam tortor erat, fringilla ut sem vitae, interdum euismod dolor. Phasellus pellentesque at augue et pellentesque. Etiam non commodo ex, quis egestas risus. Cras ornare molestie lacus, ac gravida justo suscipit vel. Etiam consectetur est tortor, eu ornare augue tempus a. Mauris venenatis dapibus magna sit amet gravida. Pellentesque interdum nibh vel arcu tristique condimentum. Maecenas tincidunt sem eget dui posuere commodo.
+
+			p Phasellus eu risus lacinia, imperdiet felis vel, condimentum est. Fusce tristique nisi lacus, non placerat turpis scelerisque id. Etiam massa urna, venenatis ac lacus sit amet, faucibus vestibulum metus. Nulla facilisi. Vestibulum porttitor varius dapibus. In sit amet justo condimentum, lacinia sapien non, lacinia odio. Nullam sollicitudin sapien eget turpis condimentum, nec aliquet sem venenatis. Sed efficitur risus quis neque fringilla, at fringilla purus varius.
+
+	section.center
+		h3 HTML modal from an HTML file
+		p.small The HTML content will use local styles
+
+		.example
+			a(href="#", data-modal-type="html", data-modal-url="external/externalhtml.html") Link to an HTML file
+
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="html" data-modal-url="external/externalhtml.html">Link to an HTML file</a>
+		//-
+
+
+	section.center
+		h3 HTML modal from a Markdown file
+		p.small The HTML content will use local styles
+
+		.example
+			a(href="#", data-modal-type="html", data-modal-url="external/externalmd.md") Link to a Markdown file
+
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="html" data-modal-url="external/externalmd.md">Link to a Markdown file</a>
+		//-
+
+		p.small Markdown is converted to HTML when the modal is opened. It does not support Reveal.js’ element attributes.
+
+
+	section.center
+		h3 Modal from an iframe
+		p.small Both data-attribute and href attribute methods are shown.
+
+		.example
+			a(href="https://www.wikipedia.org", data-modal-type="iframe") Link to an external website
+			a(href="#", data-modal-type="iframe" data-modal-url="https://www.youtube.com/embed/dQw4w9WgXcQ?&autoplay=1") Link to a Youtube video
+
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="https://www.wikipedia.org" data-modal-type="iframe">Link to an external website</a>
+				<a href="#" data-modal-type="iframe" data-modal-url="https://www.youtube.com/embed/dQw4w9WgXcQ">Link to a Youtube video</a>
+		//-
+
+section.center
+	section.center#globaloptions
+		h2 Global options
+		br
+		.centerblock
+			ol.twocol
+				li border
+				li background
+				li closebuttonhtml
+				li cssautoload
+				li csspath
+				li htmlminwidth
+				li htmlminheight
+				li overlaycolor
+				li padding
+				li radius
+				li shadow
+				li slidemodalevent
+				li speed
+				li videoautoplay
+				li videocontrols
+				li videoautohide
+				li zoom
+				li zoomfrom
+
+
+	section.center
+		h4 Option 1: background
+		p This sets the standard background color of the modal. If the padding is set to 0 (default for images and video’s), you will not see it. HTML, iframe and media (images and video) are set separately.
+		pre
+			code.hljs.js(data-line-numbers="4-8").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        bgcolor: {
+				            html: "var(--r-background-color)",
+				            iframe: "var(--r-background-color)",
+				            media: "white"
+				        }
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+		p.small It can also be set per-trigger with #[code data-modal-bgcolor].
+
+	section.center
+		h4 Option 2: border
+		p This sets the border around the dialog box.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        border: "1px solid white"
+				    },
+				    plugins: [ Multimodal ]
+				})
+			//-
+
+
+	section.center
+		h4 Option 3: closebuttonhtml
+		p Allows you to add your own HTML for the close button.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        closebuttonhtml: '' // Can be any HTML, for example <button class="mm-close" type="button" aria-hidden="true" data-modal-close aria-label="Close">X</button>
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 4: cssautoload
+		p Multimodal will load the CSS if this is set to #[code true].
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        cssautoload: true
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+		p.small If you import reveal.js-multimodal from npm, you will need to import the CSS file yourself. If you use 'import', then #[code csspath] should be set to #[code false]. If you know the path to the CSS file, you can use the #[code csspath] option and keep #[code cssautoload] set to #[code true].
+
+	section.center
+		h4 Option 5: csspath
+		p If you want to change the styling, while using cssautoload, you can link to your own CSS file.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        csspath: "" // Can be a path to a CSS file
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 6: htmlminwidth
+		p This sets the minimum width of the HTML modals. The default is 300 pixels.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        htmlminwidth: 300
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 7: htmlminheight
+		p This sets the minimum height of the HTML modals. The default is 200 pixels.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        htmlminheight: 200
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+
+	section.center
+		h4 Option 8: overlaycolor
+		p This sets the color of the overlay. Some people may call it a backdrop. The default is #[code "rgba(0, 0, 0, 0.25)"]. That's like 25% black. You can use any CSS color here, but it’s best to use rgba for transparency.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        overlaycolor: "rgba(0, 0, 0, 0.25)"
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+
+	section.center
+		h4 Option 9: padding
+		p This sets the standard padding of modals. HTML, iframe and media (images and video) are set separately.
+		pre
+			code.hljs.js(data-line-numbers="4-8").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        padding: {
+				            html: "1em",
+				            iframe: "0",
+				            media: "0"
+				        }
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+		p.small It can also be set per-trigger with #[code data-modal-padding].
+
+
+	section.center
+		h4 Option 10: radius
+		p This sets the radius of the dialog box.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        radius: "0.5em"
+				    },
+				    plugins: [ Multimodal ]
+				})
+			//-
+
+	section.center
+		h4 Option 11: shadow
+		p This sets the shadow around the dialog box. The default is a soft but dark shadow.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        outershadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)"
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 12: slidemodalevent
+		p This sets the event that triggers the modal on a slide, if that slide is set to show a modal.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        slidemodalevent: "slidetransitionend"
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 13: speed
+		p This sets the speed of the modal opening and closing.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        speed: 300
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 14: videoautoplay
+		p This sets the video to autoplay when opened.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        videoautoplay: true
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 15: videocontrols
+		p This sets the video to show controls when opened.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        videocontrols: true
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 16: videoautohide
+		p This sets the modal to close when the video in it ends.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        videoautohide: true
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 17: zoom
+		p This sets the modal to zoom in when opened.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        zoom: true
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+	section.center
+		h4 Option 18: zoomfrom
+		p This sets the starting zoom factor of the modal when it is opened. It then zooms to factor 1.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        zoomfrom: 0.90
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
