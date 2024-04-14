@@ -12,13 +12,8 @@ export async function loadVideo(url, modal, options) {
         });
 
         // Check if video metadata is loaded
-        if (video.readyState >= 1) { 
+        if (video.readyState >= 0) { 
             video.preload = "auto";
-            // Wait for video to be fully loaded
-            await new Promise((resolve, reject) => {
-                video.addEventListener('canplaythrough', resolve);
-                video.addEventListener('error', reject);
-            });
             modal.modalElement.dataset.modalType = 'video';
             video.classList.add("mm-body");
             return video.outerHTML;

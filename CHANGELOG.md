@@ -17,3 +17,9 @@
 ### Changed
 - First public GitHub version
 - Dispatch events to deck
+
+
+## [0.1.1] - 2024-04-08
+
+### Changed
+- Fix for iOS video

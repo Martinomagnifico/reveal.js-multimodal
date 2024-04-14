@@ -165,6 +165,12 @@ const Plugin = () => {
 							modal.hide();
 						});
 					}
+					video.addEventListener('webkitendfullscreen', function (e) { 
+						if (options.debug) {
+							console.log('Exited fullscreen');
+						}
+						modal.hide();
+					});
 				}
 			});
 	
