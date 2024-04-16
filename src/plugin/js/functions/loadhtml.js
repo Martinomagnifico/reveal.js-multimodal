@@ -42,6 +42,8 @@ export function loadHTML(source, modal) {
                 throw new Error('Invalid HTML content source. Must be a URL string or an anchor element.');
             }
 
+            
+
             resolve(htmlString);
         } catch (error) {
             console.error('Error loading HTML content:', error);

@@ -101,7 +101,7 @@ export class Modal {
     setContent(content, type) {
         let htmlString = content;
         if (type == "html") {
-            htmlString = `<div class="mm-body">${content}</div>`
+            htmlString = `<div class="mm-body"><div class="mm-scrollbody">${content}</div></div>`
         }
 
         this.modalContent.innerHTML = this.closeButtonHtml + htmlString;

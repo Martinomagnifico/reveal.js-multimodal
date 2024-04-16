@@ -2,7 +2,7 @@
 /*****************************************************************
  *
  * Multimodal for Reveal.js 
- * Version 0.1.0
+ * Version 0.1.3
  * 
  * @author: Martijn De Jongh (Martino), martijn.de.jongh@gmail.com
  * https://github.com/martinomagnifico
@@ -35,21 +35,19 @@
   top: 1em;
   width: 28px;
   height: 28px;
+  transform-origin: top right;
+  transform: scale(var(--mm-inversescale, 1));
 }
 .multimodal .mm-close:before {
   content: "";
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 20px;
   background: transparent;
-  transition: background-color 0.12s ease-in-out;
+  transition: all 0.0675s linear;
   pointer-events: none;
   z-index: -1;
-}
-.multimodal .mm-close.sm:before {
-  width: 32px;
-  height: 32px;
 }
 .multimodal .mm-close svg {
   width: 24px;
@@ -70,10 +68,9 @@
   stroke-dashoffset: -6;
 }
 .multimodal .mm-close:hover:before, .multimodal .mm-close:focus:before {
+  width: 36px;
+  height: 36px;
   background: rgba(0, 0, 0, 0.2);
-}
-.multimodal .mm-close:active:before {
-  background: rgba(0, 87, 101, 0.1);
 }
 .multimodal .mm-close:hover svg line {
   stroke-dasharray: 20 4;
@@ -97,6 +94,7 @@
 
 :root {
   --mm-border: 1px solid white;
+  --mm-borderwidth: 1px;
   --mm-transspeed: 0.3s;
   --mm-transtiming: ease-in-out;
   --mm-overlaycolor: rgba(0,0,0,0.30);
@@ -167,12 +165,14 @@ section > .mm-content {
   max-width: 100%;
   margin: 0;
 }
-.multimodal[data-modal-type*=iframe] iframe {
+.multimodal[data-modal-type*=iframe] .mm-body {
   max-width: 100%;
   max-height: 100%;
   margin: 0;
   width: calc(var(--mm-maxwidth));
   height: calc(var(--mm-maxheight));
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 .multimodal, .multimodal * {
   box-sizing: border-box;
@@ -202,6 +202,7 @@ section > .mm-content {
 .multimodal .mm-content {
   background: var(--mm-modal-background, var(--mm-mediabgcolor));
   border: var(--mm-border);
+  border-width: var(--mm-borderwidth);
   border-radius: var(--mm-outerradius);
   box-shadow: var(--mm-shadow);
   overflow: hidden;
@@ -219,6 +220,10 @@ section > .mm-content {
   padding: var(--mm-modal-padding, var(--mm-iframepadding));
 }
 .multimodal .mm-body {
-  overflow: hidden;
   z-index: 0;
+}
+.multimodal .mm-scrollbody {
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
 }

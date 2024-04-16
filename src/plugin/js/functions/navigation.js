@@ -1,4 +1,4 @@
-import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock-upgrade';
 
 export const setPresetConfigs = (deck, modal) => {
     modal.presetConfigs = {
@@ -47,9 +47,12 @@ export const spaceEscapeHide = (deck, modal) => {
 
 export const lockNav = (deck, modal) => {
 
-    disableBodyScroll(modal.modalElement);
+    if (modal.modalElement) {
+        disableBodyScroll(modal.modalElement);
+    }
 
     if (!isScroller(deck)) {
+
         deck.configure({
             keyboard: false,
             mouseWheel: false,
@@ -61,7 +64,11 @@ export const lockNav = (deck, modal) => {
 
 export const unlockNav = (deck, modal) => {
 
-    enableBodyScroll(modal.modalElement);
+    if (modal.modalElement) {
+        enableBodyScroll(modal.modalElement);
+    }
+
+
 
     if (!isScroller(deck)) {
         deck.configure({

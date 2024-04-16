@@ -44,7 +44,7 @@
             </ul>
             <div class="mm-content" id="somehiddendiv">
               <h2>Example of HTML content</h2>
-              <p style="margin-bottom: 0">This is just content that is normally hidden. </p>
+              <p style="margin-bottom: 0">This is just content that is normally hidden.</p>
             </div>
           </section>
         </section>
@@ -82,13 +82,6 @@
             <div class="example"><a href="#" data-modal-type="image" data-modal-url="assets/img/2.jpg">Show modal</a></div>
             <p class="small">Click the link above and then the <code>arrow keys</code>, <code>space bar</code> or <code>escape key</code>: the modal will be closed in all cases, but only arrow keys will navigate.</p>
           </section>
-          <section class="center" data-background="#260505">
-            <h3>Override navigation</h3>
-            <p>To prevent the user from accidentally navigating to another slide while the modal is open, you can add the <code>data-modal-navblock</code> attribute to the triggering element. </p>
-            <div class="example"><a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a></div>
-            <pre><code class="hljs html"><a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a></code></pre>
-            <p class="small">Note that this blocks all keyboard navigation, but the <code>escape</code> key or any close buttons will still close the modal.</p>
-          </section>
           <section data-modal-type="image" data-modal-url="assets/img/4.jpg">
             <h2>Slide modals</h2>
             <p>To automatically open a modal when a slide is shown, add the <code>data-modal-type</code> and <code>data-modal-url</code> attributes to the section element.</p>
@@ -106,6 +99,13 @@
     console.log("Trigger URL:", triggerInfo.dataset.modalUrl);
 });</code></pre>
             <p class="small">A <code>.multimodal-open</code> class is also added to the <code>.reveal</code> element so that you can hook into this with CSS.</p>
+          </section>
+          <section class="center" data-background="#260505">
+            <h3>Override navigation</h3>
+            <p>To prevent the user from accidentally navigating to another slide while the modal is open, you can add the <code>data-modal-navblock</code> attribute to the triggering element. </p>
+            <div class="example"><a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a></div>
+            <pre><code class="hljs html"><a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a></code></pre>
+            <p class="small">Note that this blocks all keyboard navigation, but the <code>escape</code> key or any close buttons will still close the modal. It will NOT work in scroll mode.</p>
           </section>
         </section>
         <section class="center">
@@ -190,11 +190,12 @@
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis pretium cursus. Sed vel tincidunt dui. Aenean accumsan eget lectus eget aliquam. Vivamus risus neque, finibus at ex at, lobortis dignissim sem. Nunc euismod euismod justo, eget condimentum urna efficitur eleifend. Quisque ornare velit ac lectus mollis eleifend. Quisque faucibus id velit at eleifend. Sed sed nunc dui. Nullam eget tempor dolor.</p>
               <p>Etiam tortor erat, fringilla ut sem vitae, interdum euismod dolor. Phasellus pellentesque at augue et pellentesque. Etiam non commodo ex, quis egestas risus. Cras ornare molestie lacus, ac gravida justo suscipit vel. Etiam consectetur est tortor, eu ornare augue tempus a. Mauris venenatis dapibus magna sit amet gravida. Pellentesque interdum nibh vel arcu tristique condimentum. Maecenas tincidunt sem eget dui posuere commodo.</p>
               <p>Phasellus eu risus lacinia, imperdiet felis vel, condimentum est. Fusce tristique nisi lacus, non placerat turpis scelerisque id. Etiam massa urna, venenatis ac lacus sit amet, faucibus vestibulum metus. Nulla facilisi. Vestibulum porttitor varius dapibus. In sit amet justo condimentum, lacinia sapien non, lacinia odio. Nullam sollicitudin sapien eget turpis condimentum, nec aliquet sem venenatis. Sed efficitur risus quis neque fringilla, at fringilla purus varius.</p>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis pretium cursus. Sed vel tincidunt dui. Aenean accumsan eget lectus eget aliquam. Vivamus risus neque, finibus at ex at, lobortis dignissim sem. Nunc euismod euismod justo, eget condimentum urna efficitur eleifend. Quisque ornare velit ac lectus mollis eleifend. Quisque faucibus id velit at eleifend. Sed sed nunc dui. Nullam eget tempor dolor.</p>
             </div>
           </section>
           <section class="center">
             <h3>HTML modal from an HTML file</h3>
-            <p class="small">The HTML content will use local styles</p>
+            <p class="small">The HTML content will use local styles.</p>
             <div class="example"><a href="#" data-modal-type="html" data-modal-url="external/externalhtml.html">Link to an HTML file</a></div>
             <pre><code class="hljs html" data-line-numbers><a href="#" data-modal-type="html" data-modal-url="external/externalhtml.html">Link to an HTML file</a></code></pre>
           </section>
@@ -228,6 +229,7 @@
                 <li>overlaycolor</li>
                 <li>padding</li>
                 <li>radius</li>
+                <li>scalecorrection</li>
                 <li>shadow</li>
                 <li>slidemodalevent</li>
                 <li>speed</li>
@@ -302,22 +304,22 @@
           </section>
           <section class="center">
             <h4>Option 6: htmlminwidth</h4>
-            <p>This sets the minimum width of the HTML modals. The default is 300 pixels.</p>
+            <p>This sets the minimum width of the HTML modals. The default is 100 pixels.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
     multimodal: {
-        htmlminwidth: 300
+        htmlminwidth: "100px"
     },
     plugins: [ Multimodal ]
 })</code></pre>
           </section>
           <section class="center">
             <h4>Option 7: htmlminheight</h4>
-            <p>This sets the minimum height of the HTML modals. The default is 200 pixels.</p>
+            <p>This sets the minimum height of the HTML modals. The default is 100 pixels.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
     multimodal: {
-        htmlminheight: 200
+        htmlminheight: "100px"
     },
     plugins: [ Multimodal ]
 })</code></pre>
@@ -361,7 +363,18 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 11: shadow</h4>
+            <h4>Option 11: scalecorrection</h4>
+            <p>This sets a scale correction, used in the border width and the close button. On small devices or screens, the border and close button may be too small. This option scales them back up.</p>
+            <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
+    ...
+    multimodal: {
+        scalecorrection: true
+    },
+    plugins: [ Multimodal ]
+})</code></pre>
+          </section>
+          <section class="center">
+            <h4>Option 12: shadow</h4>
             <p>This sets the shadow around the dialog box. The default is a soft but dark shadow.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -372,7 +385,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 12: slidemodalevent</h4>
+            <h4>Option 13: slidemodalevent</h4>
             <p>This sets the event that triggers the modal on a slide, if that slide is set to show a modal.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -383,7 +396,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 13: speed</h4>
+            <h4>Option 14: speed</h4>
             <p>This sets the speed of the modal opening and closing.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -394,7 +407,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 14: videoautoplay</h4>
+            <h4>Option 15: videoautoplay</h4>
             <p>This sets the video to autoplay when opened.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -405,7 +418,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 15: videocontrols</h4>
+            <h4>Option 16: videocontrols</h4>
             <p>This sets the video to show controls when opened.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -416,7 +429,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 16: videoautohide</h4>
+            <h4>Option 17: videoautohide</h4>
             <p>This sets the modal to close when the video in it ends.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -427,7 +440,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 17: zoom</h4>
+            <h4>Option 18: zoom</h4>
             <p>This sets the modal to zoom in when opened.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...
@@ -438,7 +451,7 @@
 })</code></pre>
           </section>
           <section class="center">
-            <h4>Option 18: zoomfrom</h4>
+            <h4>Option 19: zoomfrom</h4>
             <p>This sets the starting zoom factor of the modal when it is opened. It then zooms to factor 1.</p>
             <pre><code class="hljs js" data-line-numbers="4">Reveal.initialize({
     ...

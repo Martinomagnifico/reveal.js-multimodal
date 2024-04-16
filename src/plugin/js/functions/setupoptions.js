@@ -1,6 +1,4 @@
-
 export async function setupOptions(modal, options, originalOptions) {
-
 
     // Options for all modals
 
@@ -8,17 +6,20 @@ export async function setupOptions(modal, options, originalOptions) {
         modal.closeButtonHtml = options.closebuttonhtml;
     }
     if (options.overlaycolor !== originalOptions.overlaycolor) {
-        modal.modalElement.style.setProperty('--mm-overlaycolor', trigger.dataset.modalOverlaycolor);
+        modal.modalElement.style.setProperty('--mm-overlaycolor', options.overlaycolor);
     }
     if (options.speed !== originalOptions.speed) {
         let speed = options.speed / 1000;
         modal.modalElement.style.setProperty('--mm-transspeed', `${speed}s`);
     }
+
     if (options.htmlminwidth !== originalOptions.htmlminwidth) {
-        modal.modalElement.style.setProperty('--mm-minwidth', `${options.htmlminwidth}px`);
+        let newWidth = !isNaN(options.htmlminwidth) ? `${options.htmlminwidth}px` : options.htmlminwidth;
+        modal.modalElement.style.setProperty('--mm-minwidth', newWidth);
     }
     if (options.htmlminheight !== originalOptions.htmlminheight) {
-        modal.modalElement.style.setProperty('--mm-minheight', `${options.htmlminheight}px`);
+        let newHeight = !isNaN(options.htmlminheight) ? `${options.htmlminheight}px` : options.htmlminheight;
+        modal.modalElement.style.setProperty('--mm-minheight', newHeight);
     }
 
     if (options.radius !== originalOptions.radius) {

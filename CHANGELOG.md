@@ -23,3 +23,13 @@
 
 ### Changed
 - Fix for iOS video
+
+
+## [0.1.3] - 2024-04-16
+
+### Changed
+- Fix for 'bodyscrolllock'. Opening a locknav-link no longer breaks on iOS. However, when the lock is enabled on iOS, somehow scrolling back up is still possible. The functionality may be removed (for iOS) in the future.
+- Fix for situation where a first slide is a modal slide. On iOS, that modal was also opened when the user was on another section.
+
+### Added
+- Added a scalecorrection option. This makes sure that the close button is not reduced in size when the modal is scaled down. The same is also set up for the border around the modal.

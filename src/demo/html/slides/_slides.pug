@@ -22,7 +22,7 @@ section
 
 		#somehiddendiv.mm-content
 			h2 Example of HTML content
-			p(style="margin-bottom: 0") This is just content that is normally hidden. 
+			p(style="margin-bottom: 0") This is just content that is normally hidden.
 
 
 section.center
@@ -67,19 +67,6 @@ section.center
 		p.small Click the link above and then the #[code arrow keys], #[code space bar] or #[code escape key]: the modal will be closed in all cases, but only arrow keys will navigate.
 
 
-	section.center(data-background="#260505")
-		h3 Override navigation
-		p To prevent the user from accidentally navigating to another slide while the modal is open, you can add the #[code data-modal-navblock] attribute to the triggering element. 
-
-		.example
-			a(href="#", data-modal-type="image", data-modal-url="assets/img/3.jpg", data-modal-navblock="true") Show modal
-		pre
-			code.hljs.html.
-				<a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a>
-		//-
-
-		p.small Note that this blocks all keyboard navigation, but the #[code escape] key or any close buttons will still close the modal.
-
 
 	section(data-modal-type="image", data-modal-url="assets/img/4.jpg")
 		h2 Slide modals
@@ -106,6 +93,20 @@ section.center
 		//-
 
 		p.small A #[code .multimodal-open] class is also added to the #[code .reveal] element so that you can hook into this with CSS.
+
+
+	section.center(data-background="#260505")
+		h3 Override navigation
+		p To prevent the user from accidentally navigating to another slide while the modal is open, you can add the #[code data-modal-navblock] attribute to the triggering element. 
+
+		.example
+			a(href="#", data-modal-type="image", data-modal-url="assets/img/3.jpg", data-modal-navblock="true") Show modal
+		pre
+			code.hljs.html.
+				<a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg" data-modal-navblock="true">Show modal</a>
+		//-
+
+		p.small Note that this blocks all keyboard navigation, but the #[code escape] key or any close buttons will still close the modal. It will NOT work in scroll mode.
 
 
 section.center
@@ -239,9 +240,12 @@ section.center
 
 			p Phasellus eu risus lacinia, imperdiet felis vel, condimentum est. Fusce tristique nisi lacus, non placerat turpis scelerisque id. Etiam massa urna, venenatis ac lacus sit amet, faucibus vestibulum metus. Nulla facilisi. Vestibulum porttitor varius dapibus. In sit amet justo condimentum, lacinia sapien non, lacinia odio. Nullam sollicitudin sapien eget turpis condimentum, nec aliquet sem venenatis. Sed efficitur risus quis neque fringilla, at fringilla purus varius.
 
+			p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis pretium cursus. Sed vel tincidunt dui. Aenean accumsan eget lectus eget aliquam. Vivamus risus neque, finibus at ex at, lobortis dignissim sem. Nunc euismod euismod justo, eget condimentum urna efficitur eleifend. Quisque ornare velit ac lectus mollis eleifend. Quisque faucibus id velit at eleifend. Sed sed nunc dui. Nullam eget tempor dolor.
+
+
 	section.center
 		h3 HTML modal from an HTML file
-		p.small The HTML content will use local styles
+		p.small The HTML content will use local styles.
 
 		.example
 			a(href="#", data-modal-type="html", data-modal-url="external/externalhtml.html") Link to an HTML file
@@ -297,6 +301,7 @@ section.center
 				li overlaycolor
 				li padding
 				li radius
+				li scalecorrection
 				li shadow
 				li slidemodalevent
 				li speed
@@ -386,13 +391,13 @@ section.center
 
 	section.center
 		h4 Option 6: htmlminwidth
-		p This sets the minimum width of the HTML modals. The default is 300 pixels.
+		p This sets the minimum width of the HTML modals. The default is 100 pixels.
 		pre
 			code.hljs.js(data-line-numbers="4").
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        htmlminwidth: 300
+				        htmlminwidth: "100px"
 				    },
 				    plugins: [ Multimodal ]
 				})
@@ -400,13 +405,13 @@ section.center
 
 	section.center
 		h4 Option 7: htmlminheight
-		p This sets the minimum height of the HTML modals. The default is 200 pixels.
+		p This sets the minimum height of the HTML modals. The default is 100 pixels.
 		pre
 			code.hljs.js(data-line-numbers="4").
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        htmlminheight: 200
+				        htmlminheight: "100px"
 				    },
 				    plugins: [ Multimodal ]
 				})
@@ -462,8 +467,24 @@ section.center
 				})
 			//-
 
+
 	section.center
-		h4 Option 11: shadow
+		h4 Option 11: scalecorrection
+		p This sets a scale correction, used in the border width and the close button. On small devices or screens, the border and close button may be too small. This option scales them back up.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        scalecorrection: true
+				    },
+				    plugins: [ Multimodal ]
+				})
+		//-
+
+
+	section.center
+		h4 Option 12: shadow
 		p This sets the shadow around the dialog box. The default is a soft but dark shadow.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -477,7 +498,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 12: slidemodalevent
+		h4 Option 13: slidemodalevent
 		p This sets the event that triggers the modal on a slide, if that slide is set to show a modal.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -491,7 +512,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 13: speed
+		h4 Option 14: speed
 		p This sets the speed of the modal opening and closing.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -505,7 +526,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 14: videoautoplay
+		h4 Option 15: videoautoplay
 		p This sets the video to autoplay when opened.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -519,7 +540,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 15: videocontrols
+		h4 Option 16: videocontrols
 		p This sets the video to show controls when opened.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -533,7 +554,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 16: videoautohide
+		h4 Option 17: videoautohide
 		p This sets the modal to close when the video in it ends.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -547,7 +568,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 17: zoom
+		h4 Option 18: zoom
 		p This sets the modal to zoom in when opened.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -561,7 +582,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 18: zoomfrom
+		h4 Option 19: zoomfrom
 		p This sets the starting zoom factor of the modal when it is opened. It then zooms to factor 1.
 		pre
 			code.hljs.js(data-line-numbers="4").

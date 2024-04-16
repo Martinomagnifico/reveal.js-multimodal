@@ -2,6 +2,7 @@
 
 :root {
     --mm-border: 1px solid white;
+    --mm-borderwidth: 1px;
     --mm-transspeed: 0.3s;
     --mm-transtiming: ease-in-out;
     --mm-overlaycolor: rgba(0,0,0,0.30);
@@ -88,12 +89,14 @@ section > .mm-content {
     }
 
     &[data-modal-type*="iframe"] {
-        iframe {
+        .mm-body {
             max-width: 100%;
             max-height: 100%;
             margin: 0;
             width: calc(var(--mm-maxwidth));
             height: calc(var(--mm-maxheight));
+            box-sizing: border-box;
+            overflow-y: auto;
         }
     }
 
@@ -138,6 +141,7 @@ section > .mm-content {
     .mm-content {
         background: var(--mm-modal-background, var(--mm-mediabgcolor));
         border: var(--mm-border);
+        border-width: var(--mm-borderwidth);
         border-radius: var(--mm-outerradius);
         box-shadow: var(--mm-shadow);
         overflow: hidden;
@@ -156,7 +160,11 @@ section > .mm-content {
         padding: var(--mm-modal-padding, var(--mm-iframepadding));
     }
     .mm-body {
-        overflow: hidden;
         z-index: 0;
+    }
+    .mm-scrollbody {
+        border: 1px solid transparent;
+        display: flex;
+        flex-direction: column;
     }
 }

@@ -1,4 +1,4 @@
-export const setSize = (margin, revealEl, revealScale, modal) => {
+export const setSize = (margin, revealEl, revealScale, modal, options) => {
 
 		let revealWidth = revealEl.offsetWidth;
 		let revealHeight = revealEl.offsetHeight;
@@ -8,4 +8,18 @@ export const setSize = (margin, revealEl, revealScale, modal) => {
 
 		modal.modalElement.style.setProperty('--mm-maxwidth', `${Math.floor(maxWidth)}px`);
 		modal.modalElement.style.setProperty('--mm-maxheight', `${Math.floor(maxHeight)}px`);
+
+		if (options.scalecorrection) {
+
+			let inverseScale = Math.max(1, 1 / revealScale);
+			modal.modalElement.style.setProperty('--mm-inversescale', inverseScale);
+
+			let borderWidth = options.border.match(/(\d*\.?\d+)\s*(\w+)/);
+			if (borderWidth !== null) {
+				let sizeValue = parseFloat(borderWidth[1]);
+				let unit = borderWidth[2];
+				let newBorderwidth = sizeValue * inverseScale + unit;
+				modal.modalElement.style.setProperty('--mm-borderwidth', newBorderwidth);
+			}
+		}
 };

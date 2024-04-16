@@ -8,8 +8,6 @@
 	--close-mainlength: 16px;
 	--close-hovarratio: 1.2;
 
-	// transform: scale(1.25);
-
 	padding: 0;
 	border-radius: 50%;
 	border: none;
@@ -33,24 +31,23 @@
 	&:before {
 		content: '';
 		position: absolute;
-		width: 40px;
-		height: 40px;
+
+
+		width: 28px;
+		height: 28px;
+
 		border-radius: 20px;
 		background: transparent;
-		transition: background-color .12s ease-in-out;
+		transition: all .0675s linear;
 		pointer-events: none;
 		z-index: -1;
-	}
-	&.sm:before {
-		width: 32px;
-		height: 32px;
 	}
 
 	svg {
 		width: 24px;
 		height: 24px;
 		line {
-      transition: all .0675s linear;
+			transition: all .0675s linear;
 			stroke: var(--color-gray-rich);
 			stroke-linecap: round;
 			stroke-width: 1.25;
@@ -75,10 +72,9 @@
 
 	&:hover:before,
 	&:focus:before {
+		width: 36px;
+		height: 36px;
 		background: rgba(black, 20%);
-	}
-	&:active:before {
-		background: rgba(#005765, 10%);
 	}
 	&:hover svg {
 		line {
@@ -104,5 +100,8 @@
 		outline: 0;
 		box-shadow: none;
 	}
+
+	transform-origin: top right;
+	transform: scale(var(--mm-inversescale, 1));
 
 }

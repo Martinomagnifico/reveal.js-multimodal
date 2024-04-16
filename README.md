@@ -1,6 +1,7 @@
 # Multimodal
 
 [![Version](https://img.shields.io/npm/v/reveal.js-multimodal)](#)
+<!--[![Downloads](https://img.shields.io/npm/dt/reveal.js-multimodal)](https://github.com/martinomagnifico/reveal.js-multimodal/archive/refs/heads/master.zip)-->
 
 A plugin for [Reveal.js](https://revealjs.com) to show content in modal windows.
 
@@ -158,8 +159,8 @@ Reveal.initialize({
     closebuttonhtml: '',
     cssautoload: true,
     csspath: '',
-    htmlminwidth: 100,
-    htmlminheight: 100,
+    htmlminwidth: "100px",
+    htmlminheight: "100px",
     shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)",
     overlaycolor: "rgba(0, 0, 0, 0.30)",
     padding: {
@@ -168,6 +169,7 @@ Reveal.initialize({
       media: "0"
     },
     radius: "0.5em",
+    scalecorrection: true,
     slidemodalevent: "slidetransitionend",
     speed: 300,
     videoautoplay: true,

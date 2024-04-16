@@ -92,8 +92,11 @@ const Plugin = () => {
 	
 					if (event.currentSlide.dataset.modalType && options.slidemodalevent == "slidetransitionend") {
 						setTimeout(() => {
-							loadModalContent(event.currentSlide, modal, options, originalOptions);
-						}, 0);
+							// Timeout needed for when the first slide is a modal slide.
+							if (deck.getCurrentSlide() == event.currentSlide) {
+								loadModalContent(event.currentSlide, modal, options, originalOptions);
+							}
+						}, 10);
 					}
 				} else {
 
@@ -113,7 +116,7 @@ const Plugin = () => {
 	
 			deck.on('ready', async (event) => {
 	
-				setSize(revealMargin, revealEl, deck.getScale(), modal);
+				setSize(revealMargin, revealEl, deck.getScale(), modal, options);
 
 				if (handleModalSlideModal(event.currentSlide) && (handleModalSlideModal(event.currentSlide) == "slidetransitionend" || handleModalSlideModal(event.currentSlide) == "slidechanged")) {
 					await loadModalContent(event.currentSlide, modal, options, originalOptions);
@@ -125,7 +128,7 @@ const Plugin = () => {
 			});
 	
 			deck.on('resize', event => {
-				setSize(revealMargin, revealEl, event.scale, modal);
+				setSize(revealMargin, revealEl, event.scale, modal, options);
 			});
 	
 
@@ -141,18 +144,23 @@ const Plugin = () => {
 				}
 	
 				const closeOnClickOutside = (event) => {
-					if (event.target === modal.modalElement || event.target === modal.modalDialog) {
-						modal.hide();
+					if (!modal.isLocked) {
+						if (event.target === modal.modalElement || event.target === modal.modalDialog) {
+							modal.hide();
+						}
 					}
+
 				};
 				modal.modalElement.addEventListener('click', closeOnClickOutside);
 				modal.closeOnClickOutside = closeOnClickOutside;
 			});
 	
 			modal.on('multimodal:shown', () => {
-	
-				if (modal.triggerElement.dataset.modalNavblock && modal.triggerElement.dataset.modalNavblock == "true" ) {
-					lockNav(deck, modal);
+
+				if (modal.triggerElement) {
+					if (modal.triggerElement.dataset.modalNavblock && modal.triggerElement.dataset.modalNavblock == "true" ) {
+						lockNav(deck, modal);
+					}
 				}
 	
 				const video = modal.modalContent.querySelector('video');
@@ -236,8 +244,8 @@ const Plugin = () => {
 			closebuttonhtml: '',
 			cssautoload: true,
 			csspath: '',
-			htmlminwidth: 100,
-			htmlminheight: 100,
+			htmlminwidth: "100px",
+			htmlminheight: "100px",
 			shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)",
 			overlaycolor: "rgba(0, 0, 0, 0.30)",
 			padding: {
@@ -246,6 +254,7 @@ const Plugin = () => {
 				media: "0"
 			},
 			radius: "0.5em",
+			scalecorrection: true,
 			slidemodalevent: "slidetransitionend",
 			speed: 300,
 			videoautoplay: true,
@@ -276,7 +285,7 @@ const Plugin = () => {
 
 		if (options.debug) {
 			let style = document.createElement('style');
-			style.innerHTML = `.reveal .slides { box-shadow: inset 0 0 0 1px orange} .mm-dialog { box-shadow: inset 0 0 0 1px red}`;
+			style.innerHTML = `.reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-dialog { box-shadow: inset 0 0 0 1px red}`;
 			document.head.appendChild(style);
 		}
 
