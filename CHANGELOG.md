@@ -33,3 +33,12 @@
 
 ### Added
 - Added a scalecorrection option. This makes sure that the close button is not reduced in size when the modal is scaled down. The same is also set up for the border around the modal.
+
+
+## [0.1.4] - 2024-04-17
+
+### Changed
+- Rounded scalecorrection variables.
+
+### Added
+- Added more details in the events that are dispatched to the deck.

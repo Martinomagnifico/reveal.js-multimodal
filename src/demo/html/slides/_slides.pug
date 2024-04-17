@@ -81,18 +81,16 @@ section.center
 
 	section.center
 		h2 Events
-		p There are four events that may help you do things in your modals: #[code multimodal:show], #[code multimodal:shown], #[code multimodal:hide], and #[code multimodal:hidden]. Details about the trigger are in #[code event.detail.trigger]. Use it like this:
+		p There are 4 events that may help you do things in your modals: #[code.small multimodal:show], #[code.small multimodal:shown], #[code.small multimodal:hide], and #[code.small multimodal:hidden]. Use it like this:
 
 		pre
 			code.hljs.js(data-line-numbers).
 				deck.addEventListener("multimodal:shown", async (event) => {
-				    const triggerInfo = event.detail.trigger;
-				    console.log("Trigger type:", triggerInfo.dataset.modalType);
-				    console.log("Trigger URL:", triggerInfo.dataset.modalUrl);
+				  const triggerInfo = event.detail.trigger;
+				  console.log("Trigger type:", triggerInfo.dataset.modalType);
 				});
 		//-
-
-		p.small A #[code .multimodal-open] class is also added to the #[code .reveal] element so that you can hook into this with CSS.
+		p.small Details are in #[code event.detail]. It references the trigger, the modal and more. A #[code .multimodal-open] class is also added to the #[code .reveal] element so that you can hook into this with CSS.
 
 
 	section.center(data-background="#260505")

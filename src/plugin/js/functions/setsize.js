@@ -1,3 +1,5 @@
+import { roundToStep } from '../helpers.js';
+
 export const setSize = (margin, revealEl, revealScale, modal, options) => {
 
 		let revealWidth = revealEl.offsetWidth;
@@ -12,13 +14,13 @@ export const setSize = (margin, revealEl, revealScale, modal, options) => {
 		if (options.scalecorrection) {
 
 			let inverseScale = Math.max(1, 1 / revealScale);
-			modal.modalElement.style.setProperty('--mm-inversescale', inverseScale);
+			modal.modalElement.style.setProperty('--mm-inversescale', roundToStep(inverseScale, 0.1));
 
 			let borderWidth = options.border.match(/(\d*\.?\d+)\s*(\w+)/);
 			if (borderWidth !== null) {
 				let sizeValue = parseFloat(borderWidth[1]);
 				let unit = borderWidth[2];
-				let newBorderwidth = sizeValue * inverseScale + unit;
+				let newBorderwidth = roundToStep(sizeValue * inverseScale, 0.5) + unit;
 				modal.modalElement.style.setProperty('--mm-borderwidth', newBorderwidth);
 			}
 		}

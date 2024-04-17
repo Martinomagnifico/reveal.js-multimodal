@@ -92,13 +92,12 @@
           </section>
           <section class="center">
             <h2>Events</h2>
-            <p>There are four events that may help you do things in your modals: <code>multimodal:show</code>, <code>multimodal:shown</code>, <code>multimodal:hide</code>, and <code>multimodal:hidden</code>. Details about the trigger are in <code>event.detail.trigger</code>. Use it like this:</p>
+            <p>There are 4 events that may help you do things in your modals: <code class="small">multimodal:show</code>, <code class="small">multimodal:shown</code>, <code class="small">multimodal:hide</code>, and <code class="small">multimodal:hidden</code>. Use it like this:</p>
             <pre><code class="hljs js" data-line-numbers>deck.addEventListener("multimodal:shown", async (event) => {
-    const triggerInfo = event.detail.trigger;
-    console.log("Trigger type:", triggerInfo.dataset.modalType);
-    console.log("Trigger URL:", triggerInfo.dataset.modalUrl);
+  const triggerInfo = event.detail.trigger;
+  console.log("Trigger type:", triggerInfo.dataset.modalType);
 });</code></pre>
-            <p class="small">A <code>.multimodal-open</code> class is also added to the <code>.reveal</code> element so that you can hook into this with CSS.</p>
+            <p class="small">Details are in <code>event.detail</code>. It references the trigger, the modal and more. A <code>.multimodal-open</code> class is also added to the <code>.reveal</code> element so that you can hook into this with CSS.</p>
           </section>
           <section class="center" data-background="#260505">
             <h3>Override navigation</h3>

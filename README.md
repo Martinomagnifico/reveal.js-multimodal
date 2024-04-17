@@ -131,13 +131,12 @@ To automatically open a modal when a slide is shown, add the `data-modal-type` a
 
 #### Events
 
-There are four events that may help you do things in your modals: `multimodal:show`, `multimodal:shown`, `multimodal:hide`, and `multimodal:hidden`. Details about the trigger are in `event.detail.trigger`. Use it like this:
+There are 4 events that may help you do things in your modals: `multimodal:show`, `multimodal:shown`, `multimodal:hide`, and `multimodal:hidden`. Details are in `event.detail`. Use it like this:
 
 ```javascript
 deck.addEventListener("multimodal:shown", async (event) => {
   const triggerInfo = event.detail.trigger;
   console.log("Trigger type:", triggerInfo.dataset.modalType);
-  console.log("Trigger URL:", triggerInfo.dataset.modalUrl);
 });
 ```
 

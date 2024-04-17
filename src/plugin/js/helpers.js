@@ -251,3 +251,7 @@ export const debugLog = (options, text) => {
 	if (options.debug) console.log(text);
 }
 
+export const roundToStep = (value, step = 1.0) => {
+	const inv = 1.0 / step;
+	return Math.round(value * inv) / inv;
+};

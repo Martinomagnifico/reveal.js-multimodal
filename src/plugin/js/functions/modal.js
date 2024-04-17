@@ -34,11 +34,11 @@ export class Modal {
                     this.modalElement.classList.remove(SHOWN_CLASS);
                     this.modalElement.classList.remove(SHOW_CLASS);
                     this.modalElement.style.setProperty('display', 'none');
-                    this.trigger(EVENT_HIDDEN);
+                    this.trigger(EVENT_HIDDEN, "hidden");
                 } else {
                     // Modal is shown
                     this.modalElement.classList.add(SHOWN_CLASS);
-                    this.trigger(EVENT_SHOWN);
+                    this.trigger(EVENT_SHOWN, "shown");
                 }
             }
         });
@@ -56,7 +56,15 @@ export class Modal {
         if (listeners) {
             listeners.forEach(listener => listener(action, ...args));
         }
-        const customEvent = new CustomEvent(event, { detail: { action, trigger: this.triggerElement, args } });
+        let details = {
+            action,
+            trigger: this.triggerElement,
+            modal: this.modalElement,
+            content: this.modalContent,
+            body: this.modalContent.querySelector(MODAL_BODY_CLASS),
+            args
+        };
+        const customEvent = new CustomEvent(event, { detail: details });
         this.deck.dispatchEvent(customEvent);
     }
 
@@ -68,22 +76,22 @@ export class Modal {
         // Check for transition duration, if no transitions add both show and shown classes
         if (window.getComputedStyle(this.modalElement).getPropertyValue('transition-duration') === '0s') {
             this.modalElement.classList.add(SHOW_CLASS);
-            this.trigger(EVENT_SHOW);
+            this.trigger(EVENT_SHOW, "show");
             this.modalElement.classList.add(SHOWN_CLASS);
-            this.trigger(EVENT_SHOWN);
+            this.trigger(EVENT_SHOWN, "shown");
         } else {
             // Just add the show class. 
             // Because there is a transition, this will trigger the shown event at the end of the transition.
             setTimeout(() => {
                 this.modalElement.classList.add(SHOW_CLASS);
-                this.trigger(EVENT_SHOW);
+                this.trigger(EVENT_SHOW, "show");
             }, 10);
         }
     }
 
     hide() {
         this.isOpen = false;
-        this.trigger(EVENT_HIDE);
+        this.trigger(EVENT_HIDE, "hide");
 
         // Hide modal
         this.modalElement.setAttribute('aria-hidden', 'true');
@@ -91,7 +99,7 @@ export class Modal {
             this.modalElement.classList.remove(SHOWN_CLASS);
             this.modalElement.classList.remove(SHOW_CLASS);
             this.modalElement.style.setProperty('display', 'none');
-            this.trigger(EVENT_HIDDEN, 'hide', this.triggerInfo);
+            this.trigger(EVENT_HIDDEN, 'hide');
         } else {
             this.modalElement.classList.remove(SHOW_CLASS);
         }
