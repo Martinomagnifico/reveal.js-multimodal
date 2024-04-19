@@ -2,7 +2,7 @@
 /*****************************************************************
  *
  * Multimodal for Reveal.js 
- * Version 0.1.5
+ * Version 0.1.6
  * 
  * @author: Martijn De Jongh (Martino), martijn.de.jongh@gmail.com
  * https://github.com/martinomagnifico
@@ -157,9 +157,6 @@ section > .mm-content {
   position: relative;
   min-width: var(--mm-minwidth);
   min-height: var(--mm-minheight);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
   overflow-y: auto;
 }
 .multimodal[data-modal-type=image] .mm-body, .multimodal[data-modal-type=video] .mm-body {
@@ -224,8 +221,11 @@ section > .mm-content {
 .multimodal .mm-body {
   z-index: 0;
 }
+.multimodal .mm-content {
+  z-index: 0;
+}
 .multimodal .mm-scrollbody {
-  border: 1px solid transparent;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }

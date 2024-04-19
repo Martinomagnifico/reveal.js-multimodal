@@ -1,6 +1,6 @@
 {
   "name": "reveal.js-multimodal",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A plugin for Reveal.js to show modal windows in presentations",
   "keywords": [
     "reveal",

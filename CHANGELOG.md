@@ -1,28 +1,24 @@
 # Changelog
 
-## [0.0.8] - 2024-04-05
-- Beta version
+## [0.1.6] - 2024-04-19
+
+### Changed
+- Fix overflow issue
 
 
-## [0.0.9] - 2024-04-08
+## [0.1.5] - 2024-04-19
+
+### Changed
+- Change gulp header function
+
+
+## [0.1.4] - 2024-04-17
+
+### Changed
+- Rounded scalecorrection variables.
+
 ### Added
-- Modals can now also be opened by triggers that are added later to the DOM.
-
-### Changed
-- Some tweaks to variable names.
-
-
-## [0.1.0] - 2024-04-08
-
-### Changed
-- First public GitHub version
-- Dispatch events to deck
-
-
-## [0.1.1] - 2024-04-08
-
-### Changed
-- Fix for iOS video
+- Added more details in the events that are dispatched to the deck.
 
 
 ## [0.1.3] - 2024-04-16
@@ -35,16 +31,26 @@
 - Added a scalecorrection option. This makes sure that the close button is not reduced in size when the modal is scaled down. The same is also set up for the border around the modal.
 
 
-## [0.1.4] - 2024-04-17
+## [0.1.1] - 2024-04-08
 
 ### Changed
-- Rounded scalecorrection variables.
+- Fix for iOS video
 
+
+## [0.1.0] - 2024-04-08
+
+### Changed
+- First public GitHub version
+- Dispatch events to deck
+
+
+## [0.0.9] - 2024-04-08
 ### Added
-- Added more details in the events that are dispatched to the deck.
-
-
-## [0.1.5] - 2024-04-19
+- Modals can now also be opened by triggers that are added later to the DOM.
 
 ### Changed
-- Change gulp header function
+- Some tweaks to variable names.
+
+
+## [0.0.8] - 2024-04-05
+- Beta version

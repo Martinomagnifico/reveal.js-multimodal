@@ -72,9 +72,6 @@ section > .mm-content {
             position: relative;
             min-width: var(--mm-minwidth);
             min-height: var(--mm-minheight);
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
             overflow-y: auto;
         }
     }
@@ -162,9 +159,14 @@ section > .mm-content {
     .mm-body {
         z-index: 0;
     }
+
+    .mm-content {
+        z-index: 0;
+    }
+
     .mm-scrollbody {
-        border: 1px solid transparent;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
     }
 }
