@@ -2,7 +2,7 @@
 /*****************************************************************
  *
  * Multimodal for Reveal.js 
- * Version 0.1.4
+ * Version 0.1.5
  * 
  * @author: Martijn De Jongh (Martino), martijn.de.jongh@gmail.com
  * https://github.com/martinomagnifico
@@ -13,6 +13,8 @@
  * Copyright (C) 2023 Martijn De Jongh (Martino)
  *
  ******************************************************************/
+
+
 
 .multimodal .mm-close {
   --color-gray-rich: white;

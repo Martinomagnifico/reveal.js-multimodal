@@ -1,7 +1,7 @@
 # Multimodal
 
 [![Version](https://img.shields.io/npm/v/reveal.js-multimodal)](#)
-<!--[![Downloads](https://img.shields.io/npm/dt/reveal.js-multimodal)](https://github.com/martinomagnifico/reveal.js-multimodal/archive/refs/heads/master.zip)-->
+<!--<!--[![Downloads](https://img.shields.io/npm/dt/reveal.js-multimodal)](https://github.com/martinomagnifico/reveal.js-multimodal/archive/refs/heads/master.zip)-->-->
 
 A plugin for [Reveal.js](https://revealjs.com) to show content in modal windows.
 

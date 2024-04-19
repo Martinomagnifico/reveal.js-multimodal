@@ -18,7 +18,7 @@ const terser = require('@rollup/plugin-terser');
 
 const rename = require("gulp-rename");
 const merge = require('merge-stream');
-const header = require('gulp-header');
+const tap = require('gulp-tap');
 const del = require('del');
 
 const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod';
@@ -65,6 +65,8 @@ const banner = `
  * Copyright (C) 2023 ${pkg.author.name}
  *
  ******************************************************************/
+
+\r\n
 `
 
 
@@ -162,7 +164,9 @@ const pluginstyles = () => {
 		.pipe(sass())
 		.pipe(autoprefixer())
 		.pipe(rename(`${pkg.functionname.toLowerCase()}.css`))
-		.pipe(header(banner + "\n"))
+		.pipe(tap((file) => {
+			file.contents = Buffer.concat([Buffer.from(banner),file.contents]);
+		}))
 		.pipe(dest(pluginfolder))
 		.pipe(browserSync.stream())
 	);

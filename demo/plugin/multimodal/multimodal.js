@@ -1,7 +1,7 @@
 /*****************************************************************
  *
  * Multimodal for Reveal.js 
- * Version 0.1.3
+ * Version 0.1.5
  * 
  * @author: Martijn De Jongh (Martino), martijn.de.jongh@gmail.com
  * https://github.com/martinomagnifico

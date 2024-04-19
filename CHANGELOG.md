@@ -42,3 +42,9 @@
 
 ### Added
 - Added more details in the events that are dispatched to the deck.
+
+
+## [0.1.5] - 2024-04-19
+
+### Changed
+- Change gulp header function
