@@ -244,6 +244,9 @@ p:last-child {
 .reveal blockquote {
   width: 100%;
 }
+.reveal blockquote.mm-content, .reveal blockquote.hidden {
+  display: none;
+}
 
 .reveal blockquote p {
   margin-top: 0;
