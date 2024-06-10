@@ -18,11 +18,11 @@ const Plugin = () => {
 		const CLOSEATTRIBUTE = "data-modal-close";
 
 		const revealEl = deck.getRevealElement();
+
 		const modalClickTriggers = Array.from(revealEl.querySelectorAll(`[${TRIGGERATTRIBUTE}]:not(section)`));
 		const revealMargin = deck.getConfig().margin;
 
-		const setupModal = () => {
-
+		const setupModal = (deck) => {
 			const modal = new Modal(deck);
 
 			setPresetConfigs(deck, modal);
@@ -40,7 +40,7 @@ const Plugin = () => {
 			const handleModalTrigger = async (event) => {
 				event.preventDefault();
 				const target = event.currentTarget;
-				if (target.hasAttribute('href') && target.getAttribute('href') === "#") {
+				if (target.hasAttribute('href') && (target.getAttribute('href') === "#" || target.getAttribute('href') === "#/" )) {
 					event.stopPropagation();
 				}
 				await loadModalContent(target, modal, options, originalOptions);
@@ -145,7 +145,7 @@ const Plugin = () => {
 	
 				const closeOnClickOutside = (event) => {
 					if (!modal.isLocked) {
-						if (event.target === modal.modalElement || event.target === modal.modalDialog) {
+						if (event.target === modal.modalElement || event.target === modal.modalMax) {
 							modal.hide();
 						}
 					}
@@ -163,7 +163,7 @@ const Plugin = () => {
 					}
 				}
 	
-				const video = modal.modalContent.querySelector('video');
+				const video = modal.modalDialog.querySelector('video');
 				if (video) {
 					if (options.videoautoplay) {
 						video.play();
@@ -194,7 +194,7 @@ const Plugin = () => {
 				unlockNav(deck, modal);
 				document.removeEventListener('keydown', escapePressed);
 	
-				const video = modal.modalContent.querySelector('video');
+				const video = modal.modalDialog.querySelector('video');
 				if (video) {
 					video.pause();
 				}
@@ -202,7 +202,7 @@ const Plugin = () => {
 	
 			modal.on('multimodal:hidden', () => {
 				modal.modalBody.innerHTML = '';
-				const iframe = modal.modalContent.querySelector('iframe');
+				const iframe = modal.modalDialog.querySelector('iframe');
 				if (iframe) { iframe.src = '' }
 				modal.modalElement.style.removeProperty('--mm-modal-background');
 				modal.modalElement.style.removeProperty('--mm-overlaycolor');
@@ -218,12 +218,16 @@ const Plugin = () => {
 			}
 		}
 
-		if ( revealEl.querySelector('.multimodal') !== null ) {
+		let modalElement = revealEl.querySelector('.multimodal');
+
+		if ( modalElement ) {
 			// There already is a multimodal container
-			setupModal();
+			setupModal(deck);
 		  } else {
 			// Create a multimodal container
-			createModalContainer(deck).then(setupModal());
+			createModalContainer(deck).then(
+				setupModal(deck)
+			);
 		}
 
 	};
@@ -235,18 +239,18 @@ const Plugin = () => {
 	const init = (deck) => {
 
 		let defaultOptions = {
-			border: "1px solid white",
 			background: {
 				html: "var(--r-background-color)",
 				iframe: "var(--r-background-color)",
 				media: "white"
 			},
+			bordercolor: "white",
+			borderwidth: "1px",
 			closebuttonhtml: '',
 			cssautoload: true,
 			csspath: '',
 			htmlminwidth: "100px",
 			htmlminheight: "100px",
-			shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)",
 			overlaycolor: "rgba(0, 0, 0, 0.30)",
 			padding: {
 				html: "1em",
@@ -255,6 +259,7 @@ const Plugin = () => {
 			},
 			radius: "0.5em",
 			scalecorrection: true,
+			shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)",
 			slidemodalevent: "slidetransitionend",
 			speed: 300,
 			videoautoplay: true,
@@ -285,7 +290,7 @@ const Plugin = () => {
 
 		if (options.debug) {
 			let style = document.createElement('style');
-			style.innerHTML = `.reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-dialog { box-shadow: inset 0 0 0 1px red}`;
+			style.innerHTML = `.reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-max { box-shadow: inset 0 0 0 1px red}`;
 			document.head.appendChild(style);
 		}
 

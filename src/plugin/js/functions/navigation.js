@@ -20,7 +20,7 @@ export const spaceEscapeHide = (deck, modal) => {
 
     if (modal.modalElement.dataset.modalType == "video") {
 
-        const video = modal.modalContent.querySelector('video');
+        const video = modal.modalDialog.querySelector('video');
         if (video) {
             deck.configure({
                 keyboard: { 

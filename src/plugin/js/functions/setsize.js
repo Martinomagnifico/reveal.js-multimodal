@@ -16,7 +16,8 @@ export const setSize = (margin, revealEl, revealScale, modal, options) => {
 			let inverseScale = Math.max(1, 1 / revealScale);
 			modal.modalElement.style.setProperty('--mm-inversescale', roundToStep(inverseScale, 0.1));
 
-			let borderWidth = options.border.match(/(\d*\.?\d+)\s*(\w+)/);
+			let borderWidth = options.borderwidth.match(/(\d*\.?\d+)\s*(\w+)/);
+
 			if (borderWidth !== null) {
 				let sizeValue = parseFloat(borderWidth[1]);
 				let unit = borderWidth[2];

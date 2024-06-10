@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.1] - 2024-06-10
+
+### Changed
+- Completed documentation
+- Fixed minor issues with paddings
+- Fixed type-error with events not being dispatched
+- Changed `border` option into `bordercolor` and `borderwidth`
+- Prepared for Quarto version
+
+## [1.0.0] - 2024-06-05
+
+### Changed
+- Fixed Firefox issue with the modals having extra space
+- Newer version of devDependency Pug
+
 ## [0.1.6] - 2024-04-19
 
 ### Changed

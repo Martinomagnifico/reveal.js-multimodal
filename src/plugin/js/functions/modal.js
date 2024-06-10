@@ -1,7 +1,7 @@
-const MODAL_ELEMENT_ID = '.multimodal';
-const MODAL_DIALOG_CLASS = '.mm-dialog';
-const MODAL_CONTENT_CLASS = '.mm-content';
-const MODAL_BODY_CLASS = '.mm-body';
+const MODAL_ELEMENT_CLASS = 'multimodal';
+const MODAL_MAX_CLASS = 'mm-max';
+const MODAL_DIALOG_CLASS = 'mm-dialog';
+const MODAL_BODY_CLASS = 'mm-body';
 const SHOWN_CLASS = 'shown';
 const SHOW_CLASS = 'show';
 
@@ -12,12 +12,13 @@ const EVENT_HIDDEN = 'multimodal:hidden';
 
 export class Modal {
 
-    constructor() {
+    constructor(deck) {
+
         this.isOpen = false; // Initialize isOpen flag
-        this.modalElement = deck.querySelector(".multimodal");
-        this.modalDialog = this.modalElement.querySelector(MODAL_DIALOG_CLASS);
-        this.modalContent = this.modalElement.querySelector(MODAL_CONTENT_CLASS);
-        this.modalBody = this.modalElement.querySelector(MODAL_BODY_CLASS);
+        this.modalElement = deck.getRevealElement().querySelector(`.${MODAL_ELEMENT_CLASS}`);
+        this.modalMax = this.modalElement.querySelector(`.${MODAL_MAX_CLASS}`);
+        this.modalDialog = this.modalElement.querySelector(`.${MODAL_DIALOG_CLASS}`);
+        this.modalBody = this.modalElement.querySelector(`.${MODAL_BODY_CLASS}`);
         this.modalElement.style.setProperty('display', 'none');
         this.modalElement.setAttribute('aria-hidden', 'true');
         this.eventListeners = {};
@@ -35,6 +36,15 @@ export class Modal {
                     this.modalElement.classList.remove(SHOW_CLASS);
                     this.modalElement.style.setProperty('display', 'none');
                     this.trigger(EVENT_HIDDEN, "hidden");
+
+                    // Remove all classes except the normal modal classes. This is for the added classes by the user.
+                    this.modalElement.classList.forEach((className) => {
+                        if (className !== MODAL_ELEMENT_CLASS && className !== SHOW_CLASS && className !== SHOWN_CLASS && className !== 'hide' && className !== 'hidden') {
+                            this.modalElement.classList.remove(className);
+                        }
+                    });
+
+
                 } else {
                     // Modal is shown
                     this.modalElement.classList.add(SHOWN_CLASS);
@@ -60,12 +70,12 @@ export class Modal {
             action,
             trigger: this.triggerElement,
             modal: this.modalElement,
-            content: this.modalContent,
-            body: this.modalContent.querySelector(MODAL_BODY_CLASS),
+            dialog: this.modalDialog,
+            body: this.modalDialog.querySelector(`.${MODAL_BODY_CLASS}`),
             args
         };
         const customEvent = new CustomEvent(event, { detail: details });
-        this.deck.dispatchEvent(customEvent);
+        this.modalElement.dispatchEvent(customEvent);
     }
 
     show() {
@@ -112,6 +122,6 @@ export class Modal {
             htmlString = `<div class="mm-body"><div class="mm-scrollbody">${content}</div></div>`
         }
 
-        this.modalContent.innerHTML = this.closeButtonHtml + htmlString;
+        this.modalDialog.innerHTML = this.closeButtonHtml + htmlString;
     }
 }

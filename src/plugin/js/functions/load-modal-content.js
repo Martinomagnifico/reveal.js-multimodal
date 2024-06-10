@@ -2,8 +2,6 @@ import { loadVideo } from './loadvideo.js';
 import { loadImage } from './loadimage.js';
 import { loadHTML } from './loadhtml.js';
 
-
-
 export async function loadModalContent(trigger, modal, options, originalOptions) {
 
     const modalType = trigger.dataset.modalType;
@@ -12,6 +10,10 @@ export async function loadModalContent(trigger, modal, options, originalOptions)
 
     if (trigger.dataset.modalOverlaycolor && trigger.dataset.modalOverlaycolor !== originalOptions.overlaycolor) {
         modal.modalElement.style.setProperty('--mm-overlaycolor', trigger.dataset.modalOverlaycolor);
+    }
+
+    if (trigger.dataset.modalClass) {
+        modal.modalElement.classList.add(...trigger.dataset.modalClass.split(/[ ,]+/));
     }
 
     if (modalType == 'html') {
@@ -59,7 +61,7 @@ export async function loadModalContent(trigger, modal, options, originalOptions)
         modalContent = await loadVideo(modalUrl, modal, options);
 
     } else if (modalType === 'image') {
-        let imageModalUrl = (modalUrl && modalUrl != "#") ? modalUrl : trigger.firstChild.tagName == "IMG" ? trigger.firstChild.getAttribute('src') : null;
+        let imageModalUrl = (modalUrl && modalUrl != "#" && modalUrl != "#/") ? modalUrl : trigger.firstChild.tagName == "IMG" ? trigger.firstChild.getAttribute('src') : null;
         let imageAlt = trigger.firstChild.tagName == "IMG" ? trigger.firstChild.getAttribute('alt') : null;
         modalContent = await loadImage(imageModalUrl, modal, imageAlt);
 

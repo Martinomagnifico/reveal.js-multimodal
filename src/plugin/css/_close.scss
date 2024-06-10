@@ -1,7 +1,7 @@
 
 
 .multimodal .mm-close {
-	--color-gray-rich: white;
+	--close-stroke-color: white;
 	--close-stroke-width: 1.2;
 	--close-hover-ratio: 1.2;
 
@@ -48,7 +48,7 @@
 		height: 24px;
 		line {
 			transition: all .0675s linear;
-			stroke: var(--color-gray-rich);
+			stroke: var(--close-stroke-color);
 			stroke-linecap: round;
 			stroke-width: 1.25;
 		}

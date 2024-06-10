@@ -1,37 +1,32 @@
 @import '_close';
 
 :root {
-    --mm-border: 1px solid white;
+    // --mm-border: 1px solid white;
     --mm-borderwidth: 1px;
+    --mm-bordercolor: white;
     --mm-transspeed: 0.3s;
     --mm-transtiming: ease-in-out;
     --mm-overlaycolor: rgba(0,0,0,0.30);
     --mm-shadow: 0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25);
     --mm-initialscale: 0.9;
-
     --mm-minwidth: 100px;
     --mm-minheight: 100px;
-
     --mm-htmlpadding: 1em;
     --mm-htmlbgcolor: var(--r-background-color);
-
     --mm-iframepadding: 0;
     --mm-iframebgcolor: var(--r-background-color);
-
     --mm-mediapadding: none;
     --mm-mediabgcolor: white;
-
     --mm-outerradius: 0.5em;
 }
 
-.mm-content.hidden,
-section > .mm-content {
+.mm-dialog.hidden,
+section > .mm-dialog {
     display: none;
 }
 
-// POSITIONING
-
 .multimodal {
+    // POSITIONING
     position: fixed;
     top: 0;
     left: 0;
@@ -41,17 +36,31 @@ section > .mm-content {
     justify-content: center;
     align-items: center;
 
-    .mm-dialog {
+    // STYLING
+    background-color: var(--mm-overlaycolor);
+    z-index: 9999;
+    opacity: 0;
+    transition: all var(--mm-transspeed) var(--mm-transtiming);
+
+    &, & * {
+        box-sizing: border-box;
+    }
+    
+    .mm-max {
+        // POSITIONING
         position: absolute;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-
         width: var(--mm-maxwidth);
         height: var(--mm-maxheight);
+        transition: all var(--mm-transspeed) var(--mm-transtiming);
+        inset: 50% auto auto 50%;
+        transform: translate(-50%, -50%) scale(calc(var(--slide-scale) * var(--mm-initialscale)));
 
-        .mm-content {
+        .mm-dialog {
+            // POSITIONING
             width: fit-content;
             height: fit-content;
             max-height: 100%;
@@ -59,33 +68,72 @@ section > .mm-content {
             display: flex;
             flex-direction: column;
             position: relative;
-
             justify-content: center;
             align-items: center;
+            overflow: hidden;
 
+            // STYLING
+            background: var(--mm-modal-background, var(--mm-mediabgcolor));
+            border-style: solid;
+            border-width: var(--mm-borderwidth);
+            border-color: var(--mm-bordercolor);
+            border-radius: var(--mm-outerradius);
+            box-shadow: var(--mm-shadow);
+            z-index: 0;
+    
+            &.hidden {
+                display: none;
+            }
+        }
+        iframe {
+            opacity: 0;
+            transition: opacity 0.8s var(--mm-transtiming);
+            transition-delay: var(0.25s);
+        }
+        .mm-body {
+            z-index: 0;
+        }
+        .mm-scrollbody {
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
     }
 
-    &[data-modal-type*="html"] {
+    &[data-modal-type*=html] {
         .mm-body {
-            position: relative;
             min-width: var(--mm-minwidth);
             min-height: var(--mm-minheight);
             overflow-y: auto;
         }
-    }
-
-    &[data-modal-type="image"],
-    &[data-modal-type="video"] {
-        .mm-body {
-            max-height: 100%;
-            max-width: 100%;
-            margin: 0;
+        .mm-dialog {
+            background: var(--mm-modal-background, var(--mm-htmlbgcolor));
+            padding: var(--mm-modal-padding, var(--mm-htmlpadding));
         }
     }
-
-    &[data-modal-type*="iframe"] {
+    &[data-modal-type=image] {
+        .mm-body {
+            max-width: var(--mm-maxwidth);
+            max-height: var(--mm-maxheight);
+            margin: 0;
+        }
+        .mm-dialog {
+            background: var(--mm-modal-background, var(--mm-mediabgcolor));
+            padding: var(--mm-modal-padding, var(--mm-mediapadding));
+        }
+    }
+    &[data-modal-type=video] {
+        .mm-body {
+            max-width: var(--mm-maxwidth);
+            max-height: var(--mm-maxheight);
+            margin: 0;
+        }
+        .mm-dialog {
+            background: var(--mm-modal-background, var(--mm-mediabgcolor));
+            padding: var(--mm-modal-padding, var(--mm-mediapadding));
+        }
+    }
+    &[data-modal-type*=iframe] {
         .mm-body {
             max-width: 100%;
             max-height: 100%;
@@ -95,32 +143,15 @@ section > .mm-content {
             box-sizing: border-box;
             overflow-y: auto;
         }
-    }
-
-    // TRANSITIONS
-
-    &, & * {
-        box-sizing: border-box;
-    }
-    background-color: var(--mm-overlaycolor);
-    z-index: 9999;
-    opacity: 0;
-    transition: all var(--mm-transspeed) var(--mm-transtiming);
-
-    .mm-dialog {
-        transition: all var(--mm-transspeed) var(--mm-transtiming);
-        inset: 50% auto auto 50%;
-        transform: translate(-50%, -50%) scale(calc(var(--slide-scale) * var(--mm-initialscale)));
-    }
-    iframe {
-        opacity: 0;
-        transition: opacity 0.8s var(--mm-transtiming);
-        transition-delay: var(0.25s);
+        .mm-dialog {
+            background: var(--mm-modal-background, var(--mm-iframebgcolor));
+            padding: var(--mm-modal-padding, var(--mm-iframepadding));
+        }
     }
 
     &.show {
         opacity: 1;
-        .mm-dialog {
+        .mm-max {
             transform: translate(-50%, -50%) scale(var(--slide-scale));
         }
         iframe {
@@ -128,45 +159,8 @@ section > .mm-content {
         }
     }
     &.show.shown {
-        .mm-dialog {
+        .mm-max {
             transition: none;
         }
-    }
-
-    // STYLING
-
-    .mm-content {
-        background: var(--mm-modal-background, var(--mm-mediabgcolor));
-        border: var(--mm-border);
-        border-width: var(--mm-borderwidth);
-        border-radius: var(--mm-outerradius);
-        box-shadow: var(--mm-shadow);
-        overflow: hidden;
-    }
-    &[data-modal-type="image"] .mm-content,
-    &[data-modal-type="video"] .mm-content {
-        background: var(--mm-modal-background, var(--mm-mediabgcolor));
-        padding: var(--mm-modal-padding, var(--mm-mediapadding));
-    }
-    &[data-modal-type="html"] .mm-content {
-        background: var(--mm-modal-background, var(--mm-htmlbgcolor));
-        padding: var(--mm-modal-padding, var(--mm-htmlpadding));
-    }
-    &[data-modal-type="iframe"] .mm-content {
-        background: var(--mm-modal-background, var(--mm-iframebgcolor));
-        padding: var(--mm-modal-padding, var(--mm-iframepadding));
-    }
-    .mm-body {
-        z-index: 0;
-    }
-
-    .mm-content {
-        z-index: 0;
-    }
-
-    .mm-scrollbody {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
     }
 }

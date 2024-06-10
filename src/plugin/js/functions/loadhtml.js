@@ -12,10 +12,19 @@ export function loadHTML(source, modal) {
 
                     const targetElement = document.querySelector(source);
                     if (!targetElement) {
+
                         throw new Error('Anchor element with specified ID not found.');
+                        
+                    } else {
+
+                        if (targetElement.firstElementChild.tagName.toLowerCase() === 'section') {
+                            htmlString = targetElement.firstElementChild.innerHTML;
+                        } else {
+                            htmlString = targetElement.innerHTML;
+                        }
+
+                        modal.modalElement.dataset.modalType = 'html';
                     }
-                    htmlString = targetElement.innerHTML;
-                    modal.modalElement.dataset.modalType = 'html';
 
                 } else if (source.endsWith('.md')) {
 

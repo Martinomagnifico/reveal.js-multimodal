@@ -25,9 +25,15 @@ export async function setupOptions(modal, options, originalOptions) {
     if (options.radius !== originalOptions.radius) {
         modal.modalElement.style.setProperty('--mm-outerradius', options.radius);
     }
-    if (options.border !== originalOptions.border) {
-        modal.modalElement.style.setProperty('--mm-border', options.border);
+
+    if (options.bordercolor !== originalOptions.bordercolor) {
+        modal.modalElement.style.setProperty('--mm-bordercolor', options.bordercolor);
     }
+
+    if (options.borderwidth !== originalOptions.borderwidth) {
+        modal.modalElement.style.setProperty('--mm-borderwidth', options.borderwidth);
+    }
+
     if (options.shadow !== originalOptions.shadow) {
         modal.modalElement.style.setProperty('--mm-shadow', options.shadow);
     }

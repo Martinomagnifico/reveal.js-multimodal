@@ -263,3 +263,16 @@ p:last-child {
 .reveal h2 {
   margin-bottom: 0 !important;
 }
+
+html {
+  color-scheme: dark;
+}
+
+.videothumb:before {
+  content: "";
+  display: block;
+  position: absolute;
+  background: url(../../assets/img/play.svg) no-repeat center center;
+  width: 100%;
+  height: 100%;
+}

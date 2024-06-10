@@ -1,7 +1,6 @@
 # Multimodal
 
 [![Version](https://img.shields.io/npm/v/reveal.js-multimodal)](#)
-<!--<!--[![Downloads](https://img.shields.io/npm/dt/reveal.js-multimodal)](https://github.com/martinomagnifico/reveal.js-multimodal/archive/refs/heads/master.zip)-->-->
 
 A plugin for [Reveal.js](https://revealjs.com) to show content in modal windows.
 
@@ -110,14 +109,6 @@ Of course, you also need to make sure that the content you are linking to (an im
 * The `space bar` or `escape key` will only close the modal
 
 
-#### Override navigation
-
-To prevent the user from accidentally navigating to another slide while the modal is open, you can add the `data-modal-navblock` attribute to the triggering element.
-
-```html
-<a href="assets/img/3.jpg" data-modal-type="image" data-modal-navblock="true">Show modal</a>
-```
-
 #### Slide modals
 
 To automatically open a modal when a slide is shown, add the `data-modal-type` and `data-modal-url` attributes to the section element.
@@ -140,8 +131,56 @@ deck.addEventListener("multimodal:shown", async (event) => {
 });
 ```
 
+#### Override navigation
 
-## Configuration
+To prevent the user from accidentally navigating to another slide while the modal is open, you can add the `data-modal-navblock` attribute to the triggering element.
+
+```html
+<a href="assets/img/3.jpg" data-modal-type="image" data-modal-navblock="true">Show modal</a>
+```
+
+
+## Adjust styling
+
+The modal is styled with CSS variables, which are controlled through the Reveal.js options (see [Global options](#global-options)). Some of these options can also be set per trigger:
+
+
+#### Overlay
+
+Add a `data-modal-overlaycolor` attribute to the trigger to change the overlay color on a per-trigger basis.
+
+```html
+<a href="#" data-modal-type="image" data-modal-url="assets/img/5.jpg" data-modal-overlaycolor="rgba(150, 50, 0, 0.5)">Show modal</a>
+```
+
+
+#### Background and padding
+
+The background color and padding can be set with the `data-modal-background` and `data-modal-padding` attributes. When using SVG's, this may come in handy. Both attributes can also be globally set in the options.
+
+```html
+<a href="#" data-modal-type="image" data-modal-background="gray" data-modal-padding="1em">
+    <img class="small" src="assets/img/svgexample.svg" alt="Graph">
+</a>
+```
+
+
+#### Passing extra classes
+
+A triggering element can pass extra classes to the modal with `data-modal-class`.
+
+```html
+<a href="#" data-modal-type="html" data-modal-url="#somehiddendiv" data-modal-class="special">Show modal</a>
+
+<style>
+    .special { --mm-bordercolor: red; }
+    .special p, .special h2 { color: red; }
+</style>
+```
+
+
+
+## Global options
 
 There are a few options that you can change from the Reveal.js options. The values below are default and do not need to be set if they are not changed.
 
@@ -149,18 +188,18 @@ There are a few options that you can change from the Reveal.js options. The valu
 Reveal.initialize({
   // ...
   multimodal: {
-    border: "1px solid white",
     background: {
       html: "var(--r-background-color)",
       iframe: "var(--r-background-color)",
       media: "white"
     },
+    bordercolor: "white",
+    borderwidth: "1px",
     closebuttonhtml: '',
     cssautoload: true,
     csspath: '',
     htmlminwidth: "100px",
     htmlminheight: "100px",
-    shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)",
     overlaycolor: "rgba(0, 0, 0, 0.30)",
     padding: {
       html: "1em",
@@ -169,6 +208,7 @@ Reveal.initialize({
     },
     radius: "0.5em",
     scalecorrection: true,
+    shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)",
     slidemodalevent: "slidetransitionend",
     speed: 300,
     videoautoplay: true,
@@ -181,10 +221,34 @@ Reveal.initialize({
 });
 ```
 
-Documentation about these options can be found in the demo for now.
 
 
-
+1. **`background`**: This sets the standard background color of the modal. If the padding is set to 0 (default for images and video’s), you will not see it. HTML, iframe and media (images and video) are set separately.
+	* **`html`**: This is set to "var(--r-background-color)", which is the standard background color of the presentation.
+	* **`iframe`**: This is set to "var(--r-background-color)", which is the standard background color of the presentation.
+	* **`media`**: This is set to "white".
+1. **`bordercolor`**: Set to `white` by default. You can set this to any CSS color value.
+1. **`borderwidth`**: Set to `1px` by default. You can set this to any CSS border width value.
+1. **`closebuttonhtml`**: Allows you to add your own HTML for the close button. Can be any HTML, for example `<button class="mm-close" type="button" data-modal-close="">X</button>`.
+1. **`cssautoload`**: Multimodal will load the CSS if this is set to `true`. If you import reveal.js-multimodal from npm, you will need to import the CSS file yourself. If you use 'import', then csspath should be set to `false`. If you know the path to the CSS file, you can use the `csspath` option and keep cssautoload set to `true`.
+1. **`csspath`**: If you want to change the styling, while using cssautoload, you can link to your own CSS file here.
+1. **`htmlminwidth`**: This sets the minimum width of the HTML modals. The default is 100 pixels.
+1. **`htmlminheight`**: This sets the minimum height of the HTML modals. The default is 100 pixels.
+1. **`overlaycolor `**: This sets the color of the overlay. Some people may call it a backdrop. The default is `rgba(0, 0, 0, 0.30)`. That's like 30% black. You can use any CSS color here, but it’s best to use rgba for transparency.
+1. **`padding`**: This sets the standard padding of modals. HTML, iframe and media (images and video) are set separately.
+	* **`html`**: This is set to "1em", so that content inside a modal has some breathing space.
+	* **`iframe`**: Set to "0" but can be changed.
+	* **`media`**: Set to "0" but can be changed.
+1. **`radius`**: This sets the radius of the dialog box.
+* **`scalecorrection `**: This sets a scale correction, used in the border width and the close button. On small devices or screens, the border and close button may be too small. This option scales them back up.
+* **`shadow`**: This sets the shadow around the dialog box. The default is `0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)`, which is a soft but dark shadow. 
+* **`slidemodalevent`**: This sets the event that triggers the modal on a slide, if that slide is set to show a modal. 
+* **`speed`**: This sets the speed of the modal opening and closing. 
+* **`videoautoplay `**: This sets the video to autoplay when opened. 
+* **`videocontrols `**: This sets the video to show controls when opened. 
+* **`videoautohide `**: This sets the modal to close when the video in it ends. 
+* **`zoom`**: This sets the modal to zoom in when opened. 
+* **`zoomfrom`**: This sets the starting zoom factor of the modal when it is opened. It then zooms to factor 1.
 
 
 ## Like it?

@@ -1,11 +1,10 @@
-section.center(data-modal-type="html", data-modal-url="#titlediv")
+section.center(data-modal-type="html", data-modal-url="#titlediv", data-modal-class="textcenter")
 	h1 Multimodal
 	h2 for Reveal.js
 
-	#titlediv.mm-content
-		.textcenter
-			h1 Multimodal
-			h2 for Reveal.js
+	#titlediv.mm-dialog
+		h1 Multimodal
+		h2 for Reveal.js
 
 section
 	section.center
@@ -20,7 +19,7 @@ section
 			li Use it to show #[a(href="#", data-modal-type="video", data-modal-url="assets/vid/radar.mp4") a video] in a window
 			li Use it to show #[a(href="#", data-modal-type="html", data-modal-url="#somehiddendiv") HTML content] in a window
 
-		#somehiddendiv.mm-content
+		#somehiddendiv.mm-dialog
 			h2 Example of HTML content
 			p(style="margin-bottom: 0") This is just content that is normally hidden.
 
@@ -34,7 +33,7 @@ section.center
 		ul
 			li Content in modals will display at its original size, but is constrained to the maximum size of the modal.
 			li The maximum size of modals is the size to the viewport, #[em minus the margin] as set in the Reveal config.
-			li The minimum size of HTML modals is 300x200 pixels. This can be set in the config.
+			li The minimum size of HTML modals is 100x100 pixels. This can be set in the config.
 
 
 	section.center
@@ -141,6 +140,31 @@ section.center
 		p.small The background color and padding can be set with the #[code data-modal-background] and #[code data-modal-padding] attributes. When using SVG's, this may come in handy. Both attributes can also be globally set in the options.
 
 
+	section.center
+		h3 Passing extra classes
+		p A triggering element can pass extra classes to the modal with #[code data-modal-class]. 
+
+		style.
+			.special { --mm-bordercolor: red;}
+			.special p, .special h2 { color: red;}
+
+		.example
+			a(href="#", data-modal-type="html", data-modal-url="#somehiddendiv" data-modal-class="special") Show modal
+
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="html" data-modal-url="#somehiddendiv" data-modal-class="special">Show modal</a>
+
+				<style>
+				    .special { --mm-bordercolor: red; }
+				    .special p, .special h2 { color: red; }
+				</style>
+		//-
+
+		p.small Note: You can add multiple classes. Divide them by space or comma.
+
+
+
 
 
 section.center
@@ -208,6 +232,21 @@ section.center
 		p.small Video modals will play when opened, close when finished, and finish when closed. Set this with #[code videoautoplay] and #[code videoautohide] settings in the options.
 
 
+	section.center
+		h3 Video modal from a clickable image
+		.example.small
+			a.videothumb(href="#", data-modal-type="video", data-modal-url="assets/vid/radar.mp4")
+				img(src="assets/img/radar.jpg")
+		pre
+			code.hljs.html(data-line-numbers).
+				<a href="#" data-modal-type="video" data-modal-url="assets/vid/radar.mp4">
+				    <img src="assets/img/radar.jpg">
+				</a>
+		//-
+
+		p.small As shown before, the href attribute can also be used.
+
+
 section.center
 	section.center
 		h2 HTML modals
@@ -222,7 +261,7 @@ section.center
 			code.hljs.html(data-line-numbers).
 				<a href="#" data-modal-type="html" data-modal-url="#somehiddendiv">Link to an ID</a>
 
-				<div class="mm-content hidden" id="somehiddendiv">
+				<div class="mm-dialog hidden" id="somehiddendiv">
 					<h2>Example of HTML content</h2>
 					<p>This is just content that is normally hidden.</p>
 				</div>
@@ -230,7 +269,7 @@ section.center
 		p Long content #[a(href="#", data-modal-type="html", data-modal-url="#longhiddendiv") like this] will be scrollable in the modal.
 
 
-		#longhiddendiv.mm-content.hidden
+		#longhiddendiv.mm-dialog.hidden
 			h2 Example of long HTML content
 			p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam venenatis pretium cursus. Sed vel tincidunt dui. Aenean accumsan eget lectus eget aliquam. Vivamus risus neque, finibus at ex at, lobortis dignissim sem. Nunc euismod euismod justo, eget condimentum urna efficitur eleifend. Quisque ornare velit ac lectus mollis eleifend. Quisque faucibus id velit at eleifend. Sed sed nunc dui. Nullam eget tempor dolor.
 
@@ -255,18 +294,18 @@ section.center
 
 
 	section.center
-		h3 HTML modal from a Markdown file
+		h3 HTML modal from a MarkDown file
 		p.small The HTML content will use local styles
 
 		.example
-			a(href="#", data-modal-type="html", data-modal-url="external/externalmd.md") Link to a Markdown file
+			a(href="#", data-modal-type="html", data-modal-url="external/externalmd.md") Link to a MarkDown file
 
 		pre
 			code.hljs.html(data-line-numbers).
-				<a href="#" data-modal-type="html" data-modal-url="external/externalmd.md">Link to a Markdown file</a>
+				<a href="#" data-modal-type="html" data-modal-url="external/externalmd.md">Link to a MarkDown file</a>
 		//-
 
-		p.small Markdown is converted to HTML when the modal is opened. It does not support Reveal.js’ element attributes.
+		p.small MarkDown is converted to HTML when the modal is opened. It does not support Reveal.js’ element attributes.
 
 
 	section.center
@@ -289,8 +328,9 @@ section.center
 		br
 		.centerblock
 			ol.twocol
-				li border
 				li background
+				li bordercolor
+				li borderwidth
 				li closebuttonhtml
 				li cssautoload
 				li csspath
@@ -318,7 +358,7 @@ section.center
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        bgcolor: {
+				        background: {
 				            html: "var(--r-background-color)",
 				            iframe: "var(--r-background-color)",
 				            media: "white"
@@ -330,14 +370,28 @@ section.center
 		p.small It can also be set per-trigger with #[code data-modal-bgcolor].
 
 	section.center
-		h4 Option 2: border
-		p This sets the border around the dialog box.
+		h4 Option 2: bordercolor
+		p This sets the border color around the dialog box.
 		pre
 			code.hljs.js(data-line-numbers="4").
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        border: "1px solid white"
+				        bordercolor: "white"
+				    },
+				    plugins: [ Multimodal ]
+				})
+			//-
+
+	section.center
+		h4 Option 3: borderwidth
+		p This sets the border width around the dialog box.
+		pre
+			code.hljs.js(data-line-numbers="4").
+				Reveal.initialize({
+				    ...
+				    multimodal: {
+				        borderwidth: "1px"
 				    },
 				    plugins: [ Multimodal ]
 				})
@@ -345,21 +399,21 @@ section.center
 
 
 	section.center
-		h4 Option 3: closebuttonhtml
-		p Allows you to add your own HTML for the close button.
+		h4 Option 4: closebuttonhtml
+		p Allows you to add your own HTML for the close button. Can be any HTML, but will need a #[code data-modal-close] attribute.
 		pre
 			code.hljs.js(data-line-numbers="4").
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        closebuttonhtml: '' // Can be any HTML, for example <button class="mm-close" type="button" aria-hidden="true" data-modal-close aria-label="Close">X</button>
+				        closebuttonhtml: '' // Can be changed to something like <button class="mm-close" type="button" aria-hidden="true" aria-label="Close" data-modal-close>X</button>
 				    },
 				    plugins: [ Multimodal ]
 				})
 		//-
 
 	section.center
-		h4 Option 4: cssautoload
+		h4 Option 5: cssautoload
 		p Multimodal will load the CSS if this is set to #[code true].
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -374,7 +428,7 @@ section.center
 		p.small If you import reveal.js-multimodal from npm, you will need to import the CSS file yourself. If you use 'import', then #[code csspath] should be set to #[code false]. If you know the path to the CSS file, you can use the #[code csspath] option and keep #[code cssautoload] set to #[code true].
 
 	section.center
-		h4 Option 5: csspath
+		h4 Option 6: csspath
 		p If you want to change the styling, while using cssautoload, you can link to your own CSS file.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -388,7 +442,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 6: htmlminwidth
+		h4 Option 7: htmlminwidth
 		p This sets the minimum width of the HTML modals. The default is 100 pixels.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -402,7 +456,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 7: htmlminheight
+		h4 Option 8: htmlminheight
 		p This sets the minimum height of the HTML modals. The default is 100 pixels.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -417,14 +471,14 @@ section.center
 
 
 	section.center
-		h4 Option 8: overlaycolor
-		p This sets the color of the overlay. Some people may call it a backdrop. The default is #[code "rgba(0, 0, 0, 0.25)"]. That's like 25% black. You can use any CSS color here, but it’s best to use rgba for transparency.
+		h4 Option 9: overlaycolor
+		p This sets the color of the overlay. Some people may call it a backdrop. The default is #[code "rgba(0, 0, 0, 0.30)"]. That's like 30% black. You can use any CSS color here, but it’s best to use rgba for transparency.
 		pre
 			code.hljs.js(data-line-numbers="4").
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        overlaycolor: "rgba(0, 0, 0, 0.25)"
+				        overlaycolor: "rgba(0, 0, 0, 0.30)"
 				    },
 				    plugins: [ Multimodal ]
 				})
@@ -432,7 +486,7 @@ section.center
 
 
 	section.center
-		h4 Option 9: padding
+		h4 Option 10: padding
 		p This sets the standard padding of modals. HTML, iframe and media (images and video) are set separately.
 		pre
 			code.hljs.js(data-line-numbers="4-8").
@@ -452,7 +506,7 @@ section.center
 
 
 	section.center
-		h4 Option 10: radius
+		h4 Option 11: radius
 		p This sets the radius of the dialog box.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -467,7 +521,7 @@ section.center
 
 
 	section.center
-		h4 Option 11: scalecorrection
+		h4 Option 12: scalecorrection
 		p This sets a scale correction, used in the border width and the close button. On small devices or screens, the border and close button may be too small. This option scales them back up.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -482,21 +536,21 @@ section.center
 
 
 	section.center
-		h4 Option 12: shadow
+		h4 Option 13: shadow
 		p This sets the shadow around the dialog box. The default is a soft but dark shadow.
 		pre
 			code.hljs.js(data-line-numbers="4").
 				Reveal.initialize({
 				    ...
 				    multimodal: {
-				        outershadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)"
+				        shadow: "0 0.5em 0.75em 0.5em rgba(0, 0, 0, 0.25)"
 				    },
 				    plugins: [ Multimodal ]
 				})
 		//-
 
 	section.center
-		h4 Option 13: slidemodalevent
+		h4 Option 14: slidemodalevent
 		p This sets the event that triggers the modal on a slide, if that slide is set to show a modal.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -510,7 +564,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 14: speed
+		h4 Option 15: speed
 		p This sets the speed of the modal opening and closing.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -524,7 +578,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 15: videoautoplay
+		h4 Option 16: videoautoplay
 		p This sets the video to autoplay when opened.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -538,7 +592,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 16: videocontrols
+		h4 Option 17: videocontrols
 		p This sets the video to show controls when opened.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -552,7 +606,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 17: videoautohide
+		h4 Option 18: videoautohide
 		p This sets the modal to close when the video in it ends.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -566,7 +620,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 18: zoom
+		h4 Option 19: zoom
 		p This sets the modal to zoom in when opened.
 		pre
 			code.hljs.js(data-line-numbers="4").
@@ -580,7 +634,7 @@ section.center
 		//-
 
 	section.center
-		h4 Option 19: zoomfrom
+		h4 Option 20: zoomfrom
 		p This sets the starting zoom factor of the modal when it is opened. It then zooms to factor 1.
 		pre
 			code.hljs.js(data-line-numbers="4").

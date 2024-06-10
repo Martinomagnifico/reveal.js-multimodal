@@ -1,12 +1,15 @@
 {
   "name": "reveal.js-multimodal",
-  "version": "0.1.6",
+  "version": "1.0.1",
   "description": "A plugin for Reveal.js to show modal windows in presentations",
   "keywords": [
     "reveal",
     "reveal.js",
     "reveal-plugin",
-    "plugin"
+    "plugin",
+    "modal",
+    "lightbox",
+    "powerpoint"
   ],
   "main": "plugin/multimodal/multimodal.js",
   "module": "plugin/multimodal/multimodal.esm.js",
@@ -35,7 +38,8 @@
     "lodash.template": "4.5.0",
     "localtunnel": {
       "axios": "1.6.2"
-    }
+    },
+    "pug": "3.0.3"
   },
   "browserslist": "> 2%, not dead",
   "devDependencies": {
