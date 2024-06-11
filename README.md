@@ -74,9 +74,9 @@ If you're using ES modules, you can add it like this:
 ```
 
 ### Styling
-The styling of Multimodal is automatically inserted when the multimodal folder is manually copied to the Reveal.js plugin folder.
+The styling of Multimodal is automatically inserted **when the multimodal folder is manually copied** to the Reveal.js plugin folder.
 
-If you import reveal.js-multimodal from npm, you will need to import the CSS file yourself. Depending on your setup this can be something like this:
+If you **import** reveal.js-multimodal from npm, you will need to **import** the CSS file yourself. Depending on your setup this can be something like this:
 
 ```
 import 'reveal.js-multimodal/plugin/multimodal/multimodal.css';
@@ -101,15 +101,26 @@ It is easy to set up your HTML structure for Multimodal. To show a modal, it nee
 
 For **Markdown** markup, check the Markdown demo above.
 
-Of course, you also need to make sure that the content you are linking to (an image, a video, a piece of HTML) is there where you expect it.
+Note: If the modal-content is not valid or can’t be found, no modal will be opened. So make sure that the content you are linking to (an image, a video, a piece of HTML) is there where you expect it.
 
-#### Navigation changes
+
+
+## Modal behaviour
+
+### Modal size
+
+* Content in modals will display at its original size, but is constrained to the maximum size of the modal.
+* The maximum size of modals is the size to the viewport, *minus the margin* as set in the Reveal config.
+* The minimum size of HTML modals is 100x100 pixels. This can be set in the config.
+
+
+### Navigation changes
 
 * The `arrow keys` will close modals *and* go to the next slide
 * The `space bar` or `escape key` will only close the modal
 
 
-#### Slide modals
+### Slide modals
 
 To automatically open a modal when a slide is shown, add the `data-modal-type` and `data-modal-url` attributes to the section element.
 
@@ -120,7 +131,7 @@ To automatically open a modal when a slide is shown, add the `data-modal-type` a
 </section>
 ```
 
-#### Events
+### Events
 
 There are 4 events that may help you do things in your modals: `multimodal:show`, `multimodal:shown`, `multimodal:hide`, and `multimodal:hidden`. Details are in `event.detail`. Use it like this:
 
@@ -131,7 +142,7 @@ deck.addEventListener("multimodal:shown", async (event) => {
 });
 ```
 
-#### Override navigation
+### Override navigation
 
 To prevent the user from accidentally navigating to another slide while the modal is open, you can add the `data-modal-navblock` attribute to the triggering element.
 
@@ -145,7 +156,7 @@ To prevent the user from accidentally navigating to another slide while the moda
 The modal is styled with CSS variables, which are controlled through the Reveal.js options (see [Global options](#global-options)). Some of these options can also be set per trigger:
 
 
-#### Overlay
+### Overlay
 
 Add a `data-modal-overlaycolor` attribute to the trigger to change the overlay color on a per-trigger basis.
 
@@ -154,7 +165,7 @@ Add a `data-modal-overlaycolor` attribute to the trigger to change the overlay c
 ```
 
 
-#### Background and padding
+### Background and padding
 
 The background color and padding can be set with the `data-modal-background` and `data-modal-padding` attributes. When using SVG's, this may come in handy. Both attributes can also be globally set in the options.
 
@@ -165,7 +176,7 @@ The background color and padding can be set with the `data-modal-background` and
 ```
 
 
-#### Passing extra classes
+### Passing extra classes
 
 A triggering element can pass extra classes to the modal with `data-modal-class`.
 
