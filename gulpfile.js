@@ -2,6 +2,9 @@
 
 const { src, dest, watch, series, parallel } = require('gulp');
 
+const fs = require('fs');
+const path = require('path');
+
 const pkg = require('./package.json');
 const sass = require('gulp-sass')(require('sass'));
 
@@ -115,11 +118,12 @@ const copydeps = () => {
 			if (dep == "reveal.js") {
 				// Copy only the basic Reveal.js files
 				const revealbase = "node_modules/reveal.js/";
-				return src([`${revealbase}dist/**`, `${revealbase}plugin/**`], { base: revealbase } ).pipe(dest(`${demofolder}`) )
+
+				return src([`${revealbase}dist/**`, `${revealbase}plugin/**`], { base: revealbase, encoding: false, buffer: true, removeBOM: false } ).pipe(dest(`${demofolder}`) )
 			} else {
 				// Copy any other dependencies (plugins). If they have names like reveal.js-plugin, remove the first part
 				let basename = dep.replace('reveal.js-', '');
-				return src([`node_modules/${dep}/plugin/${basename}/**`, `!node_modules/${dep}/**/plugin-src.js`]).pipe(dest(`${demofolder}/plugin/${basename}`) )
+				return src([`node_modules/${dep}/plugin/${basename}/**`, `!node_modules/${dep}/**/plugin-src.js`], { encoding: false, buffer: true, removeBOM: false }).pipe(dest(`${demofolder}/plugin/${basename}`) )
 			}
 		});
 		return merge(tasks);
@@ -200,15 +204,25 @@ const demoviews = () => {
 }
 
 const demoimg = () => {
+	const imagePath = path.join(`${sourcefolder}/demo/img`);
+    if (!fs.existsSync(imagePath)) {
+        return Promise.resolve(); // Return a resolved promise to indicate the task is complete
+    }
+
 	return (
-		src(`${sourcefolder}/demo/img/**/*.{gif,jpg,png,svg}`)
+		src(`${sourcefolder}/demo/img/**/*.{gif,jpg,png,svg}`, {encoding: false, buffer: true, removeBOM: false})
 		.pipe(dest(`${demofolder}/assets/img/` ))
 	)
 };
 
 const demovid = () => {
+	const videoPath = path.join(`${sourcefolder}/demo/vid`);
+    if (!fs.existsSync(videoPath)) {
+        return Promise.resolve(); // Return a resolved promise to indicate the task is complete
+    }
+
 	return (
-		src(`${sourcefolder}/demo/vid/**/*.{mp4,webm,ogg}`)
+		src(`${sourcefolder}/demo/vid/**/*.{mp4,webm,ogg}`, {encoding: false, buffer: true, removeBOM: false})
 		.pipe(dest(`${demofolder}/assets/vid/` ))
 	)
 };
@@ -222,8 +236,13 @@ const demomd = () => {
 };
 
 const demofonts = () => {
+    const fontsPath = path.join(`${sourcefolder}/demo/fonts`);
+    if (!fs.existsSync(fontsPath)) {
+        return Promise.resolve(); // Return a resolved promise to indicate the task is complete
+    }
+
 	return (
-		src(`${sourcefolder}/assets/fonts/**/*.{eot,svg,woff,ttf,woff2}`)
+		src(`${sourcefolder}/demo/fonts/**/*.{eot,svg,woff,ttf,woff2}`, {encoding: false, buffer: true, removeBOM: false})
 		.pipe(dest(`${demofolder}/assets/fonts/` ))
 	)
 };
