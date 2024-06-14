@@ -31,14 +31,6 @@
     "build": "NODE_ENV=prod gulp build"
   },
   "overrides": {
-    "chokidar": "3.5.3",
-    "glob-parent": "6.0.2",
-    "axios": "1.6.2",
-    "lodash": "4.17.21",
-    "lodash.template": "4.5.0",
-    "localtunnel": {
-      "axios": "1.6.2"
-    },
     "pug": "3.0.3"
   },
   "browserslist": "> 2%, not dead",
@@ -48,7 +40,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "browser-sync": "^2.29.3",
+    "browser-sync": "^3.0.2",
     "del": "^5.1.0",
     "gulp": "^5.0.0",
     "gulp-autoprefixer": "^8.0.0",
