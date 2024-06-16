@@ -1,6 +1,6 @@
 # Multimodal
 
-[![Version](https://img.shields.io/npm/v/reveal.js-multimodal)]() [![Downloads](https://img.shields.io/npm/dt/reveal.js-multimodal)]()
+[![Version](https://img.shields.io/npm/v/reveal.js-multimodal)]()
 
 A plugin for [Reveal.js](https://revealjs.com) to show content in modal windows.
 
@@ -74,16 +74,17 @@ If you're using ES modules, you can add it like this:
 ```
 
 ### Styling
-The styling of Multimodal is automatically inserted **when the multimodal folder is manually copied** to the Reveal.js plugin folder.
+The styling of Multimodal is automatically inserted **when the multimodal folder is manually (or automatically) copied** to the Reveal.js plugin folder.
 
-If you **import** reveal.js-multimodal from npm, you will need to **import** the CSS file yourself. Depending on your setup this can be something like this:
+**BUT**: If you are using a bundler like Webpack or Parcel, that uses **import**, you will also need to **import** the CSS file yourself. Depending on your setup this can be something like this:
 
 ```
 import 'reveal.js-multimodal/plugin/multimodal/multimodal.css';
 ```
 
-Note that if you use 'import' like this, then in the `csspath` option (in the Reveal multimodal options) should be set to false. But if you know the actual full path to the CSS file, then you can still use the csspath option and keep cssautoload set to true.
+In that case, the `cssautoload` option (in the Reveal multimodal options) should be set to `false`, to avoid style loading errors. 
 
+> However, if you actually know the correct full path to the CSS file, then you can still use the `csspath` option and keep `cssautoload` set to `true`.
 
 ### Markup
 
