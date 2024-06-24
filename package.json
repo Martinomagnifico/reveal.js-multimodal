@@ -31,7 +31,7 @@
     "build": "NODE_ENV=prod gulp build"
   },
   "overrides": {
-    "pug": "3.0.3"
+    "ws": "8.17.1"
   },
   "browserslist": "> 2%, not dead",
   "devDependencies": {
