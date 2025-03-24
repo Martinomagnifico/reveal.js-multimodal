@@ -269,7 +269,7 @@ const Plugin = () => {
 			zoomfrom: 0.90
 		};
 
-		let originalOptions = JSON.parse(JSON.stringify(defaultOptions))
+		const originalOptions = JSON.parse(JSON.stringify(defaultOptions))
 		options = mergeDeep(defaultOptions, deck.getConfig().multimodal || {});
 		options.indexbase = deck.getConfig().hashOneBasedIndex ? 1 : 0;
 
@@ -290,7 +290,7 @@ const Plugin = () => {
 
 		if (options.debug) {
 			let style = document.createElement('style');
-			style.innerHTML = `.reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-max { box-shadow: inset 0 0 0 1px red}`;
+			style.innerHTML = ".reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-max { box-shadow: inset 0 0 0 1px red}";
 			document.head.appendChild(style);
 		}
 

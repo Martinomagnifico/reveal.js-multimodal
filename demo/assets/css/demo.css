@@ -1,41 +1,49 @@
-.slides {
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.reveal.ready .slides {
-  opacity: 1;
-}
-
 .centerblock {
   height: 100%;
   min-height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   margin: auto;
 }
 
-.slides section ol.twocol, .twocol {
-  padding: 0;
-  margin: 0 auto;
-  list-style: none;
-  counter-reset: item;
+.reveal .slides ul, .reveal .slides ol {
+  --li-gap: 0.25em;
+}
+.reveal .slides ul li, .reveal .slides ol li {
+  margin-bottom: var(--li-gap);
+}
+.reveal .slides ul li:last-child, .reveal .slides ol li:last-child {
+  margin-bottom: 0;
+}
+.reveal .slides ul.twocol, .reveal .slides ol.twocol {
   width: 80%;
-  column-count: 2;
-  column-gap: 2em;
-  column-rule: 2px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  margin: 0 auto;
+  -webkit-column-count: 2;
+     -moz-column-count: 2;
+          column-count: 2;
+  -webkit-column-gap: 4em;
+     -moz-column-gap: 4em;
+          column-gap: 4em;
+  list-style: inside;
+  list-style-type: decimal;
 }
-.slides section ol.twocol li, .twocol li {
-  counter-increment: item;
-  padding-left: 1.7em;
-  margin-top: 0;
+.reveal .slides ul.twocol li, .reveal .slides ol.twocol li {
+  margin-bottom: var(--li-gap);
 }
-.slides section ol.twocol li:before, .twocol li:before {
-  content: counter(item) ".";
-  margin-left: -1.7em;
-  margin-right: 0.5em;
-  display: inline-block;
-  width: 1.2em;
-  text-align: right;
+.reveal .slides ul.twocol::after, .reveal .slides ol.twocol::after {
+  content: "";
+  width: 1px;
+  height: calc(100% - var(--li-gap));
+  background: rgba(255, 255, 255, 0.3);
+  position: absolute;
+  top: 0;
+  left: 50%;
 }
 
 .reveal pre {
@@ -46,31 +54,27 @@
   font-size: calc(0.7 * var(--r-main-font-size));
 }
 .small code, .reveal small code {
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
 
 p code {
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
 
 .reveal code.hljs {
   background: var(--code-full-bg);
-  border-radius: 0.5em;
-  padding: 0.5em;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
   white-space: pre-wrap;
 }
 .reveal code.hljs td {
-  line-height: 1.5;
-}
-.reveal code.hljs > span {
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 p.code, p code, small code, .small code, li code {
   background: var(--code-rgba-bg);
   padding: 0.15em 0.25em;
   border-radius: 0.25em;
-  font-size: 0.8em;
 }
 
 .reveal pre {
@@ -93,11 +97,9 @@ p.code, p code, small code, .small code, li code {
   --r-block-margin: 1.8rem;
   --code-full-bg: #142433;
   --code-rgba-bg: rgba(91, 102, 112, 0.3);
-}
-
-.reveal .slides ul li, .reveal .slides ol li {
-  margin-top: 0.4em;
-  margin-bottom: 0.2em;
+  --r-link-color: #3399FF;
+  --r-link-color-dark: #0088DD;
+  --r-link-color-hover: #AADDFF;
 }
 
 .has-light-background {
@@ -105,25 +107,53 @@ p.code, p code, small code, .small code, li code {
   --r-link-color-hover: #0373bd;
 }
 
-.demoembed {
-  width: 768px;
-  height: 400px;
-  margin: 64px auto;
+.embeddemo {
+  margin: 0 auto;
+  padding: 64px 128px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 64px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .reveal.embedded {
+  width: 100%;
+  max-width: 768px;
+  min-width: 390px;
+  height: 400px;
   border: 4px solid transparent;
+  border: 1px solid white;
   border-radius: 8px;
 }
 .reveal.embedded:not(.focused) {
   cursor: pointer;
 }
-.reveal.embedded.focused {
-  border-color: #42affa;
-  box-shadow: 0 4px 16px rgba(5, 21, 37, 0.3);
+.reveal.embedded:-webkit-full-screen.focused {
+  border-color: transparent;
+  -webkit-box-shadow: 0 4px 16px black;
+          box-shadow: 0 4px 16px black;
+}
+.reveal.embedded:-ms-fullscreen.focused {
+  border-color: transparent;
+  box-shadow: 0 4px 16px black;
+}
+.reveal.embedded:fullscreen.focused {
+  border-color: transparent;
+  -webkit-box-shadow: 0 4px 16px black;
+          box-shadow: 0 4px 16px black;
+}
+.reveal.embedded.reveal-scroll {
+  height: 400px;
 }
 .reveal.embedded .progress {
-  background: rgba(66, 175, 250, 0.3);
+  background: rgba(68, 153, 238, 0.3);
   font-size: 10px;
   height: 0.3em;
   border-radius: 0.25em;
@@ -133,6 +163,21 @@ p.code, p code, small code, .small code, li code {
   width: calc(100% - 1em);
   overflow: hidden;
 }
+.reveal.embedded:hover {
+  border-color: var(--r-link-color);
+}
+.reveal.embedded.focused {
+  border-color: transparent;
+  -webkit-box-shadow: 0 0 0px 4px var(--r-link-color), 0 4px 16px black;
+          box-shadow: 0 0 0px 4px var(--r-link-color), 0 4px 16px black;
+}
+.reveal.embedded:not(.focused):not(:hover) {
+  --r-link-color: gray;
+  opacity: 0.8;
+}
+.reveal.embedded:not(.focused):not(:hover) .progress {
+  background: rgba(128, 128, 128, 0.3);
+}
 
 a.github-corner {
   position: sticky;
@@ -141,14 +186,24 @@ a.github-corner {
   z-index: 2;
   padding: 0;
   top: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   line-height: 0;
+  width: -webkit-max-content;
+  width: -moz-max-content;
   width: max-content;
+  height: -webkit-max-content;
+  height: -moz-max-content;
   height: max-content;
   opacity: 0.5;
+  -webkit-transition: opacity 0.3s;
   transition: opacity 0.3s;
-  color: var(--c-theme-color, white);
+  color: var(--r-heading-color, white);
 }
 .rtl a.github-corner {
   left: auto;
@@ -159,7 +214,7 @@ a.github-corner.bottom {
   position: sticky;
   top: 100%;
   margin-top: auto;
-  top: calc(100% - 70px);
+  top: calc(100% - 78px);
 }
 .reveal.embedded a.github-corner, .reveal-viewport.reveal-scroll a.github-corner {
   display: none;
@@ -169,113 +224,33 @@ a.github-corner svg {
   width: 75px;
   height: 75px;
 }
+html.print-pdf a.github-corner {
+  display: none;
+}
 
 a.github-corner:hover {
-  color: var(--c-theme-color, white);
+  color: var(--r-heading-color, white);
   opacity: 1;
 }
 
-.reveal section a {
-  text-decoration: underline;
+.reveal {
+  opacity: 0;
+  -webkit-transition: opacity 0.5s ease-in;
+  transition: opacity 0.5s ease-in;
 }
 
-.reveal .modal a {
-  text-decoration: underline;
+.reveal.ready {
+  opacity: 1;
 }
 
-.reveal .example {
-  border: 4px solid var(--code-full-bg);
-  background: none;
-  padding: 3vmin;
-  border-radius: 0.5vmin;
-  display: flex;
-  flex-direction: row;
-  gap: 1em;
-  justify-content: center;
-  align-items: center;
-  font-style: initial;
+.demoblock {
+  background: var(--code-full-bg);
+  border-radius: 0.5rem;
+  padding: 0.5em;
 }
-.reveal .example a {
-  display: flex;
-  justify-content: center;
-}
-.reveal .example img {
+.demoblock ul.menu li {
   margin: 0;
-  max-width: 100%;
-  max-height: 100%;
 }
-.reveal .example img.small {
-  max-width: fit-content;
-  max-height: 200px;
-}
-.reveal .example.small img {
-  max-width: fit-content;
-  max-height: 200px;
-}
-
-p:last-child {
-  margin-bottom: 0;
-}
-
-.reveal-viewport:not(.reveal-scroll) .scrollvisible {
-  display: none;
-}
-.reveal-viewport.reveal-scroll .scrollvisible {
-  display: inline-block;
-}
-
-.btn {
-  font-size: inherit;
-  font-family: inherit;
-  display: inline-block;
-  padding: 0.25em 1em;
-  border: 1px solid;
-  border-radius: 0.25em;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  background: none;
-}
-.btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.reveal blockquote {
-  width: 100%;
-}
-.reveal blockquote.mm-content, .reveal blockquote.hidden {
-  display: none;
-}
-
-.reveal blockquote p {
-  margin-top: 0;
-}
-
-.slides section.present {
-  transition: opacity 0.4s ease-in-out;
-}
-.multimodal-open .slides section.present {
-  opacity: 0.75;
-}
-
-.textcenter {
-  text-align: center;
-}
-
-.reveal h2 {
-  margin-bottom: 0 !important;
-}
-
-html {
-  color-scheme: dark;
-}
-
-.videothumb:before {
-  content: "";
-  display: block;
-  position: absolute;
-  background: url(../../assets/img/play.svg) no-repeat center center;
-  width: 100%;
-  height: 100%;
+.demoblock ul.menu.tocstyle {
+  width: 97%;
 }

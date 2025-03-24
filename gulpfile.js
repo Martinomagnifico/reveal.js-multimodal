@@ -166,7 +166,7 @@ const pluginstyles = () => {
 		src(`${sourcefolder}/plugin/css/plugin.scss`)
 		.pipe(plumber())
 		.pipe(sass())
-		.pipe(autoprefixer())
+		.pipe(autoprefixer('last 2 versions'))
 		.pipe(rename(`${pkg.functionname.toLowerCase()}.css`))
 		.pipe(tap((file) => {
 			file.contents = Buffer.concat([Buffer.from(banner),file.contents]);
@@ -183,7 +183,7 @@ const demostyles = () => {
 		src(`${sourcefolder}/demo/css/*.scss`)
 		.pipe(plumber())
 		.pipe(sass())
-		.pipe(autoprefixer())
+		.pipe(autoprefixer('last 2 versions'))
 		.pipe(dest(`${demofolder}/assets/css`))
 		.pipe(browserSync.stream())
 	);

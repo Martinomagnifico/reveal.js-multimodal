@@ -25,9 +25,15 @@
   padding: 0;
   border-radius: 50%;
   border: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   cursor: pointer;
   z-index: 2;
   background: rgba(0, 0, 0, 0.28);
@@ -37,8 +43,10 @@
   top: 1em;
   width: 28px;
   height: 28px;
-  transform-origin: top right;
-  transform: scale(var(--mm-inversescale, 1));
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+  -webkit-transform: scale(var(--mm-inversescale, 1));
+          transform: scale(var(--mm-inversescale, 1));
 }
 .multimodal .mm-close:before {
   content: "";
@@ -47,6 +55,7 @@
   height: 28px;
   border-radius: 20px;
   background: transparent;
+  -webkit-transition: all 0.0675s linear;
   transition: all 0.0675s linear;
   pointer-events: none;
   z-index: -1;
@@ -56,6 +65,7 @@
   height: 24px;
 }
 .multimodal .mm-close svg line {
+  -webkit-transition: all 0.0675s linear;
   transition: all 0.0675s linear;
   stroke: var(--close-stroke-color);
   stroke-linecap: round;
@@ -91,7 +101,8 @@
 }
 .multimodal .mm-close:focus:not(:focus-visible) {
   outline: 0;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 :root {
@@ -124,46 +135,79 @@ section > .mm-dialog {
   left: 0;
   width: 100%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: var(--mm-overlaycolor);
   z-index: 9999;
   opacity: 0;
+  -webkit-transition: all var(--mm-transspeed) var(--mm-transtiming);
   transition: all var(--mm-transspeed) var(--mm-transtiming);
 }
 .multimodal, .multimodal * {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 .multimodal .mm-max {
   position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: var(--mm-maxwidth);
   height: var(--mm-maxheight);
+  -webkit-transition: all var(--mm-transspeed) var(--mm-transtiming);
   transition: all var(--mm-transspeed) var(--mm-transtiming);
   inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%) scale(calc(var(--slide-scale) * var(--mm-initialscale)));
+  -webkit-transform: translate(-50%, -50%) scale(calc(var(--slide-scale) * var(--mm-initialscale)));
+          transform: translate(-50%, -50%) scale(calc(var(--slide-scale) * var(--mm-initialscale)));
 }
 .multimodal .mm-max .mm-dialog {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
   height: fit-content;
   max-height: 100%;
   max-width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   position: relative;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   overflow: hidden;
   background: var(--mm-modal-background, var(--mm-mediabgcolor));
   border-style: solid;
   border-width: var(--mm-borderwidth);
   border-color: var(--mm-bordercolor);
   border-radius: var(--mm-outerradius);
-  box-shadow: var(--mm-shadow);
+  -webkit-box-shadow: var(--mm-shadow);
+          box-shadow: var(--mm-shadow);
   z-index: 0;
 }
 .multimodal .mm-max .mm-dialog.hidden {
@@ -171,15 +215,22 @@ section > .mm-dialog {
 }
 .multimodal .mm-max iframe {
   opacity: 0;
+  -webkit-transition: opacity 0.8s var(--mm-transtiming);
   transition: opacity 0.8s var(--mm-transtiming);
-  transition-delay: var(0.25s);
+  -webkit-transition-delay: var(0.25s);
+          transition-delay: var(0.25s);
 }
 .multimodal .mm-max .mm-body {
   z-index: 0;
 }
 .multimodal .mm-max .mm-scrollbody {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   overflow: hidden;
 }
 .multimodal[data-modal-type*=html] .mm-body {
@@ -215,7 +266,8 @@ section > .mm-dialog {
   margin: 0;
   width: calc(var(--mm-maxwidth));
   height: calc(var(--mm-maxheight));
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   overflow-y: auto;
 }
 .multimodal[data-modal-type*=iframe] .mm-dialog {
@@ -226,11 +278,13 @@ section > .mm-dialog {
   opacity: 1;
 }
 .multimodal.show .mm-max {
-  transform: translate(-50%, -50%) scale(var(--slide-scale));
+  -webkit-transform: translate(-50%, -50%) scale(var(--slide-scale));
+          transform: translate(-50%, -50%) scale(var(--slide-scale));
 }
 .multimodal.show iframe {
   opacity: 1;
 }
 .multimodal.show.shown .mm-max {
+  -webkit-transition: none;
   transition: none;
 }
