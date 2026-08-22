@@ -76,15 +76,24 @@ If you're using ES modules, you can add it like this:
 ### Styling
 The styling of Multimodal is automatically inserted **when the multimodal folder is manually (or automatically) copied** to the Reveal.js plugin folder.
 
-**BUT**: If you are using a bundler like Webpack or Parcel, that uses **import**, you will also need to **import** the CSS file yourself. Depending on your setup this can be something like this:
-
-```
+If you **import** reveal.js-multimodal from npm, you will need to **import** the CSS file yourself. Depending on your setup this can be something like this:
+```javascript
 import 'reveal.js-multimodal/plugin/multimodal/multimodal.css';
 ```
 
-In that case, the `cssautoload` option (in the Reveal multimodal options) should be set to `false`, to avoid style loading errors. 
+Multimodal will detect if it runs in a module environment and will then not autoload the CSS. You can still set `cssautoload` to `true` if you like, but your bundler (Vite, Webpack) may not like that. In any of these cases, `import` the CSS file yourself.
 
-> However, if you actually know the correct full path to the CSS file, then you can still use the `csspath` option and keep `cssautoload` set to `true`.
+If you want to change the Multimodal style, you can do a lot of that via the Reveal.js options. Or you can simply make your own style and use that stylesheet instead. Linking to your custom styles can be managed through the `csspath` option of Multimodal or through `import` when using modules.
+
+#### Custom CSS
+If and when you decide to create your own CSS file, make sure that you also include the following CSS variable, that is used by the plugin to avoid loading the CSS multiple times, and to avoid using the autoloading feature when using modules:
+
+```css
+:root {
+    --cssimported-multimodal: true;
+}
+```
+
 
 ### Markup
 
@@ -242,8 +251,8 @@ Reveal.initialize({
 1. **`bordercolor`**: Set to `white` by default. You can set this to any CSS color value.
 1. **`borderwidth`**: Set to `1px` by default. You can set this to any CSS border width value.
 1. **`closebuttonhtml`**: Allows you to add your own HTML for the close button. Can be any HTML, for example `<button class="mm-close" type="button" data-modal-close="">X</button>`.
-1. **`cssautoload`**: Multimodal will load the CSS if this is set to `true`. If you import reveal.js-multimodal from npm, you will need to import the CSS file yourself. If you use 'import', then csspath should be set to `false`. If you know the path to the CSS file, you can use the `csspath` option and keep cssautoload set to `true`.
-1. **`csspath`**: If you want to change the styling, while using cssautoload, you can link to your own CSS file here.
+1. **`cssautoload`**: Multimodal loads its own stylesheet when this is on. If you bundle Multimodal, or import its CSS yourself, it works this out and does not load a second copy, so this normally does not need setting. If you do want it to autoload in a bundled deck, then setting it to `true` yourself turns it back on.
+1. **`csspath`**: Multimodal will automatically load the styling of the plugin. If you want to customise the styling, you can link to your own CSS file here.
 1. **`htmlminwidth`**: This sets the minimum width of the HTML modals. The default is 100 pixels.
 1. **`htmlminheight`**: This sets the minimum height of the HTML modals. The default is 100 pixels.
 1. **`overlaycolor `**: This sets the color of the overlay. Some people may call it a backdrop. The default is `rgba(0, 0, 0, 0.30)`. That's like 30% black. You can use any CSS color here, but it’s best to use rgba for transparency.

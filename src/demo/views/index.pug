@@ -1,0 +1,26 @@
+extends templates/layouts/_reveal.pug
+
+append variables
+	- presentation.title = presentation.title + " list"
+
+block slides
+	section
+		ul.menu
+			li: a(href="demo.html") Demo
+			li: a(href="demo-markdown.html") Demo with markdown
+
+block append scripts
+
+	if process.env.NODE_ENV === 'production'
+		script(src=`./plugin/${plugin.name}/${plugin.name}.js`)
+		script.
+			Reveal.initialize({
+				plugins: [ Multimodal ]
+			});
+	else
+		script(type="module").
+			import Multimodal from '@/plugin/js/index';
+			Reveal.initialize({
+				plugins: [ Multimodal ],
+				multimodal: { debug: false }
+			});

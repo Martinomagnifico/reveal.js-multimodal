@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-08-22
+
+### Changed
+- This new version is a rewrite built with Vite
+- Updated for the use of the latest version of Reveal.js.
+- Uses pluginToolkit to check if it is running in a module environment and will then not autoload the CSS
+- Fixed the `closebuttonhtml` option: the default close button was assigned right after the option was applied, so a custom button was never used
+
 ## [1.0.1] - 2024-06-10
 
 ### Changed
