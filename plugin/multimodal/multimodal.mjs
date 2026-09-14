@@ -1,7 +1,7 @@
  /*****************************************************************
  *
  * reveal.js-multimodal for Reveal.js 
- * Version 1.0.1
+ * Version 1.1.0
  * 
  * @link
  * https://github.com/martinomagnifico/reveal.js-multimodal
@@ -118,23 +118,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 ], ee = (e) => m.some((t) => t.test(e)), h = (e) => {
 	if (typeof document < "u") {
 		let t = l.map((t) => `script[src$="${e}${t}"]`).join(", "), n = document.querySelector(t)?.getAttribute("src");
-		if (n) return {
-			directory: d(n),
-			isBundled: !1
-		};
+		if (n) return { directory: d(n) };
 	}
-	return u && !ee(u) && p(f(u), e) ? {
-		directory: d(u),
-		isBundled: !1
-	} : {
-		directory: "",
-		isBundled: !0
-	};
-}, te = (e) => h(e).isBundled, ne = (e) => {
-	let { directory: t } = h(e);
-	return t || `dist/plugin/${e}/`;
-}, re = /* @__PURE__ */ new Map(), ie = (e = "") => {
-	let t = re.get(e);
+	return u && !ee(u) && p(f(u), e) ? { directory: d(u) } : { directory: null };
+}, te = (e) => h(e).directory !== null, ne = /* @__PURE__ */ new Map(), re = (e = "") => {
+	let t = ne.get(e);
 	if (t) return t;
 	let n = typeof window < "u", r = typeof document < "u", i = import.meta, a = !1;
 	try {
@@ -148,16 +136,17 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	try {
 		c = i?.env?.DEV === !0;
 	} catch {}
-	let l = s || c, u = e !== "" && te(e), d = {
-		isDevelopment: l,
-		hasHMR: s,
-		isViteDev: c,
-		isBundled: u,
+	let l = e !== "" && te(e), u = {
+		hasResolvableSource: l,
 		hasWindow: n,
-		hasDocument: r
+		hasDocument: r,
+		isBundled: !l,
+		isDevelopment: s || c,
+		hasHMR: s,
+		isViteDev: c
 	};
-	return re.set(e, d), d;
-}, ae = class {
+	return ne.set(e, u), u;
+}, ie = class {
 	defaultConfig;
 	pluginInit;
 	pluginId;
@@ -184,7 +173,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	get userConfig() {
 		return this.userConfigData || {};
 	}
-	getEnvironmentInfo = () => ie(this.pluginId);
+	getEnvironmentInfo = () => re(this.pluginId);
 	init(e) {
 		if (this.initializeConfig(e), this.pluginInit) return this.pluginInit(this, e, this.getCurrentConfig());
 	}
@@ -197,9 +186,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			...e
 		};
 	}
-}, oe = "data-css-id", se = (e, t) => new Promise((n, r) => {
+}, ae = "data-css-id", oe = (e, t) => new Promise((n, r) => {
 	let i = document.createElement("link");
-	i.rel = "stylesheet", i.href = t, i.setAttribute(oe, e);
+	i.rel = "stylesheet", i.href = t, i.setAttribute(ae, e);
 	let a = setTimeout(() => {
 		i.parentNode && i.parentNode.removeChild(i), r(/* @__PURE__ */ Error(`[${e}] Timeout loading CSS from: ${t}`));
 	}, 5e3);
@@ -208,7 +197,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	}, i.onerror = () => {
 		clearTimeout(a), i.parentNode && i.parentNode.removeChild(i), r(/* @__PURE__ */ Error(`[${e}] Failed to load CSS from: ${t}`));
 	}, document.head.appendChild(i);
-}), ce = (e) => document.querySelectorAll(`[${oe}="${e}"]`).length > 0, le = 1e4, ue = (e) => Promise.resolve(g(e)), de = (e) => new Promise((t) => {
+}), se = (e) => document.querySelectorAll(`[${ae}="${e}"]`).length > 0, ce = 1e4, le = (e) => new Promise((t) => {
 	if (g(e)) return t(!0);
 	if (typeof MutationObserver > "u") return t(!1);
 	let n = !1, r = (e) => {
@@ -223,62 +212,15 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	});
 	let a = () => requestAnimationFrame(() => r(g(e)));
 	document.readyState === "complete" ? a() : window.addEventListener("load", a, { once: !0 });
-	let o = setTimeout(() => r(g(e)), le);
+	let o = setTimeout(() => r(g(e)), ce);
 }), g = (e) => {
-	if (ce(e)) return !0;
+	if (se(e)) return !0;
 	try {
 		return window.getComputedStyle(document.documentElement).getPropertyValue(`--cssimported-${e}`).trim() !== "";
 	} catch {
 		return !1;
 	}
-}, fe = async (e) => {
-	let { id: t, cssautoload: n = !0, csspath: r = "", debug: i = !1 } = e;
-	if (n === !1 || r === !1) return;
-	if (ce(t) && (typeof r != "string" || r.trim() === "")) {
-		i && console.log(`[${t}] CSS is already loaded, skipping`);
-		return;
-	}
-	ce(t) && typeof r == "string" && r.trim() !== "" && i && console.log(`[${t}] CSS is already loaded, also loading user-specified path: ${r}`);
-	let a = [];
-	typeof r == "string" && r.trim() !== "" && a.push(r);
-	let o = ne(t);
-	if (o) {
-		let e = `${o}${t}.css`;
-		a.push(e);
-	}
-	let s = `dist/plugin/${t}/${t}.css`, c = `plugin/${t}/${t}.css`;
-	a.push(s), a.push(c);
-	for (let e of a) try {
-		await se(t, e);
-		let n = "CSS";
-		r && e === r ? n = "user-specified CSS" : o && e === `${o}${t}.css` ? n = "CSS (auto-detected from script location)" : e === s ? n = "CSS (standard fallback v5)" : e === c && (n = "CSS (standard fallback v4)"), i && console.log(`[${t}] ${n} loaded successfully from: ${e}`);
-		return;
-	} catch {
-		i && console.log(`[${t}] Failed to load CSS from: ${e}`);
-	}
-	typeof r == "string" && r.trim() !== "" ? console.warn(`[${t}] Could not load CSS from: ${r}`) : i && console.log(`[${t}] Could not autoload CSS from any location`);
-};
-async function pe(e, t) {
-	if ("getEnvironmentInfo" in e && t) {
-		let n = e, r = n.getEnvironmentInfo(), i = "cssautoload" in n.userConfig, a = i ? !!t.cssautoload : !r.isBundled;
-		if (await ue(n.pluginId) && (typeof t.csspath != "string" || t.csspath.trim() === "")) {
-			t.debug && console.log(`[${n.pluginId}] CSS is already imported, skipping`);
-			return;
-		}
-		if (a) return fe({
-			id: n.pluginId,
-			cssautoload: !0,
-			csspath: t.csspath,
-			debug: t.debug
-		});
-		!i && r.isBundled && de(n.pluginId).then((e) => {
-			e || console.warn(`[${n.pluginId}] CSS autoloading is disabled in bundler environments. Please import the CSS manually, using import.`);
-		});
-		return;
-	}
-	return fe(e);
-}
-var me = ((e) => new Proxy(e, { get: (e, t) => {
+}, ue = ((e) => new Proxy(e, { get: (e, t) => {
 	if (t in e) return e[t];
 	let n = t.toString();
 	if (typeof console[n] == "function") return (...t) => {
@@ -336,7 +278,62 @@ var me = ((e) => new Proxy(e, { get: (e, t) => {
 		}
 		this.groupDepth > 0 ? r.call(console, ...t) : t.length > 0 && typeof t[0] == "string" ? r.call(console, `[${this.label}]: ${t[0]}`, ...t.slice(1)) : r.call(console, `[${this.label}]:`, ...t);
 	}
-}()), he = {
+}()), de = /* @__PURE__ */ new Set(), fe = (e, t) => {
+	let n = `${e}::${t}`;
+	de.has(n) || (de.add(n), console.warn(`[${e}] ${t}`));
+}, pe = (e) => [`dist/plugin/${e}/${e}.css`, `plugin/${e}/${e}.css`], me = (e) => typeof e == "string" && e.trim() !== "", he = async (e, t) => {
+	let { cssautoload: n, csspath: r, debug: i = !1 } = t;
+	if (n === !1 || r === !1) return i && console.log(`[${e}] CSS loading is switched off`), { status: "skipped" };
+	if (me(r)) {
+		let t = r.trim();
+		try {
+			return await oe(e, t), i && console.log(`[${e}] CSS loaded from: ${t}`), {
+				status: "loaded",
+				path: t
+			};
+		} catch {
+			return console.warn(`[${e}] Could not load CSS from: ${t}`), {
+				status: "failed",
+				path: t
+			};
+		}
+	}
+	if (g(e)) return i && console.log(`[${e}] CSS is already imported, skipping`), { status: "present" };
+	let { directory: a } = h(e);
+	if (a !== null || n === !0) {
+		let t = [...a === null ? [] : [`${a}${e}.css`], ...pe(e)].filter((e, t, n) => n.indexOf(e) === t);
+		for (let n of t) try {
+			return await oe(e, n), i && console.log(`[${e}] CSS loaded from: ${n}`), {
+				status: "loaded",
+				path: n
+			};
+		} catch {
+			i && console.log(`[${e}] No CSS at: ${n}`);
+		}
+		return console.warn(`[${e}] Could not load CSS. Tried: ${t.join(", ")}. Import the stylesheet yourself, or set csspath to where it is.`), { status: "failed" };
+	}
+	return le(e).then((t) => {
+		t || fe(e, `CSS could not be autoloaded here, because the plugin is part of a bundle. Import it once in your own code: import 'reveal.js-${e}/${e}.css'`);
+	}), { status: "advised" };
+};
+async function ge(e, t) {
+	if ("getEnvironmentInfo" in e && t) {
+		let n = e, r = n.userConfig, i = "cssautoload" in r && r.cssautoload !== "auto" ? t.cssautoload : void 0;
+		return he(n.pluginId, {
+			...t,
+			cssautoload: i
+		});
+	}
+	let { id: n, cssautoload: r, csspath: i, debug: a } = e;
+	return he(n, {
+		cssautoload: r === "auto" ? void 0 : r,
+		csspath: i,
+		debug: a
+	});
+}
+//#endregion
+//#region src/plugin/js/config.ts
+var _e = {
 	background: {
 		html: "var(--r-background-color)",
 		iframe: "var(--r-background-color)",
@@ -366,10 +363,22 @@ var me = ((e) => new Proxy(e, { get: (e, t) => {
 	videoautohide: !0,
 	zoom: !0,
 	zoomfrom: .9
-}, _ = structuredClone(he);
+}, _ = structuredClone(_e), ve = (e, t = 1) => {
+	let n = 1 / t;
+	return Math.round(e * n) / n;
+}, v = (e, t, n) => {
+	e.on(t, (e) => n(e));
+}, ye = () => /receiver/i.test(window.location.search), be = /(?:^|\.)(?:youtube(?:-nocookie)?\.com|youtu\.be|vimeo\.com)$/i, xe = (e) => {
+	try {
+		let t = new URL(e, window.location.href);
+		return t.searchParams.has("autoplay") ? (be.test(t.hostname) ? (t.searchParams.set("mute", "1"), t.searchParams.set("muted", "1")) : t.searchParams.set("autoplay", "0"), t.toString()) : e;
+	} catch {
+		return e;
+	}
+};
 //#endregion
 //#region node_modules/marked/lib/marked.esm.js
-function ge() {
+function y() {
 	return {
 		async: !1,
 		breaks: !1,
@@ -383,35 +392,35 @@ function ge() {
 		walkTokens: null
 	};
 }
-var v = ge();
-function _e(e) {
-	v = e;
+var b = y();
+function Se(e) {
+	b = e;
 }
-var y = { exec: () => null };
-function b(e) {
+var x = { exec: () => null };
+function S(e) {
 	let t = [];
 	return (n) => {
 		let r = Math.max(0, Math.min(3, n - 1)), i = t[r];
 		return i || (i = e(r), t[r] = i), i;
 	};
 }
-function x(e, t = "") {
+function C(e, t = "") {
 	let n = typeof e == "string" ? e : e.source, r = {
 		replace: (e, t) => {
 			let i = typeof t == "string" ? t : t.source;
-			return i = i.replace(S.caret, "$1"), n = n.replace(e, i), r;
+			return i = i.replace(w.caret, "$1"), n = n.replace(e, i), r;
 		},
 		getRegex: () => new RegExp(n, t)
 	};
 	return r;
 }
-var ve = ((e = "") => {
+var Ce = ((e = "") => {
 	try {
 		return !!RegExp("(?<=1)(?<!1)" + e);
 	} catch {
 		return !1;
 	}
-})(), S = {
+})(), w = {
 	codeRemoveIndent: /^(?: {1,4}| {0,3}\t)/gm,
 	outputLinkReplace: /\\([\[\]])/g,
 	indentCodeCompensation: /^(\s+)(?:```)/,
@@ -462,126 +471,126 @@ var ve = ((e = "") => {
 	notSpaceStart: /^\S*/,
 	endingNewline: /\n$/,
 	listItemRegex: (e) => RegExp(`^( {0,3}${e})((?:[	 ][^\\n]*)?(?:\\n|$))`),
-	nextBulletRegex: b((e) => RegExp(`^ {0,${e}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`)),
-	hrRegex: b((e) => RegExp(`^ {0,${e}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`)),
-	fencesBeginRegex: b((e) => RegExp(`^ {0,${e}}(?:\`\`\`|~~~)`)),
-	headingBeginRegex: b((e) => RegExp(`^ {0,${e}}#`)),
-	htmlBeginRegex: b((e) => RegExp(`^ {0,${e}}<(?:[a-z].*>|!--)`, "i")),
-	blockquoteBeginRegex: b((e) => RegExp(`^ {0,${e}}>`))
-}, ye = /^(?:[ \t]*(?:\n|$))+/, be = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, xe = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/, C = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, Se = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, w = / {0,3}(?:[*+-]|\d{1,9}[.)])/, Ce = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/, we = x(Ce).replace(/bull/g, w).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), Te = x(Ce).replace(/bull/g, w).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), T = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table|[ \t]+\n)[^\n]+)*)/, Ee = /^[^\n]+/, De = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/, Oe = x(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", De).replace("title", /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(), ke = x(/^(bull)([ \t][^\n]*?)?(?:\n|$)/).replace(/bull/g, w).getRegex(), E = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", Ae = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, je = x("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n*|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>[^\\n]*\\n*|$)|<![A-Z][\\s\\S]*?(?:>[^\\n]*\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>[^\\n]*\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", Ae).replace("tag", E).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), Me = (e) => x(T).replace("hr", C).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", e).replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", E).getRegex(), Ne = Me(/ {0,3}(?:[*+-]|1[.)])[ \t]+[^ \t\n]/), Pe = Me(/ {0,3}(?:[*+-]|\d{1,9}[.)])(?:[ \t]|\n|$)/), Fe = {
-	blockquote: x(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph", Pe).getRegex(),
-	code: be,
-	def: Oe,
-	fences: xe,
-	heading: Se,
-	hr: C,
-	html: je,
-	lheading: we,
-	list: ke,
-	newline: ye,
-	paragraph: Ne,
-	table: y,
-	text: Ee
-}, Ie = x("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", C).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", E).getRegex(), Le = {
-	...Fe,
-	lheading: Te,
-	table: Ie,
-	paragraph: x(T).replace("hr", C).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", Ie).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]+[^ \\t\\n]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", E).getRegex()
-}, Re = {
-	...Fe,
-	html: x("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment", Ae).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
+	nextBulletRegex: S((e) => RegExp(`^ {0,${e}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`)),
+	hrRegex: S((e) => RegExp(`^ {0,${e}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`)),
+	fencesBeginRegex: S((e) => RegExp(`^ {0,${e}}(?:\`\`\`|~~~)`)),
+	headingBeginRegex: S((e) => RegExp(`^ {0,${e}}#`)),
+	htmlBeginRegex: S((e) => RegExp(`^ {0,${e}}<(?:[a-z].*>|!--)`, "i")),
+	blockquoteBeginRegex: S((e) => RegExp(`^ {0,${e}}>`))
+}, we = /^(?:[ \t]*(?:\n|$))+/, Te = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, Ee = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/, T = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, De = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, Oe = / {0,3}(?:[*+-]|\d{1,9}[.)])/, ke = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/, Ae = C(ke).replace(/bull/g, Oe).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), je = C(ke).replace(/bull/g, Oe).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), Me = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table|[ \t]+\n)[^\n]+)*)/, Ne = /^[^\n]+/, Pe = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/, Fe = C(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", Pe).replace("title", /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(), Ie = C(/^(bull)([ \t][^\n]*?)?(?:\n|$)/).replace(/bull/g, Oe).getRegex(), E = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", Le = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, Re = C("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n*|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>[^\\n]*\\n*|$)|<![A-Z][\\s\\S]*?(?:>[^\\n]*\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>[^\\n]*\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", Le).replace("tag", E).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), ze = (e) => C(Me).replace("hr", T).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", e).replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", E).getRegex(), Be = ze(/ {0,3}(?:[*+-]|1[.)])[ \t]+[^ \t\n]/), Ve = ze(/ {0,3}(?:[*+-]|\d{1,9}[.)])(?:[ \t]|\n|$)/), He = {
+	blockquote: C(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph", Ve).getRegex(),
+	code: Te,
+	def: Fe,
+	fences: Ee,
+	heading: De,
+	hr: T,
+	html: Re,
+	lheading: Ae,
+	list: Ie,
+	newline: we,
+	paragraph: Be,
+	table: x,
+	text: Ne
+}, Ue = C("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", T).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", E).getRegex(), We = {
+	...He,
+	lheading: je,
+	table: Ue,
+	paragraph: C(Me).replace("hr", T).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", Ue).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]+[^ \\t\\n]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", E).getRegex()
+}, Ge = {
+	...He,
+	html: C("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment", Le).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
 	def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
 	heading: /^(#{1,6})(.*)(?:\n+|$)/,
-	fences: y,
+	fences: x,
 	lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
-	paragraph: x(T).replace("hr", C).replace("heading", " *#{1,6} *[^\n]").replace("lheading", we).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex()
-}, ze = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, Be = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, Ve = /^( {2,}|\\)\n(?!\s*$)/, He = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, D = /[\p{P}\p{S}]/u, O = /[\s\p{P}\p{S}]/u, k = /[^\s\p{P}\p{S}]/u, Ue = x(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, O).getRegex(), We = /[\p{Pi}\p{Ps}"']/u, Ge = /(?!~)[\p{P}\p{S}]/u, Ke = /(?!~)[\s\p{P}\p{S}]/u, qe = /(?:[^\s\p{P}\p{S}]|~)/u, Je = x(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", ve ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), Ye = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, Xe = x(Ye, "u").replace(/punct/g, D).getRegex(), Ze = x(Ye, "u").replace(/punct/g, Ge).getRegex(), Qe = x(/^(?:\*+(?:((?!\*)(?!openQuote)punct)|([^\s*]))?)|^_+(?:((?!_)(?!openQuote)punct)|([^\s_]))?/, "u").replace(/openQuote/g, We).replace(/punct/g, D).getRegex(), $e = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", et = x($e, "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), tt = x($e, "gu").replace(/notPunctSpace/g, qe).replace(/punctSpace/g, Ke).replace(/punct/g, Ge).getRegex(), nt = x("^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)[\\s](\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|(?:(?!\\*)punct|notPunctSpace)(\\*+)(?!\\*)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), rt = x("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), it = x("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)[\\s](_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)|(?:(?!_)punct|notPunctSpace)(_+)(?!_)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), at = x(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, D).getRegex(), ot = x("^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), st = x(/\\(punct)/, "gu").replace(/punct/g, D).getRegex(), ct = x(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), lt = x(Ae).replace("(?:-->|$)", "-->").getRegex(), ut = x("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", lt).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), A = /(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/, dt = x(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label", A).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]+|(?=\))/).replace("title", /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(), ft = x(/^!?\[(label)\]\[(ref)\]/).replace("label", A).replace("ref", De).getRegex(), pt = x(/^!?\[(ref)\](?:\[\])?/).replace("ref", De).getRegex(), mt = x("reflink|nolink(?!\\()", "g").replace("reflink", ft).replace("nolink", pt).getRegex(), ht = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, gt = {
-	_backpedal: y,
-	anyPunctuation: st,
-	autolink: ct,
-	blockSkip: Je,
-	br: Ve,
-	code: Be,
-	del: y,
-	delLDelim: y,
-	delRDelim: y,
-	emStrongLDelim: Xe,
-	emStrongRDelimAst: et,
-	emStrongRDelimUnd: rt,
-	escape: ze,
-	link: dt,
-	nolink: pt,
-	punctuation: Ue,
-	reflink: ft,
-	reflinkSearch: mt,
-	tag: ut,
-	text: He,
-	url: y
-}, _t = {
-	...gt,
-	emStrongLDelim: Qe,
-	emStrongRDelimAst: nt,
-	emStrongRDelimUnd: it,
-	link: x(/^!?\[(label)\]\((.*?)\)/).replace("label", A).getRegex(),
-	reflink: x(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", A).getRegex()
-}, vt = {
-	...gt,
-	emStrongRDelimAst: tt,
-	emStrongLDelim: Ze,
-	delLDelim: at,
-	delRDelim: ot,
-	url: x(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol", ht).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),
+	paragraph: C(Me).replace("hr", T).replace("heading", " *#{1,6} *[^\n]").replace("lheading", Ae).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex()
+}, Ke = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, qe = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, Je = /^( {2,}|\\)\n(?!\s*$)/, Ye = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, D = /[\p{P}\p{S}]/u, O = /[\s\p{P}\p{S}]/u, k = /[^\s\p{P}\p{S}]/u, Xe = C(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, O).getRegex(), Ze = /[\p{Pi}\p{Ps}"']/u, Qe = /(?!~)[\p{P}\p{S}]/u, $e = /(?!~)[\s\p{P}\p{S}]/u, et = /(?:[^\s\p{P}\p{S}]|~)/u, tt = C(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", Ce ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), nt = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, rt = C(nt, "u").replace(/punct/g, D).getRegex(), it = C(nt, "u").replace(/punct/g, Qe).getRegex(), at = C(/^(?:\*+(?:((?!\*)(?!openQuote)punct)|([^\s*]))?)|^_+(?:((?!_)(?!openQuote)punct)|([^\s_]))?/, "u").replace(/openQuote/g, Ze).replace(/punct/g, D).getRegex(), ot = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", st = C(ot, "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), ct = C(ot, "gu").replace(/notPunctSpace/g, et).replace(/punctSpace/g, $e).replace(/punct/g, Qe).getRegex(), lt = C("^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)[\\s](\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|(?:(?!\\*)punct|notPunctSpace)(\\*+)(?!\\*)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), ut = C("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), dt = C("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)[\\s](_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)|(?:(?!_)punct|notPunctSpace)(_+)(?!_)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), ft = C(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, D).getRegex(), pt = C("^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, k).replace(/punctSpace/g, O).replace(/punct/g, D).getRegex(), mt = C(/\\(punct)/, "gu").replace(/punct/g, D).getRegex(), ht = C(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), gt = C(Le).replace("(?:-->|$)", "-->").getRegex(), _t = C("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", gt).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), A = /(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/, vt = C(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label", A).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]+|(?=\))/).replace("title", /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(), yt = C(/^!?\[(label)\]\[(ref)\]/).replace("label", A).replace("ref", Pe).getRegex(), bt = C(/^!?\[(ref)\](?:\[\])?/).replace("ref", Pe).getRegex(), xt = C("reflink|nolink(?!\\()", "g").replace("reflink", yt).replace("nolink", bt).getRegex(), St = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, j = {
+	_backpedal: x,
+	anyPunctuation: mt,
+	autolink: ht,
+	blockSkip: tt,
+	br: Je,
+	code: qe,
+	del: x,
+	delLDelim: x,
+	delRDelim: x,
+	emStrongLDelim: rt,
+	emStrongRDelimAst: st,
+	emStrongRDelimUnd: ut,
+	escape: Ke,
+	link: vt,
+	nolink: bt,
+	punctuation: Xe,
+	reflink: yt,
+	reflinkSearch: xt,
+	tag: _t,
+	text: Ye,
+	url: x
+}, Ct = {
+	...j,
+	emStrongLDelim: at,
+	emStrongRDelimAst: lt,
+	emStrongRDelimUnd: dt,
+	link: C(/^!?\[(label)\]\((.*?)\)/).replace("label", A).getRegex(),
+	reflink: C(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", A).getRegex()
+}, M = {
+	...j,
+	emStrongRDelimAst: ct,
+	emStrongLDelim: it,
+	delLDelim: ft,
+	delRDelim: pt,
+	url: C(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol", St).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),
 	_backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,
 	del: /^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/,
-	text: x(/^(`+|~+|[^`~])(?:(?=[`~])|(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol", ht).getRegex()
-}, yt = {
-	...vt,
-	br: x(Ve).replace("{2,}", "*").getRegex(),
-	text: x(vt.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
-}, j = {
-	normal: Fe,
-	gfm: Le,
-	pedantic: Re
-}, M = {
-	normal: gt,
-	gfm: vt,
-	breaks: yt,
-	pedantic: _t
-}, bt = {
+	text: C(/^(`+|~+|[^`~])(?:(?=[`~])|(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol", St).getRegex()
+}, wt = {
+	...M,
+	br: C(Je).replace("{2,}", "*").getRegex(),
+	text: C(M.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
+}, N = {
+	normal: He,
+	gfm: We,
+	pedantic: Ge
+}, P = {
+	normal: j,
+	gfm: M,
+	breaks: wt,
+	pedantic: Ct
+}, Tt = {
 	"&": "&amp;",
 	"<": "&lt;",
 	">": "&gt;",
 	"\"": "&quot;",
 	"'": "&#39;"
-}, xt = (e) => bt[e];
-function N(e, t) {
+}, Et = (e) => Tt[e];
+function F(e, t) {
 	if (t) {
-		if (S.escapeTest.test(e)) return e.replace(S.escapeReplace, xt);
-	} else if (S.escapeTestNoEncode.test(e)) return e.replace(S.escapeReplaceNoEncode, xt);
+		if (w.escapeTest.test(e)) return e.replace(w.escapeReplace, Et);
+	} else if (w.escapeTestNoEncode.test(e)) return e.replace(w.escapeReplaceNoEncode, Et);
 	return e;
 }
-function St(e) {
+function Dt(e) {
 	try {
-		e = encodeURI(e).replace(S.percentDecode, "%");
+		e = encodeURI(e).replace(w.percentDecode, "%");
 	} catch {
 		return null;
 	}
 	return e;
 }
-function Ct(e, t) {
-	let n = e.replace(S.findPipe, (e, t, n) => {
+function Ot(e, t) {
+	let n = e.replace(w.findPipe, (e, t, n) => {
 		let r = !1, i = t;
 		for (; --i >= 0 && n[i] === "\\";) r = !r;
 		return r ? "|" : " |";
-	}).split(S.splitPipe), r = 0;
+	}).split(w.splitPipe), r = 0;
 	if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), t) {
 		if (n.length > t) n.splice(t);
 		else for (; n.length < t;) n.push("");
 	}
-	for (; r < n.length; r++) n[r] = n[r].trim().replace(S.slashPipe, "|");
+	for (; r < n.length; r++) n[r] = n[r].trim().replace(w.slashPipe, "|");
 	return n;
 }
-function P(e, t, n) {
+function I(e, t, n) {
 	let r = e.length;
 	if (r === 0) return "";
 	let i = 0;
@@ -593,12 +602,12 @@ function P(e, t, n) {
 	}
 	return e.slice(0, r - i);
 }
-function wt(e) {
+function kt(e) {
 	let t = e.split("\n"), n = t.length - 1;
-	for (; n >= 0 && S.blankLine.test(t[n]);) n--;
+	for (; n >= 0 && w.blankLine.test(t[n]);) n--;
 	return t.length - n <= 2 ? e : t.slice(0, n + 1).join("\n");
 }
-function Tt(e, t) {
+function At(e, t) {
 	if (e.indexOf(t[1]) === -1) return -1;
 	let n = 0;
 	for (let r = 0; r < e.length; r++) if (e[r] === "\\") r++;
@@ -606,7 +615,7 @@ function Tt(e, t) {
 	else if (e[r] === t[1] && (n--, n < 0)) return r;
 	return n > 0 ? -2 : -1;
 }
-function Et(e, t = 0) {
+function jt(e, t = 0) {
 	let n = t, r = "";
 	for (let t of e) if (t === "	") {
 		let e = 4 - n % 4;
@@ -614,7 +623,7 @@ function Et(e, t = 0) {
 	} else r += t, n++;
 	return r;
 }
-function Dt(e, t, n, r, i) {
+function Mt(e, t, n, r, i) {
 	let a = t.href, o = t.title || null, s = e[1].replace(i.other.outputLinkReplace, "$1");
 	r.state.inLink = !0;
 	let c = {
@@ -627,7 +636,7 @@ function Dt(e, t, n, r, i) {
 	};
 	return r.state.inLink = !1, c;
 }
-function Ot(e, t, n) {
+function Nt(e, t, n) {
 	let r = e.match(n.other.indentCodeCompensation);
 	if (r === null) return t;
 	let i = r[1];
@@ -638,12 +647,12 @@ function Ot(e, t, n) {
 		return r.length >= i.length ? e.slice(i.length) : e;
 	}).join("\n");
 }
-var F = class {
+var L = class {
 	options;
 	rules;
 	lexer;
 	constructor(e) {
-		this.options = e || v;
+		this.options = e || b;
 	}
 	space(e) {
 		let t = this.rules.block.newline.exec(e);
@@ -655,7 +664,7 @@ var F = class {
 	code(e) {
 		let t = this.rules.block.code.exec(e);
 		if (t) {
-			let e = this.options.pedantic ? t[0] : wt(t[0]);
+			let e = this.options.pedantic ? t[0] : kt(t[0]);
 			return {
 				type: "code",
 				raw: e,
@@ -667,7 +676,7 @@ var F = class {
 	fences(e) {
 		let t = this.rules.block.fences.exec(e);
 		if (t) {
-			let e = t[0], n = Ot(e, t[3] || "", this.rules);
+			let e = t[0], n = Nt(e, t[3] || "", this.rules);
 			return {
 				type: "code",
 				raw: e,
@@ -681,12 +690,12 @@ var F = class {
 		if (t) {
 			let e = t[2].trim();
 			if (this.rules.other.endingHash.test(e)) {
-				let t = P(e, "#");
+				let t = I(e, "#");
 				(this.options.pedantic || !t || this.rules.other.endingSpaceChar.test(t)) && (e = t.trim());
 			}
 			return {
 				type: "heading",
-				raw: P(t[0], "\n"),
+				raw: I(t[0], "\n"),
 				depth: t[1].length,
 				text: e,
 				tokens: this.lexer.inline(e)
@@ -697,13 +706,13 @@ var F = class {
 		let t = this.rules.block.hr.exec(e);
 		if (t) return {
 			type: "hr",
-			raw: P(t[0], "\n")
+			raw: I(t[0], "\n")
 		};
 	}
 	blockquote(e) {
 		let t = this.rules.block.blockquote.exec(e);
 		if (t) {
-			let e = P(t[0], "\n").split("\n"), n = "", r = "", i = [];
+			let e = I(t[0], "\n").split("\n"), n = "", r = "", i = [];
 			for (; e.length > 0;) {
 				let t = !1, a = [], o;
 				for (o = 0; o < e.length; o++) if (this.rules.other.blockquoteStart.test(e[o])) a.push(e[o]), t = !0;
@@ -755,7 +764,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 				let n = !1, r = "", s = "";
 				if (!(t = a.exec(e)) || this.rules.block.hr.test(e)) break;
 				r = t[0], e = e.substring(r.length);
-				let c = Et(t[2].split("\n", 1)[0], t[1].length), l = e.split("\n", 1)[0], u = !c.trim(), d = 0;
+				let c = jt(t[2].split("\n", 1)[0], t[1].length), l = e.split("\n", 1)[0], u = !c.trim(), d = 0;
 				if (this.options.pedantic ? (d = 2, s = c.trimStart()) : u ? d = t[1].length + 1 : (d = c.search(this.rules.other.nonSpaceChar), d = d > 4 ? 1 : d, s = c.slice(d), d += t[1].length), u && this.rules.other.blankLine.test(l) && (r += l + "\n", e = e.substring(l.length + 1), n = !0), !n) {
 					let t = this.rules.other.nextBulletRegex(d), n = this.rules.other.hrRegex(d), i = this.rules.other.fencesBeginRegex(d), a = this.rules.other.headingBeginRegex(d), o = this.rules.other.htmlBeginRegex(d), f = this.rules.other.blockquoteBeginRegex(d);
 					for (; e;) {
@@ -820,7 +829,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 	html(e) {
 		let t = this.rules.block.html.exec(e);
 		if (t) {
-			let e = wt(t[0]);
+			let e = kt(t[0]);
 			return {
 				type: "html",
 				block: !0,
@@ -837,7 +846,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 			return {
 				type: "def",
 				tag: e,
-				raw: P(t[0], "\n"),
+				raw: I(t[0], "\n"),
 				href: n,
 				title: r
 			};
@@ -846,9 +855,9 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 	table(e) {
 		let t = this.rules.block.table.exec(e);
 		if (!t || !this.rules.other.tableDelimiter.test(t[2])) return;
-		let n = Ct(t[1]), r = t[2].replace(this.rules.other.tableAlignChars, "").split("|"), i = t[3]?.trim() ? t[3].replace(this.rules.other.tableRowBlankLine, "").split("\n") : [], a = {
+		let n = Ot(t[1]), r = t[2].replace(this.rules.other.tableAlignChars, "").split("|"), i = t[3]?.trim() ? t[3].replace(this.rules.other.tableRowBlankLine, "").split("\n") : [], a = {
 			type: "table",
-			raw: P(t[0], "\n"),
+			raw: I(t[0], "\n"),
 			header: [],
 			align: [],
 			rows: []
@@ -861,7 +870,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 				header: !0,
 				align: a.align[e]
 			});
-			for (let e of i) a.rows.push(Ct(e, a.header.length).map((e, t) => ({
+			for (let e of i) a.rows.push(Ot(e, a.header.length).map((e, t) => ({
 				text: e,
 				tokens: this.lexer.inline(e),
 				header: !1,
@@ -876,7 +885,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 			let e = t[1].trim();
 			return {
 				type: "heading",
-				raw: P(t[0], "\n"),
+				raw: I(t[0], "\n"),
 				depth: t[2].charAt(0) === "=" ? 1 : 2,
 				text: e,
 				tokens: this.lexer.inline(e)
@@ -929,10 +938,10 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 			let e = t[2].trim();
 			if (!this.options.pedantic && this.rules.other.startAngleBracket.test(e)) {
 				if (!this.rules.other.endAngleBracket.test(e)) return;
-				let t = P(e.slice(0, -1), "\\");
+				let t = I(e.slice(0, -1), "\\");
 				if ((e.length - t.length) % 2 == 0) return;
 			} else {
-				let e = Tt(t[2], "()");
+				let e = At(t[2], "()");
 				if (e === -2) return;
 				if (e > -1) {
 					let n = (t[0].indexOf("!") === 0 ? 5 : 4) + t[1].length + e;
@@ -944,7 +953,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 				let e = this.rules.other.pedanticHrefTitle.exec(n);
 				e && (n = e[1], r = e[3]);
 			} else r = t[3] ? t[3].slice(1, -1) : "";
-			return n = n.trim(), this.rules.other.startAngleBracket.test(n) && (n = this.options.pedantic && !this.rules.other.endAngleBracket.test(e) ? n.slice(1) : n.slice(1, -1)), Dt(t, {
+			return n = n.trim(), this.rules.other.startAngleBracket.test(n) && (n = this.options.pedantic && !this.rules.other.endAngleBracket.test(e) ? n.slice(1) : n.slice(1, -1)), Mt(t, {
 				href: n && n.replace(this.rules.inline.anyPunctuation, "$1"),
 				title: r && r.replace(this.rules.inline.anyPunctuation, "$1")
 			}, t[0], this.lexer, this.rules);
@@ -962,7 +971,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 					text: e
 				};
 			}
-			return Dt(n, e, n[0], this.lexer, this.rules);
+			return Mt(n, e, n[0], this.lexer, this.rules);
 		}
 	}
 	emStrong(e, t, n = "") {
@@ -1098,29 +1107,29 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 			};
 		}
 	}
-}, I = class e {
+}, R = class e {
 	tokens;
 	options;
 	state;
 	inlineQueue;
 	tokenizer;
 	constructor(e) {
-		this.tokens = [], this.tokens.links = Object.create(null), this.options = e || v, this.options.tokenizer = this.options.tokenizer || new F(), this.tokenizer = this.options.tokenizer, this.tokenizer.options = this.options, this.tokenizer.lexer = this, this.inlineQueue = [], this.state = {
+		this.tokens = [], this.tokens.links = Object.create(null), this.options = e || b, this.options.tokenizer = this.options.tokenizer || new L(), this.tokenizer = this.options.tokenizer, this.tokenizer.options = this.options, this.tokenizer.lexer = this, this.inlineQueue = [], this.state = {
 			inLink: !1,
 			inRawBlock: !1,
 			top: !0
 		};
 		let t = {
-			other: S,
-			block: j.normal,
-			inline: M.normal
+			other: w,
+			block: N.normal,
+			inline: P.normal
 		};
-		this.options.pedantic ? (t.block = j.pedantic, t.inline = M.pedantic) : this.options.gfm && (t.block = j.gfm, t.inline = this.options.breaks ? M.breaks : M.gfm), this.tokenizer.rules = t;
+		this.options.pedantic ? (t.block = N.pedantic, t.inline = P.pedantic) : this.options.gfm && (t.block = N.gfm, t.inline = this.options.breaks ? P.breaks : P.gfm), this.tokenizer.rules = t;
 	}
 	static get rules() {
 		return {
-			block: j,
-			inline: M
+			block: N,
+			inline: P
 		};
 	}
 	static lex(t, n) {
@@ -1130,7 +1139,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 		return new e(n).inlineTokens(t);
 	}
 	lex(e) {
-		e = e.replace(S.carriageReturn, "\n"), this.blockTokens(e, this.tokens);
+		e = e.replace(w.carriageReturn, "\n"), this.blockTokens(e, this.tokens);
 		for (let e = 0; e < this.inlineQueue.length; e++) {
 			let t = this.inlineQueue[e];
 			this.inlineTokens(t.src, t.tokens);
@@ -1138,7 +1147,7 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 		return this.inlineQueue = [], this.tokens;
 	}
 	blockTokens(e, t = [], n = !1) {
-		this.tokenizer.lexer = this, this.options.pedantic && (e = e.replace(S.tabCharGlobal, "    ").replace(S.spaceLine, ""));
+		this.tokenizer.lexer = this, this.options.pedantic && (e = e.replace(w.tabCharGlobal, "    ").replace(w.spaceLine, ""));
 		let r = 1 / 0;
 		for (; e;) {
 			if (e.length < r) r = e.length;
@@ -1320,18 +1329,18 @@ ${a}`, r = r.substring(0, r.length - t.text.length) + s.text;
 		if (this.options.silent) console.error(t);
 		else throw Error(t);
 	}
-}, L = class {
+}, z = class {
 	options;
 	parser;
 	constructor(e) {
-		this.options = e || v;
+		this.options = e || b;
 	}
 	space(e) {
 		return "";
 	}
 	code({ text: e, lang: t, escaped: n }) {
-		let r = (t || "").match(S.notSpaceStart)?.[0], i = e.replace(S.endingNewline, "") + "\n";
-		return r ? "<pre><code class=\"language-" + N(r) + "\">" + (n ? i : N(i, !0)) + "</code></pre>\n" : "<pre><code>" + (n ? i : N(i, !0)) + "</code></pre>\n";
+		let r = (t || "").match(w.notSpaceStart)?.[0], i = e.replace(w.endingNewline, "") + "\n";
+		return r ? "<pre><code class=\"language-" + F(r) + "\">" + (n ? i : F(i, !0)) + "</code></pre>\n" : "<pre><code>" + (n ? i : F(i, !0)) + "</code></pre>\n";
 	}
 	blockquote({ tokens: e }) {
 		return `<blockquote>
@@ -1401,7 +1410,7 @@ ${e}</tr>
 		return `<em>${this.parser.parseInline(e)}</em>`;
 	}
 	codespan({ text: e }) {
-		return `<code>${N(e, !0)}</code>`;
+		return `<code>${F(e, !0)}</code>`;
 	}
 	br(e) {
 		return "<br>";
@@ -1410,24 +1419,24 @@ ${e}</tr>
 		return `<del>${this.parser.parseInline(e)}</del>`;
 	}
 	link({ href: e, title: t, tokens: n }) {
-		let r = this.parser.parseInline(n), i = St(e);
+		let r = this.parser.parseInline(n), i = Dt(e);
 		if (i === null) return r;
 		e = i;
 		let a = "<a href=\"" + e + "\"";
-		return t && (a += " title=\"" + N(t) + "\""), a += ">" + r + "</a>", a;
+		return t && (a += " title=\"" + F(t) + "\""), a += ">" + r + "</a>", a;
 	}
 	image({ href: e, title: t, text: n, tokens: r }) {
 		r && (n = this.parser.parseInline(r, this.parser.textRenderer));
-		let i = St(e);
-		if (i === null) return N(n);
+		let i = Dt(e);
+		if (i === null) return F(n);
 		e = i;
-		let a = `<img src="${e}" alt="${N(n)}"`;
-		return t && (a += ` title="${N(t)}"`), a += ">", a;
+		let a = `<img src="${e}" alt="${F(n)}"`;
+		return t && (a += ` title="${F(t)}"`), a += ">", a;
 	}
 	text(e) {
-		return "tokens" in e && e.tokens ? this.parser.parseInline(e.tokens) : "escaped" in e && e.escaped ? e.text : N(e.text);
+		return "tokens" in e && e.tokens ? this.parser.parseInline(e.tokens) : "escaped" in e && e.escaped ? e.text : F(e.text);
 	}
-}, R = class {
+}, Pt = class {
 	strong({ text: e }) {
 		return e;
 	}
@@ -1458,12 +1467,12 @@ ${e}</tr>
 	checkbox({ raw: e }) {
 		return e;
 	}
-}, z = class e {
+}, B = class e {
 	options;
 	renderer;
 	textRenderer;
 	constructor(e) {
-		this.options = e || v, this.options.renderer = this.options.renderer || new L(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new R();
+		this.options = e || b, this.options.renderer = this.options.renderer || new z(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new Pt();
 	}
 	static parse(t, n) {
 		return new e(n).parse(t);
@@ -1611,11 +1620,11 @@ ${e}</tr>
 		}
 		return n;
 	}
-}, B = class {
+}, V = class {
 	options;
 	block;
 	constructor(e) {
-		this.options = e || v;
+		this.options = e || b;
 	}
 	static passThroughHooks = /* @__PURE__ */ new Set([
 		"preprocess",
@@ -1641,22 +1650,22 @@ ${e}</tr>
 		return e;
 	}
 	provideLexer(e = this.block) {
-		return e ? I.lex : I.lexInline;
+		return e ? R.lex : R.lexInline;
 	}
 	provideParser(e = this.block) {
-		return e ? z.parse : z.parseInline;
+		return e ? B.parse : B.parseInline;
 	}
-}, V = new class {
-	defaults = ge();
+}, H = new class {
+	defaults = y();
 	options = this.setOptions;
 	parse = this.parseMarkdown(!0);
 	parseInline = this.parseMarkdown(!1);
-	Parser = z;
-	Renderer = L;
-	TextRenderer = R;
-	Lexer = I;
-	Tokenizer = F;
-	Hooks = B;
+	Parser = B;
+	Renderer = z;
+	TextRenderer = Pt;
+	Lexer = R;
+	Tokenizer = L;
+	Hooks = V;
 	constructor(...e) {
 		this.use(...e);
 	}
@@ -1707,7 +1716,7 @@ ${e}</tr>
 				}
 				"childTokens" in e && e.childTokens && (t.childTokens[e.name] = e.childTokens);
 			}), n.extensions = t), e.renderer) {
-				let t = this.defaults.renderer || new L(this.defaults);
+				let t = this.defaults.renderer || new z(this.defaults);
 				for (let n in e.renderer) {
 					if (!(n in t)) throw Error(`renderer '${n}' does not exist`);
 					if (["options", "parser"].includes(n)) continue;
@@ -1720,7 +1729,7 @@ ${e}</tr>
 				n.renderer = t;
 			}
 			if (e.tokenizer) {
-				let t = this.defaults.tokenizer || new F(this.defaults);
+				let t = this.defaults.tokenizer || new L(this.defaults);
 				for (let n in e.tokenizer) {
 					if (!(n in t)) throw Error(`tokenizer '${n}' does not exist`);
 					if ([
@@ -1737,13 +1746,13 @@ ${e}</tr>
 				n.tokenizer = t;
 			}
 			if (e.hooks) {
-				let t = this.defaults.hooks || new B();
+				let t = this.defaults.hooks || new V();
 				for (let n in e.hooks) {
 					if (!(n in t)) throw Error(`hook '${n}' does not exist`);
 					if (["options", "block"].includes(n)) continue;
 					let r = n, i = e.hooks[r], a = t[r];
-					t[r] = B.passThroughHooks.has(n) ? (e) => {
-						if (this.defaults.async && B.passThroughHooksRespectAsync.has(n)) return (async () => {
+					t[r] = V.passThroughHooks.has(n) ? (e) => {
+						if (this.defaults.async && V.passThroughHooksRespectAsync.has(n)) return (async () => {
 							let n = await i.call(t, e);
 							return a.call(t, n);
 						})();
@@ -1780,10 +1789,10 @@ ${e}</tr>
 		}, this;
 	}
 	lexer(e, t) {
-		return I.lex(e, t ?? this.defaults);
+		return R.lex(e, t ?? this.defaults);
 	}
 	parser(e, t) {
-		return z.parse(e, t ?? this.defaults);
+		return B.parse(e, t ?? this.defaults);
 	}
 	parseMarkdown(e) {
 		return (t, n) => {
@@ -1795,16 +1804,16 @@ ${e}</tr>
 			if (typeof t > "u" || t === null) return a(/* @__PURE__ */ Error("marked(): input parameter is undefined or null"));
 			if (typeof t != "string") return a(/* @__PURE__ */ Error("marked(): input parameter is of type " + Object.prototype.toString.call(t) + ", string expected"));
 			if (i.hooks && (i.hooks.options = i, i.hooks.block = e), i.async) return (async () => {
-				let n = i.hooks ? await i.hooks.preprocess(t) : t, r = await (i.hooks ? await i.hooks.provideLexer(e) : e ? I.lex : I.lexInline)(n, i), a = i.hooks ? await i.hooks.processAllTokens(r) : r;
+				let n = i.hooks ? await i.hooks.preprocess(t) : t, r = await (i.hooks ? await i.hooks.provideLexer(e) : e ? R.lex : R.lexInline)(n, i), a = i.hooks ? await i.hooks.processAllTokens(r) : r;
 				i.walkTokens && await Promise.all(this.walkTokens(a, i.walkTokens));
-				let o = await (i.hooks ? await i.hooks.provideParser(e) : e ? z.parse : z.parseInline)(a, i);
+				let o = await (i.hooks ? await i.hooks.provideParser(e) : e ? B.parse : B.parseInline)(a, i);
 				return i.hooks ? await i.hooks.postprocess(o) : o;
 			})().catch(a);
 			try {
 				i.hooks && (t = i.hooks.preprocess(t));
-				let n = (i.hooks ? i.hooks.provideLexer(e) : e ? I.lex : I.lexInline)(t, i);
+				let n = (i.hooks ? i.hooks.provideLexer(e) : e ? R.lex : R.lexInline)(t, i);
 				i.hooks && (n = i.hooks.processAllTokens(n)), i.walkTokens && this.walkTokens(n, i.walkTokens);
-				let r = (i.hooks ? i.hooks.provideParser(e) : e ? z.parse : z.parseInline)(n, i);
+				let r = (i.hooks ? i.hooks.provideParser(e) : e ? B.parse : B.parseInline)(n, i);
 				return i.hooks && (r = i.hooks.postprocess(r)), r;
 			} catch (e) {
 				return a(e);
@@ -1814,7 +1823,7 @@ ${e}</tr>
 	onError(e, t) {
 		return (n) => {
 			if (n.message += "\nPlease report this to https://github.com/markedjs/marked.", e) {
-				let e = "<p>An error occurred:</p><pre>" + N(n.message + "", !0) + "</pre>";
+				let e = "<p>An error occurred:</p><pre>" + F(n.message + "", !0) + "</pre>";
 				return t ? Promise.resolve(e) : e;
 			}
 			if (t) return Promise.reject(n);
@@ -1822,21 +1831,21 @@ ${e}</tr>
 		};
 	}
 }();
-function H(e, t) {
-	return V.parse(e, t);
+function U(e, t) {
+	return H.parse(e, t);
 }
-H.options = H.setOptions = function(e) {
-	return V.setOptions(e), H.defaults = V.defaults, _e(H.defaults), H;
-}, H.getDefaults = ge, H.defaults = v;
-function kt(...e) {
-	return V.use(...e), H.defaults = V.defaults, _e(H.defaults), H;
+U.options = U.setOptions = function(e) {
+	return H.setOptions(e), U.defaults = H.defaults, Se(U.defaults), U;
+}, U.getDefaults = y, U.defaults = b;
+function Ft(...e) {
+	return H.use(...e), U.defaults = H.defaults, Se(U.defaults), U;
 }
-H.use = kt, H.walkTokens = function(e, t) {
-	return V.walkTokens(e, t);
-}, H.parseInline = V.parseInline, H.Parser = z, H.parser = z.parse, H.Renderer = L, H.TextRenderer = R, H.Lexer = I, H.lexer = I.lex, H.Tokenizer = F, H.Hooks = B, H.parse = H, H.options, H.setOptions, H.walkTokens, H.parseInline, z.parse, I.lex;
+U.use = Ft, U.walkTokens = function(e, t) {
+	return H.walkTokens(e, t);
+}, U.parseInline = H.parseInline, U.Parser = B, U.parser = B.parse, U.Renderer = z, U.TextRenderer = Pt, U.Lexer = R, U.lexer = R.lex, U.Tokenizer = L, U.Hooks = V, U.parse = U, U.options, U.setOptions, U.walkTokens, U.parseInline, B.parse, R.lex;
 //#endregion
 //#region src/plugin/js/functions/loadhtml.ts
-async function At(e, t) {
+async function It(e, t) {
 	try {
 		if (typeof e != "string") throw Error("Invalid HTML content source. Must be a URL string or an anchor element.");
 		if (e.startsWith("#")) {
@@ -1848,7 +1857,7 @@ async function At(e, t) {
 			let n = await fetch(e);
 			if (!n.ok) throw Error("Failed to fetch MD content.");
 			let r = await n.text();
-			return t.modalElement.dataset.modalType = "html", await H.parse(r);
+			return t.modalElement.dataset.modalType = "html", await U.parse(r);
 		}
 		if (e.endsWith(".html")) {
 			let n = await fetch(e);
@@ -1864,7 +1873,7 @@ async function At(e, t) {
 }
 //#endregion
 //#region src/plugin/js/functions/loadimage.ts
-async function jt(e, t, n) {
+async function Lt(e, t, n) {
 	if (!e) {
 		console.error("No URL provided for image modal");
 		return;
@@ -1880,7 +1889,7 @@ async function jt(e, t, n) {
 }
 //#endregion
 //#region src/plugin/js/functions/loadvideo.ts
-async function Mt(e, t, n) {
+async function Rt(e, t, n) {
 	if (!e) {
 		console.error("No URL provided for video modal");
 		return;
@@ -1898,9 +1907,9 @@ async function Mt(e, t, n) {
 }
 //#endregion
 //#region src/plugin/js/functions/load-modal-content.ts
-async function U(e, t, n, r) {
+async function W(e, t, n, r) {
 	let i = r || n, a = e.dataset.modalType, o = e.dataset.modalUrl || e.getAttribute("href") || null, s = "";
-	if (typeof n.padding == "string" ? s = n.padding : n.padding && typeof n.padding != "object" && (s = String(n.padding)), e.dataset.modalOverlaycolor && e.dataset.modalOverlaycolor !== i.overlaycolor && t.modalElement.style.setProperty("--mm-overlaycolor", e.dataset.modalOverlaycolor), e.dataset.modalClass && t.modalElement.classList.add(...e.dataset.modalClass.split(/[ ,]+/)), a === "html") {
+	if (typeof n.padding == "string" ? s = n.padding : n.padding && typeof n.padding != "object" && (s = String(n.padding)), e.dataset.modalOverlaycolor && e.dataset.modalOverlaycolor !== n.overlaycolor && t.modalElement.style.setProperty("--mm-overlaycolor", e.dataset.modalOverlaycolor), t.setTriggerClasses(e.dataset.modalClass?.split(/[ ,]+/) ?? []), a === "html") {
 		let r = "";
 		typeof n.padding == "object" && n.padding.html && (r = String(n.padding.html)), s = e.dataset.modalPadding || r || s;
 		let a = "";
@@ -1930,12 +1939,12 @@ async function U(e, t, n, r) {
 		console.error("Modal type not specified");
 		return;
 	}
-	if (a === "video") c = await Mt(o, t, n);
+	if (a === "video") c = await Rt(o, t, n);
 	else if (a === "image") {
 		let n = e.firstChild, r = n?.tagName === "IMG";
-		c = await jt(o && o !== "#" && o !== "#/" ? o : r ? n.getAttribute("src") : null, t, r ? n.getAttribute("alt") : null);
-	} else if (a === "html") c = await At(o, t);
-	else if (a === "iframe") o ? (c = `<iframe class="mm-body" src="${o}" frameborder="0" allowfullscreen></iframe>`, t.modalElement.dataset.modalType = "iframe") : (console.error("No URL provided for iframe modal"), l = !0);
+		c = await Lt(o && o !== "#" && o !== "#/" ? o : r ? n.getAttribute("src") : null, t, r ? n.getAttribute("alt") : null);
+	} else if (a === "html") c = await It(o, t);
+	else if (a === "iframe") o ? (c = `<iframe class="mm-body" src="${ye() ? xe(o) : o}" frameborder="0" allowfullscreen></iframe>`, t.modalElement.dataset.modalType = "iframe") : (console.error("No URL provided for iframe modal"), l = !0);
 	else {
 		console.error("Unknown modal type");
 		return;
@@ -1944,76 +1953,76 @@ async function U(e, t, n, r) {
 }
 //#endregion
 //#region node_modules/body-scroll-lock-upgrade/lib/index.esm.js
-var Nt = !1;
+var zt = !1;
 if (typeof window < "u") {
 	let e = { get passive() {
-		Nt = !0;
+		zt = !0;
 	} };
 	window.addEventListener("testPassive", null, e), window.removeEventListener("testPassive", null, e);
 }
-var W = typeof window < "u" && window.navigator && window.navigator.platform && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1), G = [], K = /* @__PURE__ */ new Map(), Pt = !1, Ft = -1, q, It, J, Y, Lt = (e) => G.some((t) => !!(t.options.allowTouchMove && t.options.allowTouchMove(e))), Rt = (e) => {
+var G = typeof window < "u" && window.navigator && window.navigator.platform && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1), K = [], q = /* @__PURE__ */ new Map(), Bt = !1, Vt = -1, J, Ht, Y, X, Ut = (e) => K.some((t) => !!(t.options.allowTouchMove && t.options.allowTouchMove(e))), Wt = (e) => {
 	let t = e || window.event;
-	return Lt(t.target) || t.touches.length > 1 ? !0 : (t.preventDefault && t.preventDefault(), !1);
-}, zt = (e) => {
-	if (Y === void 0) {
+	return Ut(t.target) || t.touches.length > 1 ? !0 : (t.preventDefault && t.preventDefault(), !1);
+}, Gt = (e) => {
+	if (X === void 0) {
 		let t = !!e && e.reserveScrollBarGap === !0, n = window.innerWidth - document.documentElement.getBoundingClientRect().width;
 		if (t && n > 0) {
 			let e = parseInt(window.getComputedStyle(document.body).getPropertyValue("padding-right"), 10);
-			Y = document.body.style.paddingRight, document.body.style.paddingRight = `${e + n}px`;
+			X = document.body.style.paddingRight, document.body.style.paddingRight = `${e + n}px`;
 		}
 	}
-	q === void 0 && (q = document.body.style.overflow, document.body.style.overflow = "hidden");
-}, Bt = () => {
-	Y !== void 0 && (document.body.style.paddingRight = Y, Y = void 0), q !== void 0 && (document.body.style.overflow = q, q = void 0);
-}, Vt = () => window.requestAnimationFrame(() => {
+	J === void 0 && (J = document.body.style.overflow, document.body.style.overflow = "hidden");
+}, Kt = () => {
+	X !== void 0 && (document.body.style.paddingRight = X, X = void 0), J !== void 0 && (document.body.style.overflow = J, J = void 0);
+}, qt = () => window.requestAnimationFrame(() => {
 	let e = document.documentElement, t = document.body;
-	if (J === void 0) {
-		It = { ...e.style }, J = { ...t.style };
+	if (Y === void 0) {
+		Ht = { ...e.style }, Y = { ...t.style };
 		let { scrollY: n, scrollX: r, innerHeight: i } = window;
 		e.style.height = "100%", e.style.overflow = "hidden", t.style.position = "fixed", t.style.top = `${-n}px`, t.style.left = `${-r}px`, t.style.width = "100%", t.style.height = "auto", t.style.overflow = "hidden", setTimeout(() => window.requestAnimationFrame(() => {
 			let e = i - window.innerHeight;
 			e && n >= i && (t.style.top = -(n + e) + "px");
 		}), 300);
 	}
-}), Ht = () => {
-	if (J !== void 0) {
+}), Jt = () => {
+	if (Y !== void 0) {
 		let e = -parseInt(document.body.style.top, 10), t = -parseInt(document.body.style.left, 10), n = document.documentElement, r = document.body;
-		n.style.height = It?.height || "", n.style.overflow = It?.overflow || "", r.style.position = J.position || "", r.style.top = J.top || "", r.style.left = J.left || "", r.style.width = J.width || "", r.style.height = J.height || "", r.style.overflow = J.overflow || "", window.scrollTo(t, e), J = void 0;
+		n.style.height = Ht?.height || "", n.style.overflow = Ht?.overflow || "", r.style.position = Y.position || "", r.style.top = Y.top || "", r.style.left = Y.left || "", r.style.width = Y.width || "", r.style.height = Y.height || "", r.style.overflow = Y.overflow || "", window.scrollTo(t, e), Y = void 0;
 	}
-}, Ut = (e) => e ? e.scrollHeight - e.scrollTop <= e.clientHeight : !1, Wt = (e, t) => {
-	let n = e.targetTouches[0].clientY - Ft;
-	return Lt(e.target) ? !1 : t && t.scrollTop === 0 && n > 0 || Ut(t) && n < 0 ? Rt(e) : (e.stopPropagation(), !0);
-}, Gt = (e, t) => {
+}, Yt = (e) => e ? e.scrollHeight - e.scrollTop <= e.clientHeight : !1, Xt = (e, t) => {
+	let n = e.targetTouches[0].clientY - Vt;
+	return Ut(e.target) ? !1 : t && t.scrollTop === 0 && n > 0 || Yt(t) && n < 0 ? Wt(e) : (e.stopPropagation(), !0);
+}, Zt = (e, t) => {
 	if (!e) {
 		console.error("disableBodyScroll unsuccessful - targetElement must be provided when calling disableBodyScroll on IOS devices.");
 		return;
 	}
-	if (K.set(e, K?.get(e) ? K?.get(e) + 1 : 1), G.some((t) => t.targetElement === e)) return;
+	if (q.set(e, q?.get(e) ? q?.get(e) + 1 : 1), K.some((t) => t.targetElement === e)) return;
 	let n = {
 		targetElement: e,
 		options: t || {}
 	};
-	G = [...G, n], W ? Vt() : zt(t), W && (e.ontouchstart = (e) => {
-		e.targetTouches.length === 1 && (Ft = e.targetTouches[0].clientY);
+	K = [...K, n], G ? qt() : Gt(t), G && (e.ontouchstart = (e) => {
+		e.targetTouches.length === 1 && (Vt = e.targetTouches[0].clientY);
 	}, e.ontouchmove = (t) => {
-		t.targetTouches.length === 1 && Wt(t, e);
-	}, Pt ||= (document.addEventListener("touchmove", Rt, Nt ? { passive: !1 } : void 0), !0));
-}, Kt = (e) => {
+		t.targetTouches.length === 1 && Xt(t, e);
+	}, Bt ||= (document.addEventListener("touchmove", Wt, zt ? { passive: !1 } : void 0), !0));
+}, Qt = (e) => {
 	if (!e) {
 		console.error("enableBodyScroll unsuccessful - targetElement must be provided when calling enableBodyScroll on IOS devices.");
 		return;
 	}
-	K.set(e, K?.get(e) ? K?.get(e) - 1 : 0), K?.get(e) === 0 && (G = G.filter((t) => t.targetElement !== e), K?.delete(e)), W && (e.ontouchstart = null, e.ontouchmove = null, Pt && G.length === 0 && (document.removeEventListener("touchmove", Rt, Nt ? { passive: !1 } : void 0), Pt = !1)), G.length === 0 && (W ? Ht() : Bt());
-}, qt = (e, t) => {
+	q.set(e, q?.get(e) ? q?.get(e) - 1 : 0), q?.get(e) === 0 && (K = K.filter((t) => t.targetElement !== e), q?.delete(e)), G && (e.ontouchstart = null, e.ontouchmove = null, Bt && K.length === 0 && (document.removeEventListener("touchmove", Wt, zt ? { passive: !1 } : void 0), Bt = !1)), K.length === 0 && (G ? Jt() : Kt());
+}, $t = (e, t) => {
 	t.presetConfigs = {
 		keyboard: e.getConfig().keyboard,
 		mouseWheel: e.getConfig().mouseWheel,
 		scrollProgress: e.getConfig().scrollProgress
 	};
-}, Jt = (e) => {
+}, en = (e) => {
 	let t = e.getRevealElement();
 	return t ? !!t.closest(".reveal-scroll") : !1;
-}, Yt = (e, t) => {
+}, tn = (e, t) => {
 	if (t.modalElement.dataset.modalType === "video") {
 		let n = t.modalDialog.querySelector("video");
 		n && e.configure({ keyboard: {
@@ -2032,14 +2041,14 @@ var W = typeof window < "u" && window.navigator && window.navigator.platform && 
 			t.hide();
 		}
 	} });
-}, Xt = (e, t) => {
-	t.modalElement && Gt(t.modalElement), Jt(e) || e.configure({
+}, nn = (e, t) => {
+	t.modalElement && Zt(t.modalElement), en(e) || e.configure({
 		keyboard: !1,
 		mouseWheel: !1,
 		scrollProgress: !1
 	}), t.isLocked = !0;
-}, Zt = (e, t) => {
-	t.modalElement && Kt(t.modalElement), Jt(e) || e.configure({
+}, rn = (e, t) => {
+	t.modalElement && Qt(t.modalElement), en(e) || e.configure({
 		keyboard: t.presetConfigs.keyboard,
 		mouseWheel: t.presetConfigs.mouseWheel,
 		scrollProgress: t.presetConfigs.scrollProgress
@@ -2047,7 +2056,7 @@ var W = typeof window < "u" && window.navigator && window.navigator.platform && 
 };
 //#endregion
 //#region src/plugin/js/functions/preload.ts
-function Qt(e) {
+function an(e) {
 	let t = e.querySelectorAll("[data-modal-type]");
 	for (let e of t) {
 		if (e.dataset.modalType !== "image") continue;
@@ -2063,27 +2072,60 @@ function Qt(e) {
 	}
 }
 //#endregion
-//#region src/plugin/js/helpers.ts
-var $t = (e, t = 1) => {
-	let n = 1 / t;
-	return Math.round(e * n) / n;
-}, X = (e, t, n) => {
-	e.on(t, (e) => n(e));
-}, en = (e, t, n, r, i) => {
+//#region src/plugin/js/functions/scrollsync.ts
+var on = class {
+	send;
+	scroller;
+	applying = !1;
+	queued = !1;
+	lastPosition = -1;
+	constructor(e) {
+		this.send = e;
+	}
+	attach(e) {
+		this.detach(), this.scroller = e, e.addEventListener("scroll", this.onScroll, { passive: !0 });
+	}
+	detach() {
+		this.scroller?.removeEventListener("scroll", this.onScroll), this.scroller = void 0, this.applying = !1, this.lastPosition = -1;
+	}
+	apply(e) {
+		let t = this.distance();
+		t === void 0 || !this.scroller || (this.applying = !0, this.lastPosition = e, this.scroller.scrollTop = e * t, requestAnimationFrame(() => {
+			this.applying = !1;
+		}));
+	}
+	distance() {
+		if (!this.scroller) return;
+		let e = this.scroller.scrollHeight - this.scroller.clientHeight;
+		return e > 0 ? e : void 0;
+	}
+	onScroll = () => {
+		this.applying || this.queued || (this.queued = !0, requestAnimationFrame(() => {
+			this.queued = !1;
+			let e = this.distance();
+			if (e === void 0 || !this.scroller) return;
+			let t = this.scroller.scrollTop / e;
+			Math.abs(t - this.lastPosition) < .001 || (this.lastPosition = t, this.send(t));
+		}));
+	};
+}, sn = (e, t, n, r, i) => {
 	let a = t.offsetWidth, o = t.offsetHeight, s = (1 - e) * a / n, c = (1 - e) * o / n;
 	if (r.modalElement.style.setProperty("--mm-maxwidth", `${Math.floor(s)}px`), r.modalElement.style.setProperty("--mm-maxheight", `${Math.floor(c)}px`), !i.scalecorrection) return;
 	let l = Math.max(1, 1 / n);
-	r.modalElement.style.setProperty("--mm-inversescale", String($t(l, .01)));
+	r.modalElement.style.setProperty("--mm-inversescale", String(ve(l, .01)));
 	let u = i.borderwidth.match(/(\d*\.?\d+)\s*(\w+)/);
 	if (u !== null) {
-		let e = Number.parseFloat(u[1]), t = u[2], n = $t(e * l, .5) + t;
+		let e = Number.parseFloat(u[1]), t = u[2], n = ve(e * l, .5) + t;
 		r.modalElement.style.setProperty("--mm-borderwidth", n);
 	}
 };
 //#endregion
 //#region src/plugin/js/functions/setupoptions.ts
-async function tn(e, t, n) {
-	if (t.closebuttonhtml !== "" && (e.closeButtonHtml = t.closebuttonhtml), t.overlaycolor !== n.overlaycolor && e.modalElement.style.setProperty("--mm-overlaycolor", t.overlaycolor), t.speed !== n.speed) {
+function cn(e, t, n) {
+	t.overlaycolor === n.overlaycolor ? e.modalElement.style.removeProperty("--mm-overlaycolor") : e.modalElement.style.setProperty("--mm-overlaycolor", t.overlaycolor);
+}
+async function ln(e, t, n) {
+	if (t.closebuttonhtml !== "" && (e.closeButtonHtml = t.closebuttonhtml), cn(e, t, n), t.speed !== n.speed) {
 		let n = t.speed ? t.speed / 1e3 : 0;
 		e.modalElement.style.setProperty("--mm-transspeed", `${n}s`);
 	}
@@ -2098,16 +2140,124 @@ async function tn(e, t, n) {
 	t.radius !== n.radius && e.modalElement.style.setProperty("--mm-outerradius", t.radius), t.bordercolor !== n.bordercolor && e.modalElement.style.setProperty("--mm-bordercolor", t.bordercolor), t.borderwidth !== n.borderwidth && e.modalElement.style.setProperty("--mm-borderwidth", t.borderwidth), t.shadow !== n.shadow && e.modalElement.style.setProperty("--mm-shadow", t.shadow), t.zoom ? t.zoomfrom !== n.zoomfrom && e.modalElement.style.setProperty("--mm-initialscale", String(t.zoomfrom)) : e.modalElement.style.setProperty("--mm-initialscale", "1");
 }
 //#endregion
-//#region src/plugin/js/functions/createmodal.ts
-var nn = "\n	<div class=\"multimodal\" id=\"multimodal\" aria-hidden=\"true\">\n		<div class=\"mm-max\">\n			<div class=\"mm-dialog\">\n				<button class=\"mm-close\" type=\"button\" aria-hidden=\"true\" data-modal-close=\"true\" aria-label=\"Close\"><svg class=\"offset\" viewport=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(45 12 12)\"><line x1=\"0\" y1=\"12\" x2=\"24\" y2=\"12\"></line><line x1=\"12\" y1=\"0\" x2=\"12\" y2=\"24\"></line></g></svg></button>\n				<div class=\"mm-body\"></div>\n			</div>\n		</div>\n	</div>\n";
-function rn(e) {
+//#region src/plugin/js/functions/speakersync.ts
+var Z = "multimodal", un = (e) => e.dataset.modalUrl || e.getAttribute("href") || null, dn = () => {
+	try {
+		return window.parent === window.self ? void 0 : window.parent.opener ?? void 0;
+	} catch {
+		return;
+	}
+}, fn = class e {
+	revealEl;
+	handlers;
+	isPreview;
+	mainWindow;
+	peers = /* @__PURE__ */ new Set();
+	lastState = "";
+	openMessage;
+	static create(t, n, r) {
+		let i = t.isSpeakerNotes();
+		if (!(i && t.getConfig().postMessageEvents !== !0)) return new e(t, n, r, i);
+	}
+	constructor(e, t, n, r) {
+		this.revealEl = t, this.handlers = n, this.isPreview = r, this.mainWindow = r ? dn() : void 0, window.addEventListener("message", this.onMessage), r && e.on("ready", () => {
+			this.mainWindow && this.post(this.mainWindow, {
+				namespace: Z,
+				type: "hello"
+			});
+		});
+	}
+	sendOpen(e) {
+		if (!e) return;
+		let t = this.describe(e);
+		t && (this.openMessage = t, this.broadcast(t));
+	}
+	sendClose() {
+		this.openMessage = void 0, this.broadcast({
+			namespace: Z,
+			type: "close"
+		});
+	}
+	sendScroll(e) {
+		for (let t of this.targets()) this.post(t, {
+			namespace: Z,
+			type: "scroll",
+			at: e
+		});
+	}
+	triggers() {
+		return Array.from(this.revealEl.querySelectorAll("[data-modal-type]"));
+	}
+	describe(e) {
+		let t = e.dataset.modalType;
+		if (!t) return;
+		let n = this.triggers().indexOf(e);
+		if (n !== -1) return {
+			namespace: Z,
+			type: "open",
+			index: n,
+			modalType: t,
+			url: un(e)
+		};
+	}
+	resolve(e) {
+		let t = this.triggers(), n = (t) => t.dataset.modalType === e.modalType && un(t) === e.url, r = t[e.index];
+		return r && n(r) ? r : t.find(n);
+	}
+	targets() {
+		if (this.isPreview) return this.mainWindow ? [this.mainWindow] : [];
+		for (let e of this.peers) e.closed && this.peers.delete(e);
+		return Array.from(this.peers);
+	}
+	post(e, t) {
+		try {
+			e.postMessage(JSON.stringify(t), "*");
+		} catch {}
+	}
+	broadcast(e) {
+		let t = JSON.stringify(e);
+		if (t !== this.lastState) {
+			this.lastState = t;
+			for (let t of this.targets()) this.post(t, e);
+		}
+	}
+	onMessage = (e) => {
+		if (e.origin !== window.location.origin || typeof e.data != "string") return;
+		let t;
+		try {
+			t = JSON.parse(e.data);
+		} catch {
+			return;
+		}
+		if (!t || t.namespace !== Z) return;
+		if (t.type === "hello") {
+			let t = e.source;
+			if (this.isPreview || !t) return;
+			this.peers.add(t), this.openMessage && this.post(t, this.openMessage);
+			return;
+		}
+		if (t.type === "scroll") {
+			this.handlers.scroll(t.at);
+			return;
+		}
+		let n = JSON.stringify(t);
+		if (n === this.lastState) return;
+		if (this.lastState = n, t.type === "close") {
+			this.openMessage = void 0, this.handlers.close();
+			return;
+		}
+		let r = this.resolve(t);
+		r && (this.openMessage = t, this.handlers.open(r));
+	};
+}, pn = "\n	<div class=\"multimodal\" id=\"multimodal\" aria-hidden=\"true\">\n		<div class=\"mm-max\">\n			<div class=\"mm-dialog\">\n				<button class=\"mm-close\" type=\"button\" aria-hidden=\"true\" data-modal-close=\"true\" aria-label=\"Close\"><svg class=\"offset\" viewport=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(45 12 12)\"><line x1=\"0\" y1=\"12\" x2=\"24\" y2=\"12\"></line><line x1=\"12\" y1=\"0\" x2=\"12\" y2=\"24\"></line></g></svg></button>\n				<div class=\"mm-body\"></div>\n			</div>\n		</div>\n	</div>\n";
+function mn(e) {
 	let t = e.getSlidesElement();
 	if (!t) throw Error("Slides element not found");
-	t.insertAdjacentHTML("afterend", nn);
+	t.insertAdjacentHTML("afterend", pn);
 }
 //#endregion
 //#region src/plugin/js/modal.ts
-var Z = "multimodal", an = "mm-max", on = "mm-dialog", sn = "mm-body", Q = "shown", $ = "show", cn = "multimodal:show", ln = "multimodal:shown", un = "multimodal:hide", dn = "multimodal:hidden", fn = "<button class=\"mm-close\" type=\"button\" aria-hidden=\"true\" data-modal-close aria-label=\"Close\"><svg class=\"offset\" viewport=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(45 12 12)\"><line x1=\"0\" y1=\"12\" x2=\"24\" y2=\"12\"></line><line x1=\"12\" y1=\"0\" x2=\"12\" y2=\"24\"></line></g></svg></button>", pn = class e {
+var hn = "multimodal", gn = "mm-max", _n = "mm-dialog", vn = "mm-body", Q = "shown", $ = "show", yn = "multimodal:show", bn = "multimodal:shown", xn = "multimodal:hide", Sn = "multimodal:hidden", Cn = "<button class=\"mm-close\" type=\"button\" aria-hidden=\"true\" data-modal-close aria-label=\"Close\"><svg class=\"offset\" viewport=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(45 12 12)\"><line x1=\"0\" y1=\"12\" x2=\"24\" y2=\"12\"></line><line x1=\"12\" y1=\"0\" x2=\"12\" y2=\"24\"></line></g></svg></button>", wn = class e {
 	_isOpen;
 	modalElement;
 	modalMax;
@@ -2119,32 +2269,27 @@ var Z = "multimodal", an = "mm-max", on = "mm-dialog", sn = "mm-body", Q = "show
 	closeOnClickOutside;
 	isLocked;
 	eventListeners;
+	triggerClasses;
 	get isOpen() {
 		return this._isOpen;
 	}
 	static create(t) {
 		let n = t.getRevealElement();
 		if (!n) throw Error("Reveal element not found");
-		return n.querySelector(`.${Z}`) || rn(t), new e(t);
+		return n.querySelector(`.${hn}`) || mn(t), new e(t);
 	}
 	constructor(e) {
 		this._isOpen = !1;
 		let t = e.getRevealElement();
 		if (!t) throw Error("Reveal element not found");
-		let n = t.querySelector(`.${Z}`);
-		if (!n) throw Error(`Modal element with class ${Z} not found`);
-		this.modalElement = n, this.modalMax = this.modalElement.querySelector(`.${an}`), this.modalDialog = this.modalElement.querySelector(`.${on}`), this.modalBody = this.modalElement.querySelector(`.${sn}`), this.modalElement.style.setProperty("display", "none"), this.modalElement.setAttribute("aria-hidden", "true"), this.eventListeners = {}, this.presetConfigs = {
+		let n = t.querySelector(`.${hn}`);
+		if (!n) throw Error(`Modal element with class ${hn} not found`);
+		this.modalElement = n, this.modalMax = this.modalElement.querySelector(`.${gn}`), this.modalDialog = this.modalElement.querySelector(`.${_n}`), this.modalBody = this.modalElement.querySelector(`.${vn}`), this.modalElement.style.setProperty("display", "none"), this.modalElement.setAttribute("aria-hidden", "true"), this.eventListeners = {}, this.triggerClasses = [], this.presetConfigs = {
 			keyboard: !0,
 			mouseWheel: !1,
 			scrollProgress: "auto"
-		}, this.closeButtonHtml = fn, this.modalElement.addEventListener("transitionend", (e) => {
-			if (e.target === this.modalElement) {
-				if (this._isOpen) this.modalElement.classList.add(Q), this.trigger(ln, "shown");
-				else {
-					this.modalElement.classList.remove(Q), this.modalElement.classList.remove($), this.modalElement.style.setProperty("display", "none"), this.trigger(dn, "hidden");
-					for (let e of Array.from(this.modalElement.classList)) e !== Z && e !== $ && e !== Q && e !== "hide" && e !== "hidden" && this.modalElement.classList.remove(e);
-				}
-			}
+		}, this.closeButtonHtml = Cn, this.modalElement.addEventListener("transitionend", (e) => {
+			e.target === this.modalElement && (this._isOpen ? (this.modalElement.classList.add(Q), this.trigger(bn, "shown")) : (this.modalElement.classList.remove(Q), this.modalElement.classList.remove($), this.modalElement.style.setProperty("display", "none"), this.trigger(Sn, "hidden"), this.setTriggerClasses([])));
 		});
 	}
 	on(e, t) {
@@ -2158,39 +2303,46 @@ var Z = "multimodal", an = "mm-max", on = "mm-dialog", sn = "mm-body", Q = "show
 			trigger: this.triggerElement,
 			modal: this.modalElement,
 			dialog: this.modalDialog,
-			body: this.modalDialog.querySelector(`.${sn}`),
+			body: this.modalDialog.querySelector(`.${vn}`),
 			args: n
 		};
 		this.modalElement.dispatchEvent(new CustomEvent(e, { detail: i }));
 	}
 	show() {
-		this._isOpen = !0, this.modalElement.style.removeProperty("display"), this.modalElement.removeAttribute("aria-hidden"), window.getComputedStyle(this.modalElement).getPropertyValue("transition-duration") === "0s" ? (this.modalElement.classList.add($), this.trigger(cn, "show"), this.modalElement.classList.add(Q), this.trigger(ln, "shown")) : setTimeout(() => {
-			this.modalElement.classList.add($), this.trigger(cn, "show");
+		this._isOpen = !0, this.modalElement.style.removeProperty("display"), this.modalElement.removeAttribute("aria-hidden"), window.getComputedStyle(this.modalElement).getPropertyValue("transition-duration") === "0s" ? (this.modalElement.classList.add($), this.trigger(yn, "show"), this.modalElement.classList.add(Q), this.trigger(bn, "shown")) : setTimeout(() => {
+			this.modalElement.classList.add($), this.trigger(yn, "show");
 		}, 10);
 	}
 	hide() {
-		this._isOpen = !1, this.trigger(un, "hide"), this.modalElement.setAttribute("aria-hidden", "true"), window.getComputedStyle(this.modalElement).getPropertyValue("transition-duration") === "0s" ? (this.modalElement.classList.remove(Q), this.modalElement.classList.remove($), this.modalElement.style.setProperty("display", "none"), this.trigger(dn, "hide")) : this.modalElement.classList.remove($);
+		this._isOpen = !1, this.trigger(xn, "hide"), this.modalElement.setAttribute("aria-hidden", "true"), window.getComputedStyle(this.modalElement).getPropertyValue("transition-duration") === "0s" ? (this.modalElement.classList.remove(Q), this.modalElement.classList.remove($), this.modalElement.style.setProperty("display", "none"), this.trigger(Sn, "hide"), this.setTriggerClasses([])) : this.modalElement.classList.remove($);
+	}
+	setTriggerClasses(e) {
+		for (let e of this.triggerClasses) this.modalElement.classList.remove(e);
+		this.triggerClasses = [];
+		for (let t of e) !t || this.modalElement.classList.contains(t) || (this.modalElement.classList.add(t), this.triggerClasses.push(t));
 	}
 	setContent(e, t) {
 		let n = t === "html" ? `<div class="mm-body"><div class="mm-scrollbody">${e}</div></div>` : e;
 		this.modalDialog.innerHTML = this.closeButtonHtml + n;
 	}
-}, mn = "data-modal-type", hn = "data-modal-close", gn = ".reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-max { box-shadow: inset 0 0 0 1px red}", _n = class e {
+}, Tn = "data-modal-type", En = "data-modal-close", Dn = ".reveal .slides, .scroll-page-content:has(section.present) { box-shadow: inset 0 0 0 1px orange} .mm-max { box-shadow: inset 0 0 0 1px red}", On = class e {
 	deck;
 	options;
 	modal;
 	revealEl;
 	revealMargin;
+	sync;
+	scrollFollower;
 	constructor(e, t, n, r) {
 		this.deck = e, this.options = t, this.modal = n, this.revealEl = r, this.revealMargin = e.getConfig().margin ?? 0;
 	}
 	static async create(t, n) {
 		let r = t.getRevealElement();
 		if (!r) throw Error("Reveal element not found");
-		let i = pn.create(t), a = new e(t, n, i, r);
-		if (qt(t, i), await tn(i, n, _), a.setupEventHandlers(), n.debug) {
+		let i = wn.create(t), a = new e(t, n, i, r);
+		if ($t(t, i), await ln(i, n, _), a.setupEventHandlers(), n.debug) {
 			let e = document.createElement("style");
-			e.innerHTML = gn, document.head.appendChild(e);
+			e.innerHTML = Dn, document.head.appendChild(e);
 		}
 		return a;
 	}
@@ -2200,56 +2352,73 @@ var Z = "multimodal", an = "mm-max", on = "mm-dialog", sn = "mm-body", Q = "show
 	handleModalTrigger = async (e) => {
 		e.preventDefault();
 		let t = e.currentTarget, n = t.getAttribute("href");
-		(n === "#" || n === "#/") && e.stopPropagation(), await U(t, this.modal, this.options, _);
+		(n === "#" || n === "#/") && e.stopPropagation(), await W(t, this.modal, this.options, _);
 	};
 	modalEventFor(e) {
 		if (e.dataset.modalType) return e.dataset.modalEvent ? e.dataset.modalEvent : this.options.slidemodalevent;
 	}
 	setupEventHandlers() {
-		for (let e of this.revealEl.querySelectorAll(`[${mn}]:not(section)`)) e.addEventListener("click", this.handleModalTrigger);
+		if (this.sync = fn.create(this.deck, this.revealEl, {
+			open: (e) => {
+				this.modal.isOpen && this.modal.triggerElement === e || W(e, this.modal, this.options, _);
+			},
+			close: () => {
+				this.modal.isOpen && this.modal.hide();
+			},
+			scroll: (e) => {
+				this.scrollFollower?.apply(e);
+			}
+		}), this.sync) {
+			let e = this.sync;
+			this.scrollFollower = new on((t) => e.sendScroll(t));
+		}
+		for (let e of this.revealEl.querySelectorAll(`[${Tn}]:not(section)`)) e.addEventListener("click", this.handleModalTrigger);
 		let e = new MutationObserver((e) => {
-			for (let t of e) if (t.type === "childList") for (let e of Array.from(t.addedNodes)) e instanceof HTMLElement && e.hasAttribute(mn) && e.tagName.toLowerCase() !== "section" && e.addEventListener("click", this.handleModalTrigger);
+			for (let t of e) if (t.type === "childList") for (let e of Array.from(t.addedNodes)) e instanceof HTMLElement && e.hasAttribute(Tn) && e.tagName.toLowerCase() !== "section" && e.addEventListener("click", this.handleModalTrigger);
 		});
 		if (this.deck.addEventListener("click", (e) => {
 			let t = e.target;
-			(t.closest(`[${hn}]`) || t.closest("a[href=\"#multimodal\"]")) && (e.preventDefault(), e.stopPropagation(), this.modal.hide());
-		}), X(this.deck, "slidechanged", (e) => {
-			this.modal.isOpen && this.modal.hide(), Qt(e.currentSlide), Jt(this.deck) ? e.currentSlide.dataset.modalType && this.options.slidemodalevent === "slidetransitionend" && setTimeout(() => {
-				this.deck.getCurrentSlide() === e.currentSlide && U(e.currentSlide, this.modal, this.options, _);
-			}, 10) : this.modalEventFor(e.currentSlide) === "slidechanged" && U(e.currentSlide, this.modal, this.options, _);
-		}), X(this.deck, "slidetransitionend", (e) => {
-			this.modalEventFor(e.currentSlide) === "slidetransitionend" && U(e.currentSlide, this.modal, this.options, _);
-		}), X(this.deck, "ready", (t) => {
-			en(this.revealMargin, this.revealEl, this.deck.getScale(), this.modal, this.options);
+			(t.closest(`[${En}]`) || t.closest("a[href=\"#multimodal\"]")) && (e.preventDefault(), e.stopPropagation(), this.modal.hide());
+		}), v(this.deck, "slidechanged", (e) => {
+			this.modal.isOpen && this.modal.hide(), an(e.currentSlide), en(this.deck) ? e.currentSlide.dataset.modalType && this.options.slidemodalevent === "slidetransitionend" && setTimeout(() => {
+				this.deck.getCurrentSlide() === e.currentSlide && W(e.currentSlide, this.modal, this.options, _);
+			}, 10) : this.modalEventFor(e.currentSlide) === "slidechanged" && W(e.currentSlide, this.modal, this.options, _);
+		}), v(this.deck, "slidetransitionend", (e) => {
+			this.modalEventFor(e.currentSlide) === "slidetransitionend" && W(e.currentSlide, this.modal, this.options, _);
+		}), v(this.deck, "ready", (t) => {
+			sn(this.revealMargin, this.revealEl, this.deck.getScale(), this.modal, this.options);
 			let n = this.modalEventFor(t.currentSlide);
-			(n === "slidetransitionend" || n === "slidechanged") && U(t.currentSlide, this.modal, this.options, _), e.observe(this.revealEl, {
+			(n === "slidetransitionend" || n === "slidechanged") && W(t.currentSlide, this.modal, this.options, _), e.observe(this.revealEl, {
 				childList: !0,
 				subtree: !0
 			});
-		}), X(this.deck, "resize", (e) => {
-			en(this.revealMargin, this.revealEl, e.scale, this.modal, this.options);
+		}), v(this.deck, "resize", (e) => {
+			sn(this.revealMargin, this.revealEl, e.scale, this.modal, this.options);
 		}), this.modal.on("multimodal:show", () => {
-			this.revealEl.classList.add("multimodal-open"), document.addEventListener("keydown", this.escapePressed), this.modal.modalElement.closest(".reveal-scroll") || Yt(this.deck, this.modal);
+			this.revealEl.classList.add("multimodal-open"), this.sync?.sendOpen(this.modal.triggerElement), document.addEventListener("keydown", this.escapePressed), this.modal.modalElement.closest(".reveal-scroll") || tn(this.deck, this.modal);
 			let e = (e) => {
 				this.modal.isLocked || (e.target === this.modal.modalElement || e.target === this.modal.modalMax) && this.modal.hide();
 			};
 			this.modal.modalElement.addEventListener("click", e), this.modal.closeOnClickOutside = e;
 		}), this.modal.on("multimodal:shown", () => {
-			this.modal.triggerElement?.dataset.modalNavblock === "true" && Xt(this.deck, this.modal);
+			if (this.modal.triggerElement?.dataset.modalNavblock === "true" && nn(this.deck, this.modal), this.modal.modalElement.dataset.modalType === "html") {
+				let e = this.modal.modalDialog.querySelector(".mm-body");
+				e && this.scrollFollower?.attach(e);
+			}
 			let e = this.modal.modalDialog.querySelector("video");
-			e && (this.options.videoautoplay && e.play(), this.options.videoautohide && e.addEventListener("ended", () => {
+			e && (ye() && (e.muted = !0), this.options.videoautoplay && e.play(), this.options.videoautohide && e.addEventListener("ended", () => {
 				this.modal.hide();
 			}), e.addEventListener("webkitendfullscreen", () => {
 				this.options.debug && console.log("Exited fullscreen"), this.modal.hide();
 			}));
 		}), this.modal.on("multimodal:hide", () => {
-			this.revealEl.classList.remove("multimodal-open"), this.modal.closeOnClickOutside && (this.modal.modalElement.removeEventListener("click", this.modal.closeOnClickOutside), this.modal.closeOnClickOutside = void 0), Zt(this.deck, this.modal), document.removeEventListener("keydown", this.escapePressed);
+			this.revealEl.classList.remove("multimodal-open"), this.sync?.sendClose(), this.modal.closeOnClickOutside && (this.modal.modalElement.removeEventListener("click", this.modal.closeOnClickOutside), this.modal.closeOnClickOutside = void 0), this.scrollFollower?.detach(), rn(this.deck, this.modal), document.removeEventListener("keydown", this.escapePressed);
 			let e = this.modal.modalDialog.querySelector("video");
 			e && e.pause();
 		}), this.modal.on("multimodal:hidden", () => {
 			this.modal.modalBody.innerHTML = "";
 			let e = this.modal.modalDialog.querySelector("iframe");
-			e && (e.src = ""), this.modal.modalElement.style.removeProperty("--mm-modal-background"), this.modal.modalElement.style.removeProperty("--mm-overlaycolor"), this.modal.modalElement.style.removeProperty("--mm-modal-padding"), this.modal.modalElement.style.removeProperty("--mm-outerradius");
+			e && (e.src = ""), this.modal.modalElement.style.removeProperty("--mm-modal-background"), this.modal.modalElement.style.removeProperty("--mm-modal-padding"), cn(this.modal, this.options, _);
 		}), this.options.debug) for (let e of [
 			"multimodal:show",
 			"multimodal:shown",
@@ -2259,10 +2428,10 @@ var Z = "multimodal", an = "mm-max", on = "mm-dialog", sn = "mm-body", Q = "show
 			console.log(`Modal ${e.split(":")[1]}`);
 		});
 	}
-}, vn = "multimodal", yn = async (e, t, n) => {
-	me && n.debug && me.initialize(!0, vn);
+}, kn = "multimodal", An = async (e, t, n) => {
+	ue && n.debug && ue.initialize(!0, kn);
 	let r = document.querySelector("meta[name=generator]");
-	r instanceof HTMLMetaElement && r.content.includes("quarto") || await pe(e, n), await _n.create(t, n);
-}, bn = () => new ae(vn, yn, he).createInterface();
+	r instanceof HTMLMetaElement && r.content.includes("quarto") || await ge(e, n), await On.create(t, n);
+}, jn = () => new ie(kn, An, _e).createInterface();
 //#endregion
-export { bn as default };
+export { jn as default };

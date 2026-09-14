@@ -1,6 +1,4 @@
-/**
- * Preload what the triggers on a slide are going to ask for. Images only, for now.
- */
+// Images only, for now
 export function preloadFromSlide(slide: HTMLElement): void {
 	const slideTriggers = slide.querySelectorAll<HTMLElement>("[data-modal-type]");
 

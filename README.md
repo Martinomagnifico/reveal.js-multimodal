@@ -109,7 +109,15 @@ It is easy to set up your HTML structure for Multimodal. To show a modal, it nee
 <a href="#" data-modal-type="image" data-modal-url="assets/img/3.jpg">a data-modal-url</a>
 ```
 
-For **Markdown** markup, check the Markdown demo above.
+Content for an HTML modal usually sits on the slide it is opened from, where it should not be seen until the modal opens. Give it the `mm-dialog` class and the plugin keeps it out of sight:
+
+```html
+<div class="mm-dialog" id="somehiddendiv">
+  <h2>Example of HTML content</h2>
+</div>
+```
+
+For **Markdown** markup, check the Markdown demo above. The same class goes in an element comment: `<!-- .element: id="somehiddendiv" class="mm-dialog"-->`
 
 Note: If the modal-content is not valid or can’t be found, no modal will be opened. So make sure that the content you are linking to (an image, a video, a piece of HTML) is there where you expect it.
 
@@ -140,6 +148,14 @@ To automatically open a modal when a slide is shown, add the `data-modal-type` a
   <!-- Slide content here -->
 </section>
 ```
+
+### Speaker view
+
+In Speaker view (with the Reveal.js Notes plugin), opening any modal also opens it in the main window. It also works the other way around. 
+
+Scrolling a longer modal document is also repeated across the two windows, but that will only work for local content (on the page), not with iframes.
+
+Sound only comes out of the presentation window. A video modal plays muted in the speaker view, and an `iframe` that asks to autoplay is loaded there with YouTube and Vimeo's mute parameters. Any other player (which has no parameter we can rely on), is asked not to autoplay.
 
 ### Events
 

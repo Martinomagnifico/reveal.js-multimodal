@@ -11,6 +11,7 @@ block beforeslides
 
 block append scripts
 	+revealsrc("script", "dist/plugin/highlight.js")
+	+revealsrc("script", "dist/plugin/notes.js")
 
 	if process.env.NODE_ENV === 'production'
 		//- @vite-ignore
@@ -19,7 +20,7 @@ block append scripts
 			Reveal.initialize({
 				margin: 0.1, maxScale: 1.8, width: 1080, height: 700,
 				history: true, center: true, controlsTutorial: false,
-				plugins: [ Multimodal, RevealHighlight ]
+				plugins: [ Multimodal, RevealHighlight, RevealNotes ]
 			});
 	else
 		script(type="module").
@@ -27,7 +28,7 @@ block append scripts
 			Reveal.initialize({
 				margin: 0.1, maxScale: 1.8, width: 1080, height: 700,
 				history: true, center: true, controlsTutorial: false,
-				plugins: [ Multimodal, RevealHighlight ],
+				plugins: [ Multimodal, RevealHighlight, RevealNotes ],
 				multimodal: {
 					debug: false
 				}

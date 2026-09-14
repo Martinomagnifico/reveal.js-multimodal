@@ -1,10 +1,7 @@
 import type { Config } from "../config";
 import type { Modal } from "../modal";
 
-/**
- * Load a video's metadata and return the markup for it. Metadata first, so a
- * video that cannot be played never opens an empty modal.
- */
+// Metadata first, so a broken video never opens
 export async function loadVideo(
 	url: string | null,
 	modal: Modal,

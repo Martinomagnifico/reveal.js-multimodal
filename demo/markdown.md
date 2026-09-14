@@ -5,7 +5,7 @@ For Reveal.js, using Markdown
 
 > # Multimodal
 For Reveal.js, using Markdown
-<!-- .element: id="titlediv" class="mm-content"-->
+<!-- .element: id="titlediv" class="mm-dialog"-->
 
 
 
@@ -26,7 +26,7 @@ You can use it as a lighbox or actual modal to showcase images, video or HTML co
 
 > ## Example of HTML content
 This is just content that is normally hidden.
-<!-- .element: id="somehiddendiv" class="mm-content"-->
+<!-- .element: id="somehiddendiv" class="mm-dialog"-->
 
 ---
 
@@ -236,10 +236,27 @@ Video modals will play when opened, close when finished, and finish when closed.
 
 > ## Example of HTML content
 This is just content that is normally hidden.
-<!-- .element: id="somehiddendiv" class="mm-content"-->
+<!-- .element: id="somehiddendiv" class="mm-dialog"-->
 ```
 
-Long content [like this](#)<!-- .element: data-modal-type="html" data-modal-url="#longhiddendiv"--> will be scrollable in the modal.
+----
+
+### HTML modal from a local ID, long content
+
+[Link to long content](#)<!-- .element: data-modal-type="html" data-modal-url="#longhiddendiv"-->
+<!-- .element: class="example"-->
+
+Long content will be scrollable in the modal. Several paragraphs need a `div`, and the blank lines keep the Markdown inside it parsed.
+<!-- .element: class="small"-->
+
+```md []
+<div>
+
+Several paragraphs.
+
+</div>
+<!-- .element: id="longhiddendiv" class="mm-dialog"-->
+```
 
 <div>
 
@@ -251,7 +268,7 @@ Etiam tortor erat, fringilla ut sem vitae, interdum euismod dolor. Phasellus pel
 Phasellus eu risus lacinia, imperdiet felis vel, condimentum est. Fusce tristique nisi lacus, non placerat turpis scelerisque id. Etiam massa urna, venenatis ac lacus sit amet, faucibus vestibulum metus. Nulla facilisi. Vestibulum porttitor varius dapibus. In sit amet justo condimentum, lacinia sapien non, lacinia odio. Nullam sollicitudin sapien eget turpis condimentum, nec aliquet sem venenatis. Sed efficitur risus quis neque fringilla, at fringilla purus varius.
 
 </div>
-<!-- .element: id="longhiddendiv" class="mm-content"-->
+<!-- .element: id="longhiddendiv" class="mm-dialog"-->
 
 ----
 

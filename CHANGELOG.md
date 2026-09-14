@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.5] - 2026-09-14
+
+### Added
+- Modals sync with the speaker view. Fixes [#8](https://github.com/martinomagnifico/reveal.js-multimodal/issues/8)
+- HTML modals sync their scroll position with the speaker view (not iframes)
+
+### Fixed
+- The `overlaycolor` and `radius` options no longer fall back to the defaults after the first modal closes
+- A `data-modal-overlaycolor` that matches the default colour now applies
+- Classes from `data-modal-class` are removed after closing, also with `speed: 0`, and no other classes are
+- Long HTML content was visible on the slide in the Markdown demo
+
+### Changed
+- Videos and autoplaying iframes are muted in the speaker view
+
 ## [1.1.0] - 2026-08-22
 
 ### Changed

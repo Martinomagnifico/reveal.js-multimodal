@@ -11,20 +11,13 @@ export interface ModalEventDetail {
 	args: unknown[];
 }
 
-/**
- * The deck's own navigation settings, kept so they can be restored after a modal
- * that locked navigation is closed.
- */
 export interface PresetConfigs {
 	keyboard: RevealConfig["keyboard"];
 	mouseWheel: RevealConfig["mouseWheel"];
 	scrollProgress: RevealConfig["scrollProgress"];
 }
 
-/**
- * Reveal types its own events as plain DOM events, so the slide properties it
- * adds are not on the type. Handlers are given this instead.
- */
+// Reveal's slide events
 export interface RevealSlideEvent extends Event {
 	currentSlide: HTMLElement;
 	previousSlide: HTMLElement;
@@ -32,9 +25,6 @@ export interface RevealSlideEvent extends Event {
 	indexv: number;
 }
 
-/**
- * `resize` carries the new scale rather than a slide.
- */
 export interface RevealResizeEvent extends Event {
 	scale: number;
 }

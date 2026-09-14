@@ -10,9 +10,11 @@ import {
 	unlockNav,
 } from "./functions/navigation";
 import { preloadFromSlide } from "./functions/preload";
+import { ScrollFollower } from "./functions/scrollsync";
 import { setSize } from "./functions/setsize";
-import { setupOptions } from "./functions/setupoptions";
-import { onDeckEvent } from "./helpers";
+import { applyOverlayColor, setupOptions } from "./functions/setupoptions";
+import { SpeakerSync } from "./functions/speakersync";
+import { isSpeakerView, onDeckEvent } from "./helpers";
 import { Modal } from "./modal";
 import type { RevealResizeEvent, RevealSlideEvent } from "./types";
 
@@ -28,6 +30,8 @@ export class Multimodal {
 	private readonly modal: Modal;
 	private readonly revealEl: HTMLElement;
 	private readonly revealMargin: number;
+	private sync?: SpeakerSync;
+	private scrollFollower?: ScrollFollower;
 
 	private constructor(deck: RevealApi, options: Config, modal: Modal, revealEl: HTMLElement) {
 		this.deck = deck;
@@ -37,9 +41,6 @@ export class Multimodal {
 		this.revealMargin = deck.getConfig().margin ?? 0;
 	}
 
-	/**
-	 * Build the modal for this deck and wire everything to it.
-	 */
 	static async create(deck: RevealApi, options: Config): Promise<Multimodal> {
 		const revealEl = deck.getRevealElement();
 		if (!revealEl) {
@@ -63,9 +64,6 @@ export class Multimodal {
 		return multimodal;
 	}
 
-	/**
-	 * Escape closes an open modal, wherever focus happens to be.
-	 */
 	private escapePressed = (event: KeyboardEvent): void => {
 		if (event.key === "Escape") {
 			if (this.modal.isOpen) {
@@ -74,10 +72,7 @@ export class Multimodal {
 		}
 	};
 
-	/**
-	 * A trigger was clicked. An `href` of "#" is swallowed so the deck does not
-	 * also navigate.
-	 */
+	// Swallow href="#" so the deck does not navigate
 	private handleModalTrigger = async (event: Event): Promise<void> => {
 		event.preventDefault();
 		const target = event.currentTarget as HTMLElement;
@@ -88,9 +83,6 @@ export class Multimodal {
 		await loadModalContent(target, this.modal, this.options, originalConfig);
 	};
 
-	/**
-	 * The event a slide's own modal should open on, or undefined if it has none.
-	 */
 	private modalEventFor(slide: HTMLElement): string | undefined {
 		if (slide.dataset.modalType) {
 			return slide.dataset.modalEvent
@@ -101,14 +93,31 @@ export class Multimodal {
 	}
 
 	private setupEventHandlers(): void {
+		this.sync = SpeakerSync.create(this.deck, this.revealEl, {
+			open: (trigger) => {
+				if (this.modal.isOpen && this.modal.triggerElement === trigger) return;
+				loadModalContent(trigger, this.modal, this.options, originalConfig);
+			},
+			close: () => {
+				if (this.modal.isOpen) this.modal.hide();
+			},
+			scroll: (at) => {
+				this.scrollFollower?.apply(at);
+			},
+		});
+
+		if (this.sync) {
+			const sync = this.sync;
+			this.scrollFollower = new ScrollFollower((at) => sync.sendScroll(at));
+		}
+
 		for (const trigger of this.revealEl.querySelectorAll(
 			`[${TRIGGERATTRIBUTE}]:not(section)`
 		)) {
 			trigger.addEventListener("click", this.handleModalTrigger);
 		}
 
-		// Triggers that arrive later — a fragment, a Markdown slide — are picked up
-		// by an observer, because a delegated document click does not see them.
+		// Watch for triggers added later (fragments, Markdown)
 		const observer = new MutationObserver((mutationsList) => {
 			for (const mutation of mutationsList) {
 				if (mutation.type !== "childList") continue;
@@ -145,7 +154,7 @@ export class Multimodal {
 					event.currentSlide.dataset.modalType &&
 					this.options.slidemodalevent === "slidetransitionend"
 				) {
-					// A timeout, for when the first slide is itself a this.modal slide.
+					// Timeout for when the first slide is a modal slide
 					setTimeout(() => {
 						if (this.deck.getCurrentSlide() === event.currentSlide) {
 							loadModalContent(
@@ -193,6 +202,7 @@ export class Multimodal {
 
 		this.modal.on("multimodal:show", () => {
 			this.revealEl.classList.add("multimodal-open");
+			this.sync?.sendOpen(this.modal.triggerElement);
 			document.addEventListener("keydown", this.escapePressed);
 
 			if (!this.modal.modalElement.closest(".reveal-scroll")) {
@@ -218,8 +228,19 @@ export class Multimodal {
 				lockNav(this.deck, this.modal);
 			}
 
+			if (this.modal.modalElement.dataset.modalType === "html") {
+				const scroller = this.modal.modalDialog.querySelector<HTMLElement>(".mm-body");
+				if (scroller) {
+					this.scrollFollower?.attach(scroller);
+				}
+			}
+
 			const video = this.modal.modalDialog.querySelector("video");
 			if (video) {
+				// Mute in speaker view
+				if (isSpeakerView()) {
+					video.muted = true;
+				}
 				if (this.options.videoautoplay) {
 					video.play();
 				}
@@ -228,7 +249,7 @@ export class Multimodal {
 						this.modal.hide();
 					});
 				}
-				// iOS leaves its own fullscreen player rather than the this.modal.
+				// iOS fullscreen player
 				video.addEventListener("webkitendfullscreen", () => {
 					if (this.options.debug) {
 						console.log("Exited fullscreen");
@@ -242,6 +263,7 @@ export class Multimodal {
 
 		this.modal.on("multimodal:hide", () => {
 			this.revealEl.classList.remove("multimodal-open");
+			this.sync?.sendClose();
 			if (this.modal.closeOnClickOutside) {
 				this.modal.modalElement.removeEventListener(
 					"click",
@@ -250,6 +272,7 @@ export class Multimodal {
 				this.modal.closeOnClickOutside = undefined;
 			}
 
+			this.scrollFollower?.detach();
 			unlockNav(this.deck, this.modal);
 			document.removeEventListener("keydown", this.escapePressed);
 
@@ -265,10 +288,10 @@ export class Multimodal {
 			if (iframe) {
 				iframe.src = "";
 			}
+			// Undo what the trigger set
 			this.modal.modalElement.style.removeProperty("--mm-modal-background");
-			this.modal.modalElement.style.removeProperty("--mm-overlaycolor");
 			this.modal.modalElement.style.removeProperty("--mm-modal-padding");
-			this.modal.modalElement.style.removeProperty("--mm-outerradius");
+			applyOverlayColor(this.modal, this.options, originalConfig);
 		});
 
 		if (this.options.debug) {

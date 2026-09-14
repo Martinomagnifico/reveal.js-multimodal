@@ -1,12 +1,15 @@
 import type { Config } from "../config";
 import type { Modal } from "../modal";
 
-/**
- * Sets up options for the modal
- * @param modal Modal instance
- * @param options Current configuration options
- * @param originalOptions Original default configuration options
- */
+// Overlay colour from the deck, also reset after closing
+export function applyOverlayColor(modal: Modal, options: Config, originalOptions: Config): void {
+	if (options.overlaycolor !== originalOptions.overlaycolor) {
+		modal.modalElement.style.setProperty("--mm-overlaycolor", options.overlaycolor);
+	} else {
+		modal.modalElement.style.removeProperty("--mm-overlaycolor");
+	}
+}
+
 export async function setupOptions(
 	modal: Modal,
 	options: Config,
@@ -17,9 +20,7 @@ export async function setupOptions(
 		modal.closeButtonHtml = options.closebuttonhtml;
 	}
 
-	if (options.overlaycolor !== originalOptions.overlaycolor) {
-		modal.modalElement.style.setProperty("--mm-overlaycolor", options.overlaycolor);
-	}
+	applyOverlayColor(modal, options, originalOptions);
 
 	if (options.speed !== originalOptions.speed) {
 		const speed = options.speed ? options.speed / 1000 : 0;

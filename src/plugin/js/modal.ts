@@ -24,25 +24,21 @@ export class Modal {
 	modalDialog: HTMLElement;
 	modalBody: HTMLElement;
 
-	/** Written by setupOptions, and by an author through `closebuttonhtml`. */
 	closeButtonHtml: string;
-	/** The element that opened the modal, read back when it is shown. */
 	triggerElement?: HTMLElement;
-	/** The deck's navigation settings, kept so lockNav can restore them. */
 	presetConfigs: PresetConfigs;
 	closeOnClickOutside?: (event: MouseEvent) => void;
 	isLocked?: boolean;
 
 	private eventListeners: Record<string, ModalEventListener[]>;
+	// Classes added by data-modal-class
+	private triggerClasses: string[];
 
 	get isOpen(): boolean {
 		return this._isOpen;
 	}
 
-	/**
-	 * Build the modal for a deck: add the container if the author has not written
-	 * one themselves, then wrap it.
-	 */
+	// Add the container if the author has not
 	static create(deck: RevealApi): Modal {
 		const revealEl = deck.getRevealElement();
 		if (!revealEl) {
@@ -76,11 +72,12 @@ export class Modal {
 		this.modalElement.style.setProperty("display", "none");
 		this.modalElement.setAttribute("aria-hidden", "true");
 		this.eventListeners = {};
+		this.triggerClasses = [];
 		this.presetConfigs = { keyboard: true, mouseWheel: false, scrollProgress: "auto" };
 		this.closeButtonHtml = DEFAULT_CLOSE_BUTTON_HTML;
 
 		this.modalElement.addEventListener("transitionend", (event: TransitionEvent) => {
-			// Only the modal's own transition, not one bubbling up from its content.
+			// Ignore transitions from the content
 			if (event.target !== this.modalElement) return;
 
 			if (!this._isOpen) {
@@ -89,19 +86,7 @@ export class Modal {
 				this.modalElement.classList.remove(SHOW_CLASS);
 				this.modalElement.style.setProperty("display", "none");
 				this.trigger(EVENT_HIDDEN, "hidden");
-
-				// Drop whatever classes the trigger added, keeping the plugin's own.
-				for (const className of Array.from(this.modalElement.classList)) {
-					if (
-						className !== MODAL_ELEMENT_CLASS &&
-						className !== SHOW_CLASS &&
-						className !== SHOWN_CLASS &&
-						className !== "hide" &&
-						className !== "hidden"
-					) {
-						this.modalElement.classList.remove(className);
-					}
-				}
+				this.setTriggerClasses([]);
 			} else {
 				// Modal is shown
 				this.modalElement.classList.add(SHOWN_CLASS);
@@ -142,8 +127,7 @@ export class Modal {
 		this.modalElement.style.removeProperty("display");
 		this.modalElement.removeAttribute("aria-hidden");
 
-		// With no transition there is no transitionend to wait for, so both states
-		// are announced here instead.
+		// No transition, so no transitionend
 		if (
 			window.getComputedStyle(this.modalElement).getPropertyValue("transition-duration") ===
 			"0s"
@@ -173,8 +157,23 @@ export class Modal {
 			this.modalElement.classList.remove(SHOW_CLASS);
 			this.modalElement.style.setProperty("display", "none");
 			this.trigger(EVENT_HIDDEN, "hide");
+			this.setTriggerClasses([]);
 		} else {
 			this.modalElement.classList.remove(SHOW_CLASS);
+		}
+	}
+
+	// Swap the trigger's classes, never the modal's own
+	setTriggerClasses(classNames: string[]): void {
+		for (const className of this.triggerClasses) {
+			this.modalElement.classList.remove(className);
+		}
+		this.triggerClasses = [];
+
+		for (const className of classNames) {
+			if (!className || this.modalElement.classList.contains(className)) continue;
+			this.modalElement.classList.add(className);
+			this.triggerClasses.push(className);
 		}
 	}
 

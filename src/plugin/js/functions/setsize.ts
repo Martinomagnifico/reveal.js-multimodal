@@ -2,10 +2,7 @@ import type { Config } from "../config";
 import { roundToStep } from "../helpers";
 import type { Modal } from "../modal";
 
-/**
- * Keep the modal inside the deck's own bounds, and undo Reveal's scaling on the
- * border so it does not thicken as the deck scales up.
- */
+// Fit the modal in the deck, and unscale the border
 export const setSize = (
 	margin: number,
 	revealEl: HTMLElement,

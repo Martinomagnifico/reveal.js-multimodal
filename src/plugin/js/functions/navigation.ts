@@ -2,9 +2,6 @@ import { disableBodyScroll, enableBodyScroll } from "body-scroll-lock-upgrade";
 import type { RevealApi } from "reveal.js";
 import type { Modal } from "../modal";
 
-/**
- * Store the deck's own navigation settings on the modal, so they can be put back.
- */
 export const setPresetConfigs = (deck: RevealApi, modal: Modal): void => {
 	modal.presetConfigs = {
 		keyboard: deck.getConfig().keyboard,
@@ -13,9 +10,6 @@ export const setPresetConfigs = (deck: RevealApi, modal: Modal): void => {
 	};
 };
 
-/**
- * Whether the deck is in scroll view, where Reveal owns scrolling itself.
- */
 export const isScroller = (deck: RevealApi): boolean => {
 	const revealEl = deck.getRevealElement();
 	if (!revealEl) {
@@ -25,10 +19,7 @@ export const isScroller = (deck: RevealApi): boolean => {
 	return !!revealEl.closest(".reveal-scroll");
 };
 
-/**
- * While a modal is open, space and escape belong to the modal: escape closes it,
- * and space plays or pauses a video rather than advancing the deck.
- */
+// Escape closes, space plays or pauses a video
 export const spaceEscapeHide = (deck: RevealApi, modal: Modal): void => {
 	if (modal.modalElement.dataset.modalType === "video") {
 		const video = modal.modalDialog.querySelector("video");
@@ -62,9 +53,6 @@ export const spaceEscapeHide = (deck: RevealApi, modal: Modal): void => {
 	}
 };
 
-/**
- * Lock navigation for a modal that asked for it with `data-modal-navblock`.
- */
 export const lockNav = (deck: RevealApi, modal: Modal): void => {
 	if (modal.modalElement) {
 		disableBodyScroll(modal.modalElement);
@@ -80,9 +68,6 @@ export const lockNav = (deck: RevealApi, modal: Modal): void => {
 	modal.isLocked = true;
 };
 
-/**
- * Give navigation back, restoring what the deck was configured with.
- */
 export const unlockNav = (deck: RevealApi, modal: Modal): void => {
 	if (modal.modalElement) {
 		enableBodyScroll(modal.modalElement);

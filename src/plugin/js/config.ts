@@ -62,12 +62,7 @@ const defaultConfig: Config = {
 	zoomfrom: 0.9,
 };
 
-/**
- * A pristine copy of the defaults, taken at module load, before anything can be
- * merged into `defaultConfig`. setupOptions and loadModalContent only write a
- * custom property when the author's value differs from the shipped one, so they
- * need something to compare against that is guaranteed untouched.
- */
+// Untouched defaults to compare against
 const originalConfig: Config = structuredClone(defaultConfig);
 
 export { defaultConfig, originalConfig };

@@ -11,9 +11,6 @@ const MODAL_CONTAINER_HTML = `
 	</div>
 `;
 
-/**
- * Add the modal container to the deck, just after the slides element.
- */
 export function createModalContainer(deck: RevealApi): void {
 	const slidesElement = deck.getSlidesElement();
 	if (!slidesElement) {

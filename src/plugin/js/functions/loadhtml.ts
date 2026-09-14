@@ -1,12 +1,7 @@
 import { marked } from "marked";
 import type { Modal } from "../modal";
 
-/**
- * Resolve an HTML source into markup: an id on the page, a fetched .md file, or
- * a fetched .html file. Returns undefined when the source cannot be resolved —
- * the caller treats that as "do not open", so a failure never rejects out of a
- * click handler.
- */
+// From an id, a .md file or an .html file
 export async function loadHTML(source: string | null, modal: Modal): Promise<string | undefined> {
 	try {
 		if (typeof source !== "string") {
@@ -23,7 +18,7 @@ export async function loadHTML(source: string | null, modal: Modal): Promise<str
 
 			modal.modalElement.dataset.modalType = "html";
 
-			// A slide used as a source holds its content one level down.
+			// A slide holds its content one level down
 			return targetElement.firstElementChild?.tagName.toLowerCase() === "section"
 				? targetElement.firstElementChild.innerHTML
 				: targetElement.innerHTML;

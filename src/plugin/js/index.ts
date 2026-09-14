@@ -18,8 +18,7 @@ const init = async (plugin: PluginBase<Config>, deck: RevealApi, config: Config)
 		debug.initialize(true, PLUGIN_ID);
 	}
 
-	// Quarto ships its own copy of the plugin CSS, so autoloading it there would
-	// only duplicate what is already on the page.
+	// Quarto has its own CSS
 	const generatorMetaTag = document.querySelector("meta[name=generator]");
 	const isQuartoContent =
 		generatorMetaTag instanceof HTMLMetaElement && generatorMetaTag.content.includes("quarto");

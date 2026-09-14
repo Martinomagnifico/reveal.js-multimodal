@@ -1,17 +1,11 @@
 import type { Config } from "../config";
+import { isSpeakerView, silenceUrl } from "../helpers";
 import type { Modal } from "../modal";
 import { loadHTML } from "./loadhtml";
 import { loadImage } from "./loadimage";
 import { loadVideo } from "./loadvideo";
 
-/**
- * Loads content into the modal based on trigger element and type
- * @param trigger Element that triggered the modal
- * @param modal Modal instance
- * @param options Current configuration options
- * @param originalOptions Original default configuration options
- * @returns Promise that resolves when content is loaded
- */
+// Load content into the modal based on the trigger
 export async function loadModalContent(
 	trigger: HTMLElement,
 	modal: Modal,
@@ -32,9 +26,10 @@ export async function loadModalContent(
 		modalPadding = String(options.padding);
 	}
 
+	// Compare with the deck's colour, not the default
 	if (
 		trigger.dataset.modalOverlaycolor &&
-		trigger.dataset.modalOverlaycolor !== origOpts.overlaycolor
+		trigger.dataset.modalOverlaycolor !== options.overlaycolor
 	) {
 		modal.modalElement.style.setProperty(
 			"--mm-overlaycolor",
@@ -42,9 +37,8 @@ export async function loadModalContent(
 		);
 	}
 
-	if (trigger.dataset.modalClass) {
-		modal.modalElement.classList.add(...trigger.dataset.modalClass.split(/[ ,]+/));
-	}
+	// Also clears leftover classes
+	modal.setTriggerClasses(trigger.dataset.modalClass?.split(/[ ,]+/) ?? []);
 
 	if (modalType === "html") {
 		// Handle HTML padding
@@ -217,7 +211,9 @@ export async function loadModalContent(
 		modalContent = await loadHTML(modalUrl, modal);
 	} else if (modalType === "iframe") {
 		if (modalUrl) {
-			modalContent = `<iframe class="mm-body" src="${modalUrl}" frameborder="0" allowfullscreen></iframe>`;
+			// Mute in speaker view
+			const iframeUrl = isSpeakerView() ? silenceUrl(modalUrl) : modalUrl;
+			modalContent = `<iframe class="mm-body" src="${iframeUrl}" frameborder="0" allowfullscreen></iframe>`;
 			modal.modalElement.dataset.modalType = "iframe";
 		} else {
 			console.error("No URL provided for iframe modal");
@@ -228,8 +224,7 @@ export async function loadModalContent(
 		return;
 	}
 
-	// A loader that could not resolve its source returns undefined, which is the
-	// same "do not open" as an error along the way.
+	// Loader failed
 	if (hasError || !modalContent) {
 		return;
 	}

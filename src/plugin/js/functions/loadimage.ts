@@ -1,9 +1,5 @@
 import type { Modal } from "../modal";
 
-/**
- * Load an image and return the markup for it. Resolves undefined when the image
- * cannot be loaded, which the caller reads as "do not open".
- */
 export async function loadImage(
 	url: string | null,
 	modal: Modal,
