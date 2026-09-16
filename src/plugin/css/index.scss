@@ -45,6 +45,8 @@ section > .mm-dialog {
     z-index: 9999;
     opacity: 0;
     transition: all var(--mm-transspeed) var(--mm-transtiming);
+    // Only an open modal takes clicks, so one that is fading out, or never finished hiding, lets them through to the slides
+    pointer-events: none;
 
     &, & * {
         box-sizing: border-box;
@@ -75,6 +77,11 @@ section > .mm-dialog {
             justify-content: center;
             align-items: center;
             overflow: hidden;
+
+            // Only script focuses it, when the modal opens, so it needs no ring
+            &:focus {
+                outline: none;
+            }
 
             // STYLING
             background: var(--mm-modal-background, var(--mm-mediabgcolor));
@@ -155,6 +162,7 @@ section > .mm-dialog {
 
     &.show {
         opacity: 1;
+        pointer-events: auto;
         .mm-max {
             transform: translate(-50%, -50%) scale(var(--slide-scale));
         }

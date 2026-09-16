@@ -130,18 +130,11 @@
           <section class="center">
             <h3>Passing extra classes</h3>
             <p>A triggering element can pass extra classes to the modal with <code>data-modal-class</code>. </p>
-            <style>
-              .special { --mm-bordercolor: red;}
-              .special p, .special h2 { color: red;}
-              
-            </style>
+            <style>.special{--mm-bordercolor:red}.special p,.special h2{color:red}</style>
             <div class="example"><a href="#" data-modal-type="html" data-modal-url="#somehiddendiv" data-modal-class="special">Show modal</a></div>
             <pre><code class="hljs html" data-line-numbers><a href="#" data-modal-type="html" data-modal-url="#somehiddendiv" data-modal-class="special">Show modal</a>
 
-<style>
-    .special { --mm-bordercolor: red; }
-    .special p, .special h2 { color: red; }
-</style></code></pre>
+<style>.special{--mm-bordercolor:red}.special p,.special h2{color:red}</style></code></pre>
             <p class="small">Note: You can add multiple classes. Divide them by space or comma.</p>
           </section>
         </section>

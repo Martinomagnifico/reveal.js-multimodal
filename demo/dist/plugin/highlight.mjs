@@ -1,14 +1,14 @@
 //#region \0rolldown/runtime.js
-var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescriptor, r = Object.getOwnPropertyNames, i = Object.getPrototypeOf, a = Object.prototype.hasOwnProperty, o = (e, t) => () => (t || e((t = { exports: {} }).exports, t), t.exports), s = (e, i, o, s) => {
+var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescriptor, r = Object.getOwnPropertyNames, i = Object.getPrototypeOf, a = Object.prototype.hasOwnProperty, o = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t.exports), s = (e, i, o, s) => {
 	if (i && typeof i == "object" || typeof i == "function") for (var c = r(i), l = 0, u = c.length, d; l < u; l++) d = c[l], !a.call(e, d) && d !== o && t(e, d, {
 		get: ((e) => i[e]).bind(null, d),
 		enumerable: !(s = n(i, d)) || s.enumerable
 	});
 	return e;
-}, c = (n, r, a) => (a = n == null ? {} : e(i(n)), s(r || !n || !n.__esModule ? t(a, "default", {
+}, c = (n, r, o) => (o = n == null ? {} : e(i(n)), s(r || !n || !n.__esModule || !a.call(n, "default") ? t(o, "default", {
 	value: n,
 	enumerable: !0
-}) : a, n)), l = /* @__PURE__ */ o(((e, t) => {
+}) : o, n)), l = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return e instanceof Map ? e.clear = e.delete = e.set = function() {
 			throw Error("map is read-only");
@@ -217,49 +217,24 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		});
 		let i = y("I", "a", "is", "so", "us", "to", "at", "if", "in", "it", "on", /[A-Za-z]+['](d|ve|re|ll|t|s|n)/, /[A-Za-z]+[-][a-z]+/, /[A-Za-z][a-z]{2,}/);
 		return r.contains.push({ begin: _(/[ ]+/, "(", i, /[.]?[:]?([.][ ]|[ ])/, "){3}") }), r;
-	}, L = I("//", "$"), R = I("/\\*", "\\*/"), z = I("#", "$"), B = {
-		scope: "number",
-		begin: D,
-		relevance: 0
-	}, ee = {
-		scope: "number",
-		begin: O,
-		relevance: 0
-	}, te = {
-		scope: "number",
-		begin: k,
-		relevance: 0
-	}, V = {
-		scope: "regexp",
-		begin: /\/(?=[^/\n]*\/)/,
-		end: /\/[gimuy]*/,
-		contains: [M, {
-			begin: /\[/,
-			end: /\]/,
-			relevance: 0,
-			contains: [M]
-		}]
-	}, ne = {
-		scope: "title",
-		begin: T,
-		relevance: 0
-	}, H = {
-		scope: "title",
-		begin: E,
-		relevance: 0
-	}, U = {
-		begin: "\\.\\s*" + E,
-		relevance: 0
-	}, W = /* @__PURE__ */ Object.freeze({
+	}, L = I("//", "$"), R = I("/\\*", "\\*/"), z = I("#", "$"), B = /*#__PURE__*/ Object.freeze({
 		__proto__: null,
 		APOS_STRING_MODE: N,
 		BACKSLASH_ESCAPE: M,
-		BINARY_NUMBER_MODE: te,
+		BINARY_NUMBER_MODE: {
+			scope: "number",
+			begin: k,
+			relevance: 0
+		},
 		BINARY_NUMBER_RE: k,
 		COMMENT: I,
 		C_BLOCK_COMMENT_MODE: R,
 		C_LINE_COMMENT_MODE: L,
-		C_NUMBER_MODE: ee,
+		C_NUMBER_MODE: {
+			scope: "number",
+			begin: O,
+			relevance: 0
+		},
 		C_NUMBER_RE: O,
 		END_SAME_AS_BEGIN: function(e) {
 			return Object.assign(e, {
@@ -274,40 +249,65 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		HASH_COMMENT_MODE: z,
 		IDENT_RE: T,
 		MATCH_NOTHING_RE: w,
-		METHOD_GUARD: U,
-		NUMBER_MODE: B,
+		METHOD_GUARD: {
+			begin: "\\.\\s*[a-zA-Z_]\\w*",
+			relevance: 0
+		},
+		NUMBER_MODE: {
+			scope: "number",
+			begin: D,
+			relevance: 0
+		},
 		NUMBER_RE: D,
 		PHRASAL_WORDS_MODE: F,
 		QUOTE_STRING_MODE: P,
-		REGEXP_MODE: V,
+		REGEXP_MODE: {
+			scope: "regexp",
+			begin: /\/(?=[^/\n]*\/)/,
+			end: /\/[gimuy]*/,
+			contains: [M, {
+				begin: /\[/,
+				end: /\]/,
+				relevance: 0,
+				contains: [M]
+			}]
+		},
 		RE_STARTERS_RE: A,
 		SHEBANG: j,
-		TITLE_MODE: ne,
+		TITLE_MODE: {
+			scope: "title",
+			begin: T,
+			relevance: 0
+		},
 		UNDERSCORE_IDENT_RE: E,
-		UNDERSCORE_TITLE_MODE: H
+		UNDERSCORE_TITLE_MODE: {
+			scope: "title",
+			begin: E,
+			relevance: 0
+		}
 	});
-	function G(e, t) {
+	function V(e, t) {
 		e.input[e.index - 1] === "." && t.ignoreMatch();
 	}
-	function re(e, t) {
+	function ee(e, t) {
 		e.className !== void 0 && (e.scope = e.className, delete e.className);
 	}
-	function ie(e, t) {
-		t && e.beginKeywords && (e.begin = "\\b(" + e.beginKeywords.split(" ").join("|") + ")(?!\\.)(?=\\b|\\s)", e.__beforeBegin = G, e.keywords = e.keywords || e.beginKeywords, delete e.beginKeywords, e.relevance === void 0 && (e.relevance = 0));
+	function H(e, t) {
+		t && e.beginKeywords && (e.begin = "\\b(" + e.beginKeywords.split(" ").join("|") + ")(?!\\.)(?=\\b|\\s)", e.__beforeBegin = V, e.keywords = e.keywords || e.beginKeywords, delete e.beginKeywords, e.relevance === void 0 && (e.relevance = 0));
 	}
-	function K(e, t) {
+	function te(e, t) {
 		Array.isArray(e.illegal) && (e.illegal = y(...e.illegal));
 	}
-	function ae(e, t) {
+	function ne(e, t) {
 		if (e.match) {
 			if (e.begin || e.end) throw Error("begin & end are not supported with match");
 			e.begin = e.match, delete e.match;
 		}
 	}
-	function oe(e, t) {
+	function U(e, t) {
 		e.relevance === void 0 && (e.relevance = 1);
 	}
-	var se = (e, t) => {
+	var W = (e, t) => {
 		if (!e.beforeMatch) return;
 		if (e.starts) throw Error("beforeMatch cannot be used with starts");
 		let n = Object.assign({}, e);
@@ -317,7 +317,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			relevance: 0,
 			contains: [Object.assign(n, { endsParent: !0 })]
 		}, e.relevance = 0, delete n.beforeMatch;
-	}, ce = [
+	}, G = [
 		"of",
 		"and",
 		"for",
@@ -329,58 +329,58 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		"parent",
 		"list",
 		"value"
-	], le = "keyword";
-	function q(e, t, n = le) {
+	], re = "keyword";
+	function K(e, t, n = re) {
 		let r = Object.create(null);
 		return typeof e == "string" ? i(n, e.split(" ")) : Array.isArray(e) ? i(n, e) : Object.keys(e).forEach(function(n) {
-			Object.assign(r, q(e[n], t, n));
+			Object.assign(r, K(e[n], t, n));
 		}), r;
 		function i(e, n) {
 			t && (n = n.map((e) => e.toLowerCase())), n.forEach(function(t) {
 				let n = t.split("|");
-				r[n[0]] = [e, ue(n[0], n[1])];
+				r[n[0]] = [e, q(n[0], n[1])];
 			});
 		}
 	}
-	function ue(e, t) {
-		return t ? Number(t) : +!de(e);
+	function q(e, t) {
+		return t ? Number(t) : +!ie(e);
 	}
-	function de(e) {
-		return ce.includes(e.toLowerCase());
+	function ie(e) {
+		return G.includes(e.toLowerCase());
 	}
-	var fe = {}, J = (e) => {
+	var ae = {}, J = (e) => {
 		console.error(e);
-	}, pe = (e, ...t) => {
+	}, oe = (e, ...t) => {
 		console.log(`WARN: ${e}`, ...t);
 	}, Y = (e, t) => {
-		fe[`${e}/${t}`] || (console.log(`Deprecated as of ${e}. ${t}`), fe[`${e}/${t}`] = !0);
+		ae[`${e}/${t}`] || (console.log(`Deprecated as of ${e}. ${t}`), ae[`${e}/${t}`] = !0);
 	}, X = /* @__PURE__ */ Error();
-	function me(e, t, { key: n }) {
+	function se(e, t, { key: n }) {
 		let r = 0, i = e[n], a = {}, o = {};
 		for (let e = 1; e <= t.length; e++) o[e + r] = i[e], a[e + r] = !0, r += b(t[e - 1]);
 		e[n] = o, e[n]._emit = a, e[n]._multi = !0;
 	}
-	function he(e) {
+	function ce(e) {
 		if (Array.isArray(e.begin)) {
 			if (e.skip || e.excludeBegin || e.returnBegin) throw J("skip, excludeBegin, returnBegin not compatible with beginScope: {}"), X;
 			if (typeof e.beginScope != "object" || e.beginScope === null) throw J("beginScope must be object"), X;
-			me(e, e.begin, { key: "beginScope" }), e.begin = C(e.begin, { joinWith: "" });
+			se(e, e.begin, { key: "beginScope" }), e.begin = C(e.begin, { joinWith: "" });
 		}
 	}
-	function ge(e) {
+	function le(e) {
 		if (Array.isArray(e.end)) {
 			if (e.skip || e.excludeEnd || e.returnEnd) throw J("skip, excludeEnd, returnEnd not compatible with endScope: {}"), X;
 			if (typeof e.endScope != "object" || e.endScope === null) throw J("endScope must be object"), X;
-			me(e, e.end, { key: "endScope" }), e.end = C(e.end, { joinWith: "" });
+			se(e, e.end, { key: "endScope" }), e.end = C(e.end, { joinWith: "" });
 		}
 	}
-	function _e(e) {
+	function ue(e) {
 		e.scope && typeof e.scope == "object" && e.scope !== null && (e.beginScope = e.scope, delete e.scope);
 	}
-	function ve(e) {
-		_e(e), typeof e.beginScope == "string" && (e.beginScope = { _wrap: e.beginScope }), typeof e.endScope == "string" && (e.endScope = { _wrap: e.endScope }), he(e), ge(e);
+	function de(e) {
+		ue(e), typeof e.beginScope == "string" && (e.beginScope = { _wrap: e.beginScope }), typeof e.endScope == "string" && (e.endScope = { _wrap: e.endScope }), ce(e), le(e);
 	}
-	function ye(e) {
+	function fe(e) {
 		function t(t, n) {
 			return new RegExp(p(t), "m" + (e.case_insensitive ? "i" : "") + (e.unicodeRegex ? "u" : "") + (n ? "g" : ""));
 		}
@@ -392,7 +392,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				t.position = this.position++, this.matchIndexes[this.matchAt] = t, this.regexes.push([t, e]), this.matchAt += b(e) + 1;
 			}
 			compile() {
-				this.regexes.length === 0 && (this.exec = () => null), this.matcherRe = t(C(this.regexes.map((e) => e[1]), { joinWith: "|" }), !0), this.lastIndex = 0;
+				this.regexes.length === 0 && (this.exec = () => null);
+				let e = this.regexes.map((e) => e[1]);
+				this.matcherRe = t(C(e, { joinWith: "|" }), !0), this.lastIndex = 0;
 			}
 			exec(e) {
 				this.matcherRe.lastIndex = this.lastIndex;
@@ -442,18 +444,18 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			let a = n;
 			if (n.isCompiled) return a;
 			[
-				re,
-				ae,
-				ve,
-				se
+				ee,
+				ne,
+				de,
+				W
 			].forEach((e) => e(n, r)), e.compilerExtensions.forEach((e) => e(n, r)), n.__beforeBegin = null, [
-				ie,
-				K,
-				oe
+				H,
+				te,
+				U
 			].forEach((e) => e(n, r)), n.isCompiled = !0;
 			let s = null;
-			return typeof n.keywords == "object" && n.keywords.$pattern && (n.keywords = Object.assign({}, n.keywords), s = n.keywords.$pattern, delete n.keywords.$pattern), s ||= /\w+/, n.keywords &&= q(n.keywords, e.case_insensitive), a.keywordPatternRe = t(s, !0), r && (n.begin ||= /\B|\b/, a.beginRe = t(a.begin), !n.end && !n.endsWithParent && (n.end = /\B|\b/), n.end && (a.endRe = t(a.end)), a.terminatorEnd = p(a.end) || "", n.endsWithParent && r.terminatorEnd && (a.terminatorEnd += (n.end ? "|" : "") + r.terminatorEnd)), n.illegal && (a.illegalRe = t(n.illegal)), n.contains ||= [], n.contains = [].concat(...n.contains.map(function(e) {
-				return xe(e === "self" ? n : e);
+			return typeof n.keywords == "object" && n.keywords.$pattern && (n.keywords = Object.assign({}, n.keywords), s = n.keywords.$pattern, delete n.keywords.$pattern), s ||= /\w+/, n.keywords &&= K(n.keywords, e.case_insensitive), a.keywordPatternRe = t(s, !0), r && (n.begin ||= /\B|\b/, a.beginRe = t(a.begin), !n.end && !n.endsWithParent && (n.end = /\B|\b/), n.end && (a.endRe = t(a.end)), a.terminatorEnd = p(a.end) || "", n.endsWithParent && r.terminatorEnd && (a.terminatorEnd += (n.end ? "|" : "") + r.terminatorEnd)), n.illegal && (a.illegalRe = t(n.illegal)), n.contains ||= [], n.contains = [].concat(...n.contains.map(function(e) {
+				return me(e === "self" ? n : e);
 			})), n.contains.forEach(function(e) {
 				o(e, a);
 			}), n.starts && o(n.starts, r), a.matcher = i(a), a;
@@ -461,19 +463,19 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		if (e.compilerExtensions ||= [], e.contains && e.contains.includes("self")) throw Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.");
 		return e.classNameAliases = a(e.classNameAliases || {}), o(e);
 	}
-	function be(e) {
-		return e ? e.endsWithParent || be(e.starts) : !1;
+	function pe(e) {
+		return e ? e.endsWithParent || pe(e.starts) : !1;
 	}
-	function xe(e) {
+	function me(e) {
 		return e.variants && !e.cachedVariants && (e.cachedVariants = e.variants.map(function(t) {
 			return a(e, { variants: null }, t);
-		})), e.cachedVariants ? e.cachedVariants : be(e) ? a(e, { starts: e.starts ? a(e.starts) : null }) : Object.isFrozen(e) ? a(e) : e;
+		})), e.cachedVariants ? e.cachedVariants : pe(e) ? a(e, { starts: e.starts ? a(e.starts) : null }) : Object.isFrozen(e) ? a(e) : e;
 	}
-	var Se = "11.11.1", Ce = class extends Error {
+	var he = "11.11.1", ge = class extends Error {
 		constructor(e, t) {
 			super(e), this.name = "HTMLInjectionError", this.html = t;
 		}
-	}, we = i, Te = a, Ee = Symbol("nomatch"), De = 7, Oe = function(e) {
+	}, _e = i, ve = a, ye = Symbol("nomatch"), be = 7, xe = function(e) {
 		let t = Object.create(null), i = Object.create(null), a = [], o = !0, s = "Could not find the language '{}', did you forget to load/include a language module?", c = {
 			disableAutodetect: !0,
 			name: "Plain text",
@@ -497,7 +499,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			let n = l.languageDetectRe.exec(t);
 			if (n) {
 				let t = N(n[1]);
-				return t || (pe(s.replace("{}", n[1])), pe("Falling back to no-highlight mode for this block.", e)), t ? n[1] : "no-highlight";
+				return t || (oe(s.replace("{}", n[1])), oe("Falling back to no-highlight mode for this block.", e)), t ? n[1] : "no-highlight";
 			}
 			return t.split(/\s+/).find((e) => u(e) || N(e));
 		}
@@ -530,7 +532,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					let r = D.case_insensitive ? t[0].toLowerCase() : t[0], i = u(A, r);
 					if (i) {
 						let [e, a] = i;
-						if (M.addText(n), n = "", c[r] = (c[r] || 0) + 1, c[r] <= De && (F += a), e.startsWith("_")) n += t[0];
+						if (M.addText(n), n = "", c[r] = (c[r] || 0) + 1, c[r] <= be && (F += a), e.startsWith("_")) n += t[0];
 						else {
 							let n = D.classNameAliases[e] || e;
 							m(t[0], n);
@@ -596,7 +598,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}
 			function C(e) {
 				let t = e[0], r = n.substring(e.index), i = _(A, e, r);
-				if (!i) return Ee;
+				if (!i) return ye;
 				let a = A;
 				A.endScope && A.endScope._wrap ? (p(), m(t, A.endScope._wrap)) : A.endScope && A.endScope._multi ? (p(), h(A.endScope, e)) : a.skip ? P += t : (a.returnEnd || a.excludeEnd || (P += t), p(), a.excludeEnd && (P = t));
 				do
@@ -624,9 +626,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				if (r.type === "illegal" && !i) {
 					let e = /* @__PURE__ */ Error("Illegal lexeme \"" + a + "\" for mode \"" + (A.scope || "<unnamed>") + "\"");
 					throw e.mode = A, e;
-				} else if (r.type === "end") {
+				}
+				if (r.type === "end") {
 					let e = C(r);
-					if (e !== Ee) return e;
+					if (e !== ye) return e;
 				}
 				if (r.type === "illegal" && a === "") return P += "\n", 1;
 				if (L > 1e5 && L > r.index * 3) throw /* @__PURE__ */ Error("potential infinite loop, way more iterations than matches");
@@ -634,7 +637,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}
 			let D = N(e);
 			if (!D) throw J(s.replace("{}", e)), Error("Unknown language: \"" + e + "\"");
-			let O = ye(D), k = "", A = a || O, j = {}, M = new l.__emitter(l);
+			let O = fe(D), k = "", A = a || O, j = {}, M = new l.__emitter(l);
 			w();
 			let P = "", F = 0, I = 0, L = 0, R = !1;
 			try {
@@ -660,7 +663,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			} catch (t) {
 				if (t.message && t.message.includes("Illegal")) return {
 					language: e,
-					value: we(n),
+					value: _e(n),
 					illegal: !0,
 					relevance: 0,
 					_illegalBy: {
@@ -674,7 +677,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				};
 				if (o) return {
 					language: e,
-					value: we(n),
+					value: _e(n),
 					illegal: !1,
 					relevance: 0,
 					errorRaised: t,
@@ -686,7 +689,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		}
 		function b(e) {
 			let t = {
-				value: we(e),
+				value: _e(e),
 				illegal: !1,
 				relevance: 0,
 				_top: c,
@@ -722,7 +725,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				console.log("Element previously highlighted. To highlight again, first unset `dataset.highlighted`.", e);
 				return;
 			}
-			if (e.children.length > 0 && (l.ignoreUnescapedHTML || (console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk."), console.warn("https://github.com/highlightjs/highlight.js/wiki/security"), console.warn("The element with unescaped HTML:"), console.warn(e)), l.throwUnescapedHTML)) throw new Ce("One of your code blocks includes unescaped HTML.", e.innerHTML);
+			if (e.children.length > 0 && (l.ignoreUnescapedHTML || (console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk."), console.warn("https://github.com/highlightjs/highlight.js/wiki/security"), console.warn("The element with unescaped HTML:"), console.warn(e)), l.throwUnescapedHTML)) throw new ge("One of your code blocks includes unescaped HTML.", e.innerHTML);
 			t = e;
 			let r = t.textContent, i = n ? p(r, {
 				language: n,
@@ -742,7 +745,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			});
 		}
 		function T(e) {
-			l = Te(l, e);
+			l = ve(l, e);
 		}
 		let E = () => {
 			k(), Y("10.6.0", "initHighlighting() deprecated.  Use highlightAll() now.");
@@ -770,7 +773,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				else throw e;
 				i = c;
 			}
-			i.name ||= n, t[n] = i, i.rawDefinition = r.bind(null, e), i.aliases && P(i.aliases, { languageName: n });
+			i.name || (i.name = n), t[n] = i, i.rawDefinition = r.bind(null, e), i.aliases && P(i.aliases, { languageName: n });
 		}
 		function j(e) {
 			delete t[e];
@@ -811,7 +814,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				e[n] && e[n](t);
 			});
 		}
-		function B(e) {
+		function V(e) {
 			return Y("10.7.0", "highlightBlock will be removed entirely in v12.0"), Y("10.7.0", "Please use highlightElement now."), w(e);
 		}
 		Object.assign(e, {
@@ -819,7 +822,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			highlightAuto: S,
 			highlightAll: k,
 			highlightElement: w,
-			highlightBlock: B,
+			highlightBlock: V,
 			configure: T,
 			initHighlighting: E,
 			initHighlightingOnLoad: D,
@@ -829,24 +832,24 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			getLanguage: N,
 			registerAliases: P,
 			autoDetection: F,
-			inherit: Te,
+			inherit: ve,
 			addPlugin: L,
 			removePlugin: R
 		}), e.debugMode = function() {
 			o = !1;
 		}, e.safeMode = function() {
 			o = !0;
-		}, e.versionString = Se, e.regex = {
+		}, e.versionString = he, e.regex = {
 			concat: _,
 			lookahead: m,
 			either: y,
 			optional: g,
 			anyNumberOfTimes: h
 		};
-		for (let e in W) typeof W[e] == "object" && n(W[e]);
-		return Object.assign(e, W), e;
-	}, Z = Oe({});
-	Z.newInstance = () => Oe({}), t.exports = Z, Z.HighlightJS = Z, Z.default = Z;
+		for (let e in B) typeof B[e] == "object" && n(B[e]);
+		return Object.assign(e, B), e;
+	}, Z = xe({});
+	Z.newInstance = () => xe({}), t.exports = Z, Z.HighlightJS = Z, Z.default = Z;
 })), u = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = "[A-Za-zА-Яа-яёЁ_][A-Za-zА-Яа-яёЁ_0-9]+", n = "далее возврат вызватьисключение выполнить для если и из или иначе иначеесли исключение каждого конецесли конецпопытки конеццикла не новый перейти перем по пока попытка прервать продолжить тогда цикл экспорт ", r = "null истина ложь неопределено", i = e.inherit(e.NUMBER_MODE), a = {
@@ -1147,12 +1150,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), m = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "\\d(_|\\d)*";
-		"" + t, t + "", t + "";
-		let n = "[A-Za-z](_?[A-Za-z0-9.])*", r = "[]\\{\\}%#'\"", i = e.COMMENT("--", "$"), a = {
+		let t = "[A-Za-z](_?[A-Za-z0-9.])*", n = "[]\\{\\}%#'\"", r = e.COMMENT("--", "$"), i = {
 			begin: "\\s+:\\s+",
 			end: "\\s*(:=|;|\\)|=>|$)",
-			illegal: r,
+			illegal: n,
 			contains: [
 				{
 					beginKeywords: "loop for declare others",
@@ -1164,7 +1165,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				},
 				{
 					className: "type",
-					begin: n,
+					begin: t,
 					endsParent: !0,
 					relevance: 0
 				}
@@ -1178,7 +1179,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				literal: ["True", "False"]
 			},
 			contains: [
-				i,
+				r,
 				{
 					className: "string",
 					begin: /"/,
@@ -1199,7 +1200,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				},
 				{
 					className: "symbol",
-					begin: "'" + n
+					begin: "'" + t
 				},
 				{
 					className: "title",
@@ -1208,7 +1209,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					keywords: "package body",
 					excludeBegin: !0,
 					excludeEnd: !0,
-					illegal: r
+					illegal: n
 				},
 				{
 					begin: "(\\b(with|overriding)\\s+)?\\b(function|procedure)\\s+",
@@ -1216,16 +1217,16 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					keywords: "overriding function procedure with is renames return",
 					returnBegin: !0,
 					contains: [
-						i,
+						r,
 						{
 							className: "title",
 							begin: "(\\bwith\\s+)?\\b(function|procedure)\\s+",
 							end: "(\\(|\\s+|$)",
 							excludeBegin: !0,
 							excludeEnd: !0,
-							illegal: r
+							illegal: n
 						},
-						a,
+						i,
 						{
 							className: "type",
 							begin: "\\breturn\\s+",
@@ -1234,7 +1235,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 							excludeBegin: !0,
 							excludeEnd: !0,
 							endsParent: !0,
-							illegal: r
+							illegal: n
 						}
 					]
 				},
@@ -1244,9 +1245,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: "\\s+",
 					keywords: "type",
 					excludeBegin: !0,
-					illegal: r
+					illegal: n
 				},
-				a
+				i
 			]
 		};
 	}
@@ -1633,10 +1634,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), y = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = e.regex, n = e.COMMENT("//", "$", { contains: [{ begin: /\\\n/ }] }), r = "decltype\\(auto\\)", i = "[a-zA-Z_]\\w*::", a = "(?!struct)(" + r + "|" + t.optional(i) + "[a-zA-Z_]\\w*" + t.optional("<[^<>]+>") + ")", o = {
+		let t = e.regex, n = e.COMMENT("//", "$", { contains: [{ begin: /\\\n/ }] }), r = "[a-zA-Z_]\\w*::", i = "(?!struct)(decltype\\(auto\\)|" + t.optional(r) + "[a-zA-Z_]\\w*" + t.optional("<[^<>]+>") + ")", a = {
 			className: "type",
 			begin: "\\b[a-z\\d_]*_t\\b"
-		}, s = {
+		}, o = {
 			className: "string",
 			variants: [
 				{
@@ -1655,11 +1656,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /\)([^()\\ ]{0,16})"/
 				})
 			]
-		}, c = {
+		}, s = {
 			className: "number",
 			variants: [{ begin: "[+-]?(?:(?:[0-9](?:'?[0-9])*\\.(?:[0-9](?:'?[0-9])*)?|\\.[0-9](?:'?[0-9])*)(?:[Ee][+-]?[0-9](?:'?[0-9])*)?|[0-9](?:'?[0-9])*[Ee][+-]?[0-9](?:'?[0-9])*|0[Xx](?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*(?:\\.(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)?)?|\\.[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)[Pp][+-]?[0-9](?:'?[0-9])*)(?:[Ff](?:16|32|64|128)?|(BF|bf)16|[Ll]|)" }, { begin: "[+-]?\\b(?:0[Bb][01](?:'?[01])*|0[Xx][0-9A-Fa-f](?:'?[0-9A-Fa-f])*|0(?:'?[0-7])*|[1-9](?:'?[0-9])*)(?:[Uu](?:LL?|ll?)|[Uu][Zz]?|(?:LL?|ll?)[Uu]?|[Zz][Uu]|)" }],
 			relevance: 0
-		}, l = {
+		}, c = {
 			className: "meta",
 			begin: /#\s*[a-z]+\b/,
 			end: /$/,
@@ -1669,7 +1670,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					begin: /\\\n/,
 					relevance: 0
 				},
-				e.inherit(s, { className: "string" }),
+				e.inherit(o, { className: "string" }),
 				{
 					className: "string",
 					begin: /<.*?>/
@@ -1677,11 +1678,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				n,
 				e.C_BLOCK_COMMENT_MODE
 			]
-		}, u = {
+		}, l = {
 			className: "title",
-			begin: t.optional(i) + e.IDENT_RE,
+			begin: t.optional(r) + e.IDENT_RE,
 			relevance: 0
-		}, d = t.optional(i) + e.IDENT_RE + "\\s*\\(", f = /* @__PURE__ */ "alignas.alignof.and.and_eq.asm.atomic_cancel.atomic_commit.atomic_noexcept.auto.bitand.bitor.break.case.catch.class.co_await.co_return.co_yield.compl.concept.const_cast|10.consteval.constexpr.constinit.continue.decltype.default.delete.do.dynamic_cast|10.else.enum.explicit.export.extern.false.final.for.friend.goto.if.import.inline.module.mutable.namespace.new.noexcept.not.not_eq.nullptr.operator.or.or_eq.override.private.protected.public.reflexpr.register.reinterpret_cast|10.requires.return.sizeof.static_assert.static_cast|10.struct.switch.synchronized.template.this.thread_local.throw.transaction_safe.transaction_safe_dynamic.true.try.typedef.typeid.typename.union.using.virtual.volatile.while.xor.xor_eq".split("."), p = [
+		}, u = t.optional(r) + e.IDENT_RE + "\\s*\\(", d = /* @__PURE__ */ "alignas.alignof.and.and_eq.asm.atomic_cancel.atomic_commit.atomic_noexcept.auto.bitand.bitor.break.case.catch.class.co_await.co_return.co_yield.compl.concept.const_cast|10.consteval.constexpr.constinit.continue.decltype.default.delete.do.dynamic_cast|10.else.enum.explicit.export.extern.false.final.for.friend.goto.if.import.inline.module.mutable.namespace.new.noexcept.not.not_eq.nullptr.operator.or.or_eq.override.private.protected.public.reflexpr.register.reinterpret_cast|10.requires.return.sizeof.static_assert.static_cast|10.struct.switch.synchronized.template.this.thread_local.throw.transaction_safe.transaction_safe_dynamic.true.try.typedef.typeid.typename.union.using.virtual.volatile.while.xor.xor_eq".split("."), f = [
 			"bool",
 			"char",
 			"char16_t",
@@ -1698,9 +1699,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			"signed",
 			"const",
 			"static"
-		], m = /* @__PURE__ */ "any.auto_ptr.barrier.binary_semaphore.bitset.complex.condition_variable.condition_variable_any.counting_semaphore.deque.false_type.flat_map.flat_set.future.imaginary.initializer_list.istringstream.jthread.latch.lock_guard.multimap.multiset.mutex.optional.ostringstream.packaged_task.pair.promise.priority_queue.queue.recursive_mutex.recursive_timed_mutex.scoped_lock.set.shared_future.shared_lock.shared_mutex.shared_timed_mutex.shared_ptr.stack.string_view.stringstream.timed_mutex.thread.true_type.tuple.unique_lock.unique_ptr.unordered_map.unordered_multimap.unordered_multiset.unordered_set.variant.vector.weak_ptr.wstring.wstring_view".split("."), h = /* @__PURE__ */ "abort.abs.acos.apply.as_const.asin.atan.atan2.calloc.ceil.cerr.cin.clog.cos.cosh.cout.declval.endl.exchange.exit.exp.fabs.floor.fmod.forward.fprintf.fputs.free.frexp.fscanf.future.invoke.isalnum.isalpha.iscntrl.isdigit.isgraph.islower.isprint.ispunct.isspace.isupper.isxdigit.labs.launder.ldexp.log.log10.make_pair.make_shared.make_shared_for_overwrite.make_tuple.make_unique.malloc.memchr.memcmp.memcpy.memset.modf.move.pow.printf.putchar.puts.realloc.scanf.sin.sinh.snprintf.sprintf.sqrt.sscanf.std.stderr.stdin.stdout.strcat.strchr.strcmp.strcpy.strcspn.strlen.strncat.strncmp.strncpy.strpbrk.strrchr.strspn.strstr.swap.tan.tanh.terminate.to_underlying.tolower.toupper.vfprintf.visit.vprintf.vsprintf".split("."), g = {
-			type: p,
-			keyword: f,
+		], p = /* @__PURE__ */ "any.auto_ptr.barrier.binary_semaphore.bitset.complex.condition_variable.condition_variable_any.counting_semaphore.deque.false_type.flat_map.flat_set.future.imaginary.initializer_list.istringstream.jthread.latch.lock_guard.multimap.multiset.mutex.optional.ostringstream.packaged_task.pair.promise.priority_queue.queue.recursive_mutex.recursive_timed_mutex.scoped_lock.set.shared_future.shared_lock.shared_mutex.shared_timed_mutex.shared_ptr.stack.string_view.stringstream.timed_mutex.thread.true_type.tuple.unique_lock.unique_ptr.unordered_map.unordered_multimap.unordered_multiset.unordered_set.variant.vector.weak_ptr.wstring.wstring_view".split("."), m = /* @__PURE__ */ "abort.abs.acos.apply.as_const.asin.atan.atan2.calloc.ceil.cerr.cin.clog.cos.cosh.cout.declval.endl.exchange.exit.exp.fabs.floor.fmod.forward.fprintf.fputs.free.frexp.fscanf.future.invoke.isalnum.isalpha.iscntrl.isdigit.isgraph.islower.isprint.ispunct.isspace.isupper.isxdigit.labs.launder.ldexp.log.log10.make_pair.make_shared.make_shared_for_overwrite.make_tuple.make_unique.malloc.memchr.memcmp.memcpy.memset.modf.move.pow.printf.putchar.puts.realloc.scanf.sin.sinh.snprintf.sprintf.sqrt.sscanf.std.stderr.stdin.stdout.strcat.strchr.strcmp.strcpy.strcspn.strlen.strncat.strncmp.strncpy.strpbrk.strrchr.strspn.strstr.swap.tan.tanh.terminate.to_underlying.tolower.toupper.vfprintf.visit.vprintf.vsprintf".split("."), h = {
+			type: f,
+			keyword: d,
 			literal: [
 				"NULL",
 				"false",
@@ -1709,21 +1710,21 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				"true"
 			],
 			built_in: ["_Pragma"],
-			_type_hints: m
-		}, _ = {
+			_type_hints: p
+		}, g = {
 			className: "function.dispatch",
 			relevance: 0,
-			keywords: { _hint: h },
+			keywords: { _hint: m },
 			begin: t.concat(/\b/, /(?!decltype)/, /(?!if)/, /(?!for)/, /(?!switch)/, /(?!while)/, e.IDENT_RE, t.lookahead(/(<[^<>]+>|)\s*\(/))
-		}, v = [
-			_,
-			l,
-			o,
+		}, _ = [
+			g,
+			c,
+			a,
 			n,
 			e.C_BLOCK_COMMENT_MODE,
-			c,
-			s
-		], y = {
+			s,
+			o
+		], v = {
 			variants: [
 				{
 					begin: /=/,
@@ -1738,33 +1739,33 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /;/
 				}
 			],
-			keywords: g,
-			contains: v.concat([{
+			keywords: h,
+			contains: _.concat([{
 				begin: /\(/,
 				end: /\)/,
-				keywords: g,
-				contains: v.concat(["self"]),
+				keywords: h,
+				contains: _.concat(["self"]),
 				relevance: 0
 			}]),
 			relevance: 0
-		}, b = {
+		}, y = {
 			className: "function",
-			begin: "(" + a + "[\\*&\\s]+)+" + d,
+			begin: "(" + i + "[\\*&\\s]+)+" + u,
 			returnBegin: !0,
 			end: /[{;=]/,
 			excludeEnd: !0,
-			keywords: g,
+			keywords: h,
 			illegal: /[^\w\s\*&:<>.]/,
 			contains: [
 				{
-					begin: r,
-					keywords: g,
+					begin: "decltype\\(auto\\)",
+					keywords: h,
 					relevance: 0
 				},
 				{
-					begin: d,
+					begin: u,
 					returnBegin: !0,
-					contains: [u],
+					contains: [l],
 					relevance: 0
 				},
 				{
@@ -1774,7 +1775,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{
 					begin: /:/,
 					endsWithParent: !0,
-					contains: [s, c]
+					contains: [o, s]
 				},
 				{
 					relevance: 0,
@@ -1784,34 +1785,34 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					className: "params",
 					begin: /\(/,
 					end: /\)/,
-					keywords: g,
+					keywords: h,
 					relevance: 0,
 					contains: [
 						n,
 						e.C_BLOCK_COMMENT_MODE,
-						s,
-						c,
 						o,
+						s,
+						a,
 						{
 							begin: /\(/,
 							end: /\)/,
-							keywords: g,
+							keywords: h,
 							relevance: 0,
 							contains: [
 								"self",
 								n,
 								e.C_BLOCK_COMMENT_MODE,
+								o,
 								s,
-								c,
-								o
+								a
 							]
 						}
 					]
 				},
-				o,
+				a,
 				n,
 				e.C_BLOCK_COMMENT_MODE,
-				l
+				c
 			]
 		};
 		return {
@@ -1825,20 +1826,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				"hxx",
 				"cxx"
 			],
-			keywords: g,
+			keywords: h,
 			illegal: "</",
 			classNameAliases: { "function.dispatch": "built_in" },
-			contains: [].concat(y, b, _, v, [
-				l,
+			contains: [].concat(v, y, g, _, [
+				c,
 				{
 					begin: "\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function|flat_map|flat_set)\\s*<(?!<)",
 					end: ">",
-					keywords: g,
-					contains: ["self", o]
+					keywords: h,
+					contains: ["self", a]
 				},
 				{
 					begin: e.IDENT_RE + "::",
-					keywords: g
+					keywords: h
 				},
 				{
 					match: [
@@ -3020,10 +3021,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), N = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = e.regex, n = e.COMMENT("//", "$", { contains: [{ begin: /\\\n/ }] }), r = "decltype\\(auto\\)", i = "[a-zA-Z_]\\w*::", a = "(" + r + "|" + t.optional(i) + "[a-zA-Z_]\\w*" + t.optional("<[^<>]+>") + ")", o = {
+		let t = e.regex, n = e.COMMENT("//", "$", { contains: [{ begin: /\\\n/ }] }), r = "[a-zA-Z_]\\w*::", i = "(decltype\\(auto\\)|" + t.optional(r) + "[a-zA-Z_]\\w*" + t.optional("<[^<>]+>") + ")", a = {
 			className: "type",
 			variants: [{ begin: "\\b[a-z\\d_]*_t\\b" }, { match: /\batomic_[a-z]{3,6}\b/ }]
-		}, s = {
+		}, o = {
 			className: "string",
 			variants: [
 				{
@@ -3042,7 +3043,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /\)([^()\\ ]{0,16})"/
 				})
 			]
-		}, c = {
+		}, s = {
 			className: "number",
 			variants: [
 				{ match: /\b(0b[01']+)/ },
@@ -3051,7 +3052,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{ match: /(-?)\b\d+(?:'\d+)*(?:\.\d*(?:'\d*)*)?(?:[eE][-+]?\d+)?/ }
 			],
 			relevance: 0
-		}, l = {
+		}, c = {
 			className: "meta",
 			begin: /#\s*[a-z]+\b/,
 			end: /$/,
@@ -3061,7 +3062,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					begin: /\\\n/,
 					relevance: 0
 				},
-				e.inherit(s, { className: "string" }),
+				e.inherit(o, { className: "string" }),
 				{
 					className: "string",
 					begin: /<.*?>/
@@ -3069,23 +3070,23 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				n,
 				e.C_BLOCK_COMMENT_MODE
 			]
-		}, u = {
+		}, l = {
 			className: "title",
-			begin: t.optional(i) + e.IDENT_RE,
+			begin: t.optional(r) + e.IDENT_RE,
 			relevance: 0
-		}, d = t.optional(i) + e.IDENT_RE + "\\s*\\(", f = {
+		}, u = t.optional(r) + e.IDENT_RE + "\\s*\\(", d = {
 			keyword: /* @__PURE__ */ "asm.auto.break.case.continue.default.do.else.enum.extern.for.fortran.goto.if.inline.register.restrict.return.sizeof.typeof.typeof_unqual.struct.switch.typedef.union.volatile.while._Alignas._Alignof._Atomic._Generic._Noreturn._Static_assert._Thread_local.alignas.alignof.noreturn.static_assert.thread_local._Pragma".split("."),
 			type: /* @__PURE__ */ "float.double.signed.unsigned.int.short.long.char.void._Bool._BitInt._Complex._Imaginary._Decimal32._Decimal64._Decimal96._Decimal128._Decimal64x._Decimal128x._Float16._Float32._Float64._Float128._Float32x._Float64x._Float128x.const.static.constexpr.complex.bool.imaginary".split("."),
 			literal: "true false NULL",
 			built_in: "std string wstring cin cout cerr clog stdin stdout stderr stringstream istringstream ostringstream auto_ptr deque list queue stack vector map set pair bitset multiset multimap unordered_set unordered_map unordered_multiset unordered_multimap priority_queue make_pair array shared_ptr abort terminate abs acos asin atan2 atan calloc ceil cosh cos exit exp fabs floor fmod fprintf fputs free frexp fscanf future isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit tolower toupper labs ldexp log10 log malloc realloc memchr memcmp memcpy memset modf pow printf putchar puts scanf sinh sin snprintf sprintf sqrt sscanf strcat strchr strcmp strcpy strcspn strlen strncat strncmp strncpy strpbrk strrchr strspn strstr tanh tan vfprintf vprintf vsprintf endl initializer_list unique_ptr"
-		}, p = [
-			l,
-			o,
+		}, f = [
+			c,
+			a,
 			n,
 			e.C_BLOCK_COMMENT_MODE,
-			c,
-			s
-		], m = {
+			s,
+			o
+		], p = {
 			variants: [
 				{
 					begin: /=/,
@@ -3100,32 +3101,32 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /;/
 				}
 			],
-			keywords: f,
-			contains: p.concat([{
+			keywords: d,
+			contains: f.concat([{
 				begin: /\(/,
 				end: /\)/,
-				keywords: f,
-				contains: p.concat(["self"]),
+				keywords: d,
+				contains: f.concat(["self"]),
 				relevance: 0
 			}]),
 			relevance: 0
-		}, h = {
-			begin: "(" + a + "[\\*&\\s]+)+" + d,
+		}, m = {
+			begin: "(" + i + "[\\*&\\s]+)+" + u,
 			returnBegin: !0,
 			end: /[{;=]/,
 			excludeEnd: !0,
-			keywords: f,
+			keywords: d,
 			illegal: /[^\w\s\*&:<>.]/,
 			contains: [
 				{
-					begin: r,
-					keywords: f,
+					begin: "decltype\\(auto\\)",
+					keywords: d,
 					relevance: 0
 				},
 				{
-					begin: d,
+					begin: u,
 					returnBegin: !0,
-					contains: [e.inherit(u, { className: "title.function" })],
+					contains: [e.inherit(l, { className: "title.function" })],
 					relevance: 0
 				},
 				{
@@ -3136,47 +3137,47 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					className: "params",
 					begin: /\(/,
 					end: /\)/,
-					keywords: f,
+					keywords: d,
 					relevance: 0,
 					contains: [
 						n,
 						e.C_BLOCK_COMMENT_MODE,
-						s,
-						c,
 						o,
+						s,
+						a,
 						{
 							begin: /\(/,
 							end: /\)/,
-							keywords: f,
+							keywords: d,
 							relevance: 0,
 							contains: [
 								"self",
 								n,
 								e.C_BLOCK_COMMENT_MODE,
+								o,
 								s,
-								c,
-								o
+								a
 							]
 						}
 					]
 				},
-				o,
+				a,
 				n,
 				e.C_BLOCK_COMMENT_MODE,
-				l
+				c
 			]
 		};
 		return {
 			name: "C",
 			aliases: ["h"],
-			keywords: f,
+			keywords: d,
 			disableAutodetect: !0,
 			illegal: "</",
-			contains: [].concat(m, h, p, [
-				l,
+			contains: [].concat(p, m, f, [
+				c,
 				{
 					begin: e.IDENT_RE + "::",
-					keywords: f
+					keywords: d
 				},
 				{
 					className: "class",
@@ -3186,9 +3187,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				}
 			]),
 			exports: {
-				preprocessor: l,
-				strings: s,
-				keywords: f
+				preprocessor: c,
+				strings: o,
+				keywords: d
 			}
 		};
 	}
@@ -3459,13 +3460,13 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), R = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "[#]?[a-zA-Z_\\-!.?+*=<>&'][a-zA-Z_\\-!.?+*=<>&'0-9/;:$#]*", n = "def defonce defprotocol defstruct defmulti defmethod defn- defn defmacro deftype defrecord", r = {
-			$pattern: t,
-			built_in: n + " cond apply if-not if-let if not not= =|0 <|0 >|0 <=|0 >=|0 ==|0 +|0 /|0 *|0 -|0 rem quot neg? pos? delay? symbol? keyword? true? false? integer? empty? coll? list? set? ifn? fn? associative? sequential? sorted? counted? reversible? number? decimal? class? distinct? isa? float? rational? reduced? ratio? odd? even? char? seq? vector? string? map? nil? contains? zero? instance? not-every? not-any? libspec? -> ->> .. . inc compare do dotimes mapcat take remove take-while drop letfn drop-last take-last drop-while while intern condp case reduced cycle split-at split-with repeat replicate iterate range merge zipmap declare line-seq sort comparator sort-by dorun doall nthnext nthrest partition eval doseq await await-for let agent atom send send-off release-pending-sends add-watch mapv filterv remove-watch agent-error restart-agent set-error-handler error-handler set-error-mode! error-mode shutdown-agents quote var fn loop recur throw try monitor-enter monitor-exit macroexpand macroexpand-1 for dosync and or when when-not when-let comp juxt partial sequence memoize constantly complement identity assert peek pop doto proxy first rest cons cast coll last butlast sigs reify second ffirst fnext nfirst nnext meta with-meta ns in-ns create-ns import refer keys select-keys vals key val rseq name namespace promise into transient persistent! conj! assoc! dissoc! pop! disj! use class type num float double short byte boolean bigint biginteger bigdec print-method print-dup throw-if printf format load compile get-in update-in pr pr-on newline flush read slurp read-line subvec with-open memfn time re-find re-groups rand-int rand mod locking assert-valid-fdecl alias resolve ref deref refset swap! reset! set-validator! compare-and-set! alter-meta! reset-meta! commute get-validator alter ref-set ref-history-count ref-min-history ref-max-history ensure sync io! new next conj set! to-array future future-call into-array aset gen-class reduce map filter find empty hash-map hash-set sorted-map sorted-map-by sorted-set sorted-set-by vec vector seq flatten reverse assoc dissoc list disj get union difference intersection extend extend-type extend-protocol int nth delay count concat chunk chunk-buffer chunk-append chunk-first chunk-rest max min dec unchecked-inc-int unchecked-inc unchecked-dec-inc unchecked-dec unchecked-negate unchecked-add-int unchecked-add unchecked-subtract-int unchecked-subtract chunk-next chunk-cons chunked-seq? prn vary-meta lazy-seq spread list* str find-keyword keyword symbol gensym force rationalize"
-		}, i = {
-			begin: t,
-			relevance: 0
+		let t = "a-zA-Z_\\-!.?+*=<>&'", n = "[#]?[" + t + "][" + t + "0-9/;:$#]*", r = "def defonce defprotocol defstruct defmulti defmethod defn- defn defmacro deftype defrecord", i = {
+			$pattern: n,
+			built_in: r + " " + "cond apply if-not if-let if not not= =|0 <|0 >|0 <=|0 >=|0 ==|0 +|0 /|0 *|0 -|0 rem " + "quot neg? pos? delay? symbol? keyword? true? false? integer? empty? coll? list? " + "set? ifn? fn? associative? sequential? sorted? counted? reversible? number? decimal? " + "class? distinct? isa? float? rational? reduced? ratio? odd? even? char? seq? vector? " + "string? map? nil? contains? zero? instance? not-every? not-any? libspec? -> ->> .. . " + "inc compare do dotimes mapcat take remove take-while drop letfn drop-last take-last " + "drop-while while intern condp case reduced cycle split-at split-with repeat replicate " + "iterate range merge zipmap declare line-seq sort comparator sort-by dorun doall nthnext " + "nthrest partition eval doseq await await-for let agent atom send send-off release-pending-sends " + "add-watch mapv filterv remove-watch agent-error restart-agent set-error-handler error-handler " + "set-error-mode! error-mode shutdown-agents quote var fn loop recur throw try monitor-enter " + "monitor-exit macroexpand macroexpand-1 for dosync and or " + "when when-not when-let comp juxt partial sequence memoize constantly complement identity assert " + "peek pop doto proxy first rest cons cast coll last butlast " + "sigs reify second ffirst fnext nfirst nnext meta with-meta ns in-ns create-ns import " + "refer keys select-keys vals key val rseq name namespace promise into transient persistent! conj! " + "assoc! dissoc! pop! disj! use class type num float double short byte boolean bigint biginteger " + "bigdec print-method print-dup throw-if printf format load compile get-in update-in pr pr-on newline " + "flush read slurp read-line subvec with-open memfn time re-find re-groups rand-int rand mod locking " + "assert-valid-fdecl alias resolve ref deref refset swap! reset! set-validator! compare-and-set! alter-meta! " + "reset-meta! commute get-validator alter ref-set ref-history-count ref-min-history ref-max-history ensure sync io! " + "new next conj set! to-array future future-call into-array aset gen-class reduce map filter find empty " + "hash-map hash-set sorted-map sorted-map-by sorted-set sorted-set-by vec vector seq flatten reverse assoc dissoc list " + "disj get union difference intersection extend extend-type extend-protocol int nth delay count concat chunk chunk-buffer " + "chunk-append chunk-first chunk-rest max min dec unchecked-inc-int unchecked-inc unchecked-dec-inc unchecked-dec unchecked-negate " + "unchecked-add-int unchecked-add unchecked-subtract-int unchecked-subtract chunk-next chunk-cons chunked-seq? prn vary-meta " + "lazy-seq spread list* str find-keyword keyword symbol gensym force rationalize"
 		}, a = {
+			begin: n,
+			relevance: 0
+		}, o = {
 			scope: "number",
 			relevance: 0,
 			variants: [
@@ -3476,7 +3477,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{ match: /[-+]?[0-9]+((\.[0-9]*([eE][+-]?[0-9]+)?M?)|([eE][+-]?[0-9]+M?|M))/ },
 				{ match: /[-+]?([1-9][0-9]*|0)N?/ }
 			]
-		}, o = {
+		}, s = {
 			scope: "character",
 			variants: [
 				{ match: /\\o[0-3]?[0-7]{1,2}/ },
@@ -3487,83 +3488,83 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					relevance: 0
 				}
 			]
-		}, s = {
+		}, c = {
 			scope: "regex",
 			begin: /#"/,
 			end: /"/,
 			contains: [e.BACKSLASH_ESCAPE]
-		}, c = e.inherit(e.QUOTE_STRING_MODE, { illegal: null }), l = {
+		}, l = e.inherit(e.QUOTE_STRING_MODE, { illegal: null }), u = {
 			scope: "punctuation",
 			match: /,/,
 			relevance: 0
-		}, u = e.COMMENT(";", "$", { relevance: 0 }), d = {
+		}, d = e.COMMENT(";", "$", { relevance: 0 }), f = {
 			className: "literal",
 			begin: /\b(true|false|nil)\b/
-		}, f = {
-			begin: "\\[|(#::?" + t + ")?\\{",
+		}, p = {
+			begin: "\\[|(#::?" + n + ")?\\{",
 			end: "[\\]\\}]",
 			relevance: 0
-		}, p = {
-			className: "symbol",
-			begin: "[:]{1,2}" + t
 		}, m = {
+			className: "symbol",
+			begin: "[:]{1,2}" + n
+		}, h = {
 			begin: "\\(",
 			end: "\\)"
-		}, h = {
+		}, g = {
 			endsWithParent: !0,
 			relevance: 0
-		}, g = {
-			keywords: r,
+		}, _ = {
+			keywords: i,
 			className: "name",
-			begin: t,
+			begin: n,
 			relevance: 0,
-			starts: h
-		}, _ = [
-			l,
-			m,
-			o,
+			starts: g
+		}, v = [
+			u,
+			h,
 			s,
 			c,
-			u,
-			p,
-			f,
-			a,
+			l,
 			d,
-			i
+			m,
+			p,
+			o,
+			f,
+			a
 		];
-		return m.contains = [
+		return h.contains = [
 			{
-				beginKeywords: n,
+				beginKeywords: r,
 				keywords: {
-					$pattern: t,
-					keyword: n
+					$pattern: n,
+					keyword: r
 				},
 				end: "(\\[|#|\\d|\"|:|\\{|\\)|\\(|$)",
 				contains: [{
 					className: "title",
-					begin: t,
+					begin: n,
 					relevance: 0,
 					excludeEnd: !0,
 					endsParent: !0
-				}].concat(_)
+				}].concat(v)
 			},
-			g,
-			h
-		], h.contains = _, f.contains = _, {
+			_,
+			g
+		], g.contains = v, p.contains = v, {
 			name: "Clojure",
 			aliases: ["clj", "edn"],
 			illegal: /\S/,
 			contains: [
-				l,
-				m,
-				o,
+				u,
+				h,
 				s,
 				c,
-				u,
+				l,
+				d,
+				m,
 				p,
-				f,
-				a,
-				d
+				o,
+				f
 			]
 		};
 	}
@@ -3604,7 +3605,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), ee = /* @__PURE__ */ o(((e, t) => {
+})), V = /* @__PURE__ */ o(((e, t) => {
 	var n = /* @__PURE__ */ "as.in.of.if.for.while.finally.var.new.function.do.return.void.else.break.catch.instanceof.with.throw.case.default.try.switch.continue.typeof.delete.let.yield.const.class.debugger.async.await.static.import.from.export.extends.using".split("."), r = [
 		"true",
 		"false",
@@ -3734,7 +3735,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			}
 		];
 		o.contains = s;
-		let c = e.inherit(e.TITLE_MODE, { begin: a }), l = {
+		let c = e.inherit(e.TITLE_MODE, { begin: a }), l = "(\\(.*\\)\\s*)?\\B[-=]>", u = {
 			className: "params",
 			begin: "\\([^\\(]",
 			returnBegin: !0,
@@ -3744,7 +3745,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				keywords: t,
 				contains: ["self"].concat(s)
 			}]
-		}, u = {
+		}, d = {
 			variants: [{ match: [
 				/class\s+/,
 				a,
@@ -3772,23 +3773,23 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				e.HASH_COMMENT_MODE,
 				{
 					className: "function",
-					begin: "^\\s*" + a + "\\s*=\\s*(\\(.*\\)\\s*)?\\B[-=]>",
+					begin: "^\\s*" + a + "\\s*=\\s*" + l,
 					end: "[-=]>",
 					returnBegin: !0,
-					contains: [c, l]
+					contains: [c, u]
 				},
 				{
 					begin: /[:\(,=]\s*/,
 					relevance: 0,
 					contains: [{
 						className: "function",
-						begin: "(\\(.*\\)\\s*)?\\B[-=]>",
+						begin: l,
 						end: "[-=]>",
 						returnBegin: !0,
-						contains: [l]
+						contains: [u]
 					}]
 				},
-				u,
+				d,
 				{
 					begin: a + ":",
 					end: ":",
@@ -3800,7 +3801,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = a;
-})), te = /* @__PURE__ */ o(((e, t) => {
+})), ee = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "Coq",
@@ -3823,7 +3824,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), V = /* @__PURE__ */ o(((e, t) => {
+})), H = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "Caché Object Script",
@@ -3898,12 +3899,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), ne = /* @__PURE__ */ o(((e, t) => {
+})), te = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = e.regex, n = e.COMMENT("//", "$", { contains: [{ begin: /\\\n/ }] }), r = "decltype\\(auto\\)", i = "[a-zA-Z_]\\w*::", a = "(?!struct)(" + r + "|" + t.optional(i) + "[a-zA-Z_]\\w*" + t.optional("<[^<>]+>") + ")", o = {
+		let t = e.regex, n = e.COMMENT("//", "$", { contains: [{ begin: /\\\n/ }] }), r = "[a-zA-Z_]\\w*::", i = "(?!struct)(decltype\\(auto\\)|" + t.optional(r) + "[a-zA-Z_]\\w*" + t.optional("<[^<>]+>") + ")", a = {
 			className: "type",
 			begin: "\\b[a-z\\d_]*_t\\b"
-		}, s = {
+		}, o = {
 			className: "string",
 			variants: [
 				{
@@ -3922,11 +3923,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /\)([^()\\ ]{0,16})"/
 				})
 			]
-		}, c = {
+		}, s = {
 			className: "number",
 			variants: [{ begin: "[+-]?(?:(?:[0-9](?:'?[0-9])*\\.(?:[0-9](?:'?[0-9])*)?|\\.[0-9](?:'?[0-9])*)(?:[Ee][+-]?[0-9](?:'?[0-9])*)?|[0-9](?:'?[0-9])*[Ee][+-]?[0-9](?:'?[0-9])*|0[Xx](?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*(?:\\.(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)?)?|\\.[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)[Pp][+-]?[0-9](?:'?[0-9])*)(?:[Ff](?:16|32|64|128)?|(BF|bf)16|[Ll]|)" }, { begin: "[+-]?\\b(?:0[Bb][01](?:'?[01])*|0[Xx][0-9A-Fa-f](?:'?[0-9A-Fa-f])*|0(?:'?[0-7])*|[1-9](?:'?[0-9])*)(?:[Uu](?:LL?|ll?)|[Uu][Zz]?|(?:LL?|ll?)[Uu]?|[Zz][Uu]|)" }],
 			relevance: 0
-		}, l = {
+		}, c = {
 			className: "meta",
 			begin: /#\s*[a-z]+\b/,
 			end: /$/,
@@ -3936,7 +3937,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					begin: /\\\n/,
 					relevance: 0
 				},
-				e.inherit(s, { className: "string" }),
+				e.inherit(o, { className: "string" }),
 				{
 					className: "string",
 					begin: /<.*?>/
@@ -3944,11 +3945,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				n,
 				e.C_BLOCK_COMMENT_MODE
 			]
-		}, u = {
+		}, l = {
 			className: "title",
-			begin: t.optional(i) + e.IDENT_RE,
+			begin: t.optional(r) + e.IDENT_RE,
 			relevance: 0
-		}, d = t.optional(i) + e.IDENT_RE + "\\s*\\(", f = /* @__PURE__ */ "alignas.alignof.and.and_eq.asm.atomic_cancel.atomic_commit.atomic_noexcept.auto.bitand.bitor.break.case.catch.class.co_await.co_return.co_yield.compl.concept.const_cast|10.consteval.constexpr.constinit.continue.decltype.default.delete.do.dynamic_cast|10.else.enum.explicit.export.extern.false.final.for.friend.goto.if.import.inline.module.mutable.namespace.new.noexcept.not.not_eq.nullptr.operator.or.or_eq.override.private.protected.public.reflexpr.register.reinterpret_cast|10.requires.return.sizeof.static_assert.static_cast|10.struct.switch.synchronized.template.this.thread_local.throw.transaction_safe.transaction_safe_dynamic.true.try.typedef.typeid.typename.union.using.virtual.volatile.while.xor.xor_eq".split("."), p = [
+		}, u = t.optional(r) + e.IDENT_RE + "\\s*\\(", d = /* @__PURE__ */ "alignas.alignof.and.and_eq.asm.atomic_cancel.atomic_commit.atomic_noexcept.auto.bitand.bitor.break.case.catch.class.co_await.co_return.co_yield.compl.concept.const_cast|10.consteval.constexpr.constinit.continue.decltype.default.delete.do.dynamic_cast|10.else.enum.explicit.export.extern.false.final.for.friend.goto.if.import.inline.module.mutable.namespace.new.noexcept.not.not_eq.nullptr.operator.or.or_eq.override.private.protected.public.reflexpr.register.reinterpret_cast|10.requires.return.sizeof.static_assert.static_cast|10.struct.switch.synchronized.template.this.thread_local.throw.transaction_safe.transaction_safe_dynamic.true.try.typedef.typeid.typename.union.using.virtual.volatile.while.xor.xor_eq".split("."), f = [
 			"bool",
 			"char",
 			"char16_t",
@@ -3965,9 +3966,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			"signed",
 			"const",
 			"static"
-		], m = /* @__PURE__ */ "any.auto_ptr.barrier.binary_semaphore.bitset.complex.condition_variable.condition_variable_any.counting_semaphore.deque.false_type.flat_map.flat_set.future.imaginary.initializer_list.istringstream.jthread.latch.lock_guard.multimap.multiset.mutex.optional.ostringstream.packaged_task.pair.promise.priority_queue.queue.recursive_mutex.recursive_timed_mutex.scoped_lock.set.shared_future.shared_lock.shared_mutex.shared_timed_mutex.shared_ptr.stack.string_view.stringstream.timed_mutex.thread.true_type.tuple.unique_lock.unique_ptr.unordered_map.unordered_multimap.unordered_multiset.unordered_set.variant.vector.weak_ptr.wstring.wstring_view".split("."), h = /* @__PURE__ */ "abort.abs.acos.apply.as_const.asin.atan.atan2.calloc.ceil.cerr.cin.clog.cos.cosh.cout.declval.endl.exchange.exit.exp.fabs.floor.fmod.forward.fprintf.fputs.free.frexp.fscanf.future.invoke.isalnum.isalpha.iscntrl.isdigit.isgraph.islower.isprint.ispunct.isspace.isupper.isxdigit.labs.launder.ldexp.log.log10.make_pair.make_shared.make_shared_for_overwrite.make_tuple.make_unique.malloc.memchr.memcmp.memcpy.memset.modf.move.pow.printf.putchar.puts.realloc.scanf.sin.sinh.snprintf.sprintf.sqrt.sscanf.std.stderr.stdin.stdout.strcat.strchr.strcmp.strcpy.strcspn.strlen.strncat.strncmp.strncpy.strpbrk.strrchr.strspn.strstr.swap.tan.tanh.terminate.to_underlying.tolower.toupper.vfprintf.visit.vprintf.vsprintf".split("."), g = {
-			type: p,
-			keyword: f,
+		], p = /* @__PURE__ */ "any.auto_ptr.barrier.binary_semaphore.bitset.complex.condition_variable.condition_variable_any.counting_semaphore.deque.false_type.flat_map.flat_set.future.imaginary.initializer_list.istringstream.jthread.latch.lock_guard.multimap.multiset.mutex.optional.ostringstream.packaged_task.pair.promise.priority_queue.queue.recursive_mutex.recursive_timed_mutex.scoped_lock.set.shared_future.shared_lock.shared_mutex.shared_timed_mutex.shared_ptr.stack.string_view.stringstream.timed_mutex.thread.true_type.tuple.unique_lock.unique_ptr.unordered_map.unordered_multimap.unordered_multiset.unordered_set.variant.vector.weak_ptr.wstring.wstring_view".split("."), m = /* @__PURE__ */ "abort.abs.acos.apply.as_const.asin.atan.atan2.calloc.ceil.cerr.cin.clog.cos.cosh.cout.declval.endl.exchange.exit.exp.fabs.floor.fmod.forward.fprintf.fputs.free.frexp.fscanf.future.invoke.isalnum.isalpha.iscntrl.isdigit.isgraph.islower.isprint.ispunct.isspace.isupper.isxdigit.labs.launder.ldexp.log.log10.make_pair.make_shared.make_shared_for_overwrite.make_tuple.make_unique.malloc.memchr.memcmp.memcpy.memset.modf.move.pow.printf.putchar.puts.realloc.scanf.sin.sinh.snprintf.sprintf.sqrt.sscanf.std.stderr.stdin.stdout.strcat.strchr.strcmp.strcpy.strcspn.strlen.strncat.strncmp.strncpy.strpbrk.strrchr.strspn.strstr.swap.tan.tanh.terminate.to_underlying.tolower.toupper.vfprintf.visit.vprintf.vsprintf".split("."), h = {
+			type: f,
+			keyword: d,
 			literal: [
 				"NULL",
 				"false",
@@ -3976,21 +3977,21 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				"true"
 			],
 			built_in: ["_Pragma"],
-			_type_hints: m
-		}, _ = {
+			_type_hints: p
+		}, g = {
 			className: "function.dispatch",
 			relevance: 0,
-			keywords: { _hint: h },
+			keywords: { _hint: m },
 			begin: t.concat(/\b/, /(?!decltype)/, /(?!if)/, /(?!for)/, /(?!switch)/, /(?!while)/, e.IDENT_RE, t.lookahead(/(<[^<>]+>|)\s*\(/))
-		}, v = [
-			_,
-			l,
-			o,
+		}, _ = [
+			g,
+			c,
+			a,
 			n,
 			e.C_BLOCK_COMMENT_MODE,
-			c,
-			s
-		], y = {
+			s,
+			o
+		], v = {
 			variants: [
 				{
 					begin: /=/,
@@ -4005,33 +4006,33 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /;/
 				}
 			],
-			keywords: g,
-			contains: v.concat([{
+			keywords: h,
+			contains: _.concat([{
 				begin: /\(/,
 				end: /\)/,
-				keywords: g,
-				contains: v.concat(["self"]),
+				keywords: h,
+				contains: _.concat(["self"]),
 				relevance: 0
 			}]),
 			relevance: 0
-		}, b = {
+		}, y = {
 			className: "function",
-			begin: "(" + a + "[\\*&\\s]+)+" + d,
+			begin: "(" + i + "[\\*&\\s]+)+" + u,
 			returnBegin: !0,
 			end: /[{;=]/,
 			excludeEnd: !0,
-			keywords: g,
+			keywords: h,
 			illegal: /[^\w\s\*&:<>.]/,
 			contains: [
 				{
-					begin: r,
-					keywords: g,
+					begin: "decltype\\(auto\\)",
+					keywords: h,
 					relevance: 0
 				},
 				{
-					begin: d,
+					begin: u,
 					returnBegin: !0,
-					contains: [u],
+					contains: [l],
 					relevance: 0
 				},
 				{
@@ -4041,7 +4042,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{
 					begin: /:/,
 					endsWithParent: !0,
-					contains: [s, c]
+					contains: [o, s]
 				},
 				{
 					relevance: 0,
@@ -4051,34 +4052,34 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					className: "params",
 					begin: /\(/,
 					end: /\)/,
-					keywords: g,
+					keywords: h,
 					relevance: 0,
 					contains: [
 						n,
 						e.C_BLOCK_COMMENT_MODE,
-						s,
-						c,
 						o,
+						s,
+						a,
 						{
 							begin: /\(/,
 							end: /\)/,
-							keywords: g,
+							keywords: h,
 							relevance: 0,
 							contains: [
 								"self",
 								n,
 								e.C_BLOCK_COMMENT_MODE,
+								o,
 								s,
-								c,
-								o
+								a
 							]
 						}
 					]
 				},
-				o,
+				a,
 				n,
 				e.C_BLOCK_COMMENT_MODE,
-				l
+				c
 			]
 		};
 		return {
@@ -4092,20 +4093,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				"hxx",
 				"cxx"
 			],
-			keywords: g,
+			keywords: h,
 			illegal: "</",
 			classNameAliases: { "function.dispatch": "built_in" },
-			contains: [].concat(y, b, _, v, [
-				l,
+			contains: [].concat(v, y, g, _, [
+				c,
 				{
 					begin: "\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function|flat_map|flat_set)\\s*<(?!<)",
 					end: ">",
-					keywords: g,
-					contains: ["self", o]
+					keywords: h,
+					contains: ["self", a]
 				},
 				{
 					begin: e.IDENT_RE + "::",
-					keywords: g
+					keywords: h
 				},
 				{
 					match: [
@@ -4122,7 +4123,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), H = /* @__PURE__ */ o(((e, t) => {
+})), ne = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = "group clone ms master location colocation order fencing_topology rsc_ticket acl_target acl_group user role tag xml";
 		return {
@@ -4885,67 +4886,65 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = u;
-})), ie = /* @__PURE__ */ o(((e, t) => {
+})), K = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = {
 			$pattern: e.UNDERSCORE_IDENT_RE,
 			keyword: "abstract alias align asm assert auto body break byte case cast catch class const continue debug default delete deprecated do else enum export extern final finally for foreach foreach_reverse|10 goto if immutable import in inout int interface invariant is lazy macro mixin module new nothrow out override package pragma private protected public pure ref return scope shared static struct super switch synchronized template this throw try typedef typeid typeof union unittest version void volatile while with __FILE__ __LINE__ __gshared|10 __thread __traits __DATE__ __EOF__ __TIME__ __TIMESTAMP__ __VENDOR__ __VERSION__",
 			built_in: "bool cdouble cent cfloat char creal dchar delegate double dstring float function idouble ifloat ireal long real short string ubyte ucent uint ulong ushort wchar wstring",
 			literal: "false null true"
-		}, n = "(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)", r = "([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*)";
-		"" + r, "" + n, "" + n, "" + r;
-		let i = "\\\\(['\"\\?\\\\abfnrtv]|u[\\dA-Fa-f]{4}|[0-7]{1,3}|x[\\dA-Fa-f]{2}|U[\\dA-Fa-f]{8})|&[a-zA-Z\\d]{2,};", a = {
+		}, n = "((0|[1-9][\\d_]*)|0[bB][01_]+|0[xX]([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*))", r = "\\\\(['\"\\?\\\\abfnrtv]|u[\\dA-Fa-f]{4}|[0-7]{1,3}|x[\\dA-Fa-f]{2}|U[\\dA-Fa-f]{8})|&[a-zA-Z\\d]{2,};", i = {
 			className: "number",
-			begin: "\\b((0|[1-9][\\d_]*)|0[bB][01_]+|0[xX]([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*))(L|u|U|Lu|LU|uL|UL)?",
+			begin: "\\b" + n + "(L|u|U|Lu|LU|uL|UL)?",
+			relevance: 0
+		}, a = {
+			className: "number",
+			begin: "\\b(((0[xX](([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*)\\.([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*)|\\.?([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*))[pP][+-]?(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d))|((0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)(\\.\\d*|([eE][+-]?(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)))|\\d+\\.(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)|\\.(0|[1-9][\\d_]*)([eE][+-]?(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d))?))([fF]|L|i|[fF]i|Li)?|" + n + "(i|[fF]i|Li)" + ")",
 			relevance: 0
 		}, o = {
-			className: "number",
-			begin: "\\b(((0[xX](([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*)\\.([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*)|\\.?([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*))[pP][+-]?(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d))|((0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)(\\.\\d*|([eE][+-]?(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)))|\\d+\\.(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)|\\.(0|[1-9][\\d_]*)([eE][+-]?(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d))?))([fF]|L|i|[fF]i|Li)?|((0|[1-9][\\d_]*)|0[bB][01_]+|0[xX]([\\da-fA-F][\\da-fA-F_]*|_[\\da-fA-F][\\da-fA-F_]*))(i|[fF]i|Li))",
-			relevance: 0
-		}, s = {
 			className: "string",
-			begin: "'(" + i + "|.)",
+			begin: "'(" + r + "|.)",
 			end: "'",
 			illegal: "."
-		}, c = {
+		}, s = {
 			className: "string",
 			begin: "\"",
 			contains: [{
-				begin: i,
+				begin: r,
 				relevance: 0
 			}],
 			end: "\"[cwd]?"
-		}, l = {
+		}, c = {
 			className: "string",
 			begin: "[rq]\"",
 			end: "\"[cwd]?",
 			relevance: 5
-		}, u = {
+		}, l = {
 			className: "string",
 			begin: "`",
 			end: "`[cwd]?"
-		}, d = {
+		}, u = {
 			className: "string",
 			begin: "x\"[\\da-fA-F\\s\\n\\r]*\"[cwd]?",
 			relevance: 10
-		}, f = {
+		}, d = {
 			className: "string",
 			begin: "q\"\\{",
 			end: "\\}\""
-		}, p = {
+		}, f = {
 			className: "meta",
 			begin: "^#!",
 			end: "$",
 			relevance: 5
-		}, m = {
+		}, p = {
 			className: "meta",
 			begin: "#(line)",
 			end: "$",
 			relevance: 5
-		}, h = {
+		}, m = {
 			className: "keyword",
 			begin: "@[a-zA-Z_][a-zA-Z_\\d]*"
-		}, g = e.COMMENT("\\/\\+", "\\+\\/", {
+		}, h = e.COMMENT("\\/\\+", "\\+\\/", {
 			contains: ["self"],
 			relevance: 10
 		});
@@ -4955,23 +4954,23 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			contains: [
 				e.C_LINE_COMMENT_MODE,
 				e.C_BLOCK_COMMENT_MODE,
-				g,
-				d,
+				h,
+				u,
+				s,
 				c,
 				l,
-				u,
-				f,
-				o,
+				d,
 				a,
-				s,
+				i,
+				o,
+				f,
 				p,
-				m,
-				h
+				m
 			]
 		};
 	}
 	t.exports = n;
-})), K = /* @__PURE__ */ o(((e, t) => {
+})), q = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.regex, n = {
 			begin: /<\/?[A-Za-z_]/,
@@ -5151,7 +5150,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), ae = /* @__PURE__ */ o(((e, t) => {
+})), ie = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = {
 			className: "subst",
@@ -5277,7 +5276,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), oe = /* @__PURE__ */ o(((e, t) => {
+})), ae = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = /* @__PURE__ */ "exports.register.file.shl.array.record.property.for.mod.while.set.ally.label.uses.raise.not.stored.class.safecall.var.interface.or.private.static.exit.index.inherited.to.else.stdcall.override.shr.asm.far.resourcestring.finalization.packed.virtual.out.and.protected.library.do.xorwrite.goto.near.function.end.div.overload.object.unit.begin.string.on.inline.repeat.until.destructor.write.message.program.with.read.initialization.except.default.nil.if.case.cdecl.in.downto.threadvar.of.try.pascal.const.external.constructor.type.public.then.implementation.finally.published.procedure.absolute.reintroduce.operator.as.is.abstract.alias.assembler.bitpacked.break.continue.cppdecl.cvar.enumerator.experimental.platform.deprecated.unimplemented.dynamic.export.far16.forward.generic.helper.implements.interrupt.iochecks.local.name.nodefault.noreturn.nostackframe.oldfpccall.otherwise.saveregisters.softfloat.specialize.strict.unaligned.varargs".split("."), n = [
 			e.C_LINE_COMMENT_MODE,
@@ -5369,7 +5368,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), se = /* @__PURE__ */ o(((e, t) => {
+})), J = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.regex;
 		return {
@@ -5407,7 +5406,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), ce = /* @__PURE__ */ o(((e, t) => {
+})), oe = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = {
 			begin: /\|[A-Za-z]+:?/,
@@ -5448,7 +5447,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), le = /* @__PURE__ */ o(((e, t) => {
+})), Y = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "DNS Zone",
@@ -5473,7 +5472,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), q = /* @__PURE__ */ o(((e, t) => {
+})), X = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "Dockerfile",
@@ -5506,7 +5505,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), ue = /* @__PURE__ */ o(((e, t) => {
+})), se = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.COMMENT(/^\s*@?rem\b/, /$/, { relevance: 10 });
 		return {
@@ -5562,7 +5561,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), de = /* @__PURE__ */ o(((e, t) => {
+})), ce = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			keywords: "dsconfig",
@@ -5615,7 +5614,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), fe = /* @__PURE__ */ o(((e, t) => {
+})), le = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = {
 			className: "string",
@@ -5729,7 +5728,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), J = /* @__PURE__ */ o(((e, t) => {
+})), ue = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "Dust",
@@ -5760,7 +5759,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), pe = /* @__PURE__ */ o(((e, t) => {
+})), de = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.COMMENT(/\(\*/, /\*\)/);
 		return {
@@ -5798,7 +5797,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), Y = /* @__PURE__ */ o(((e, t) => {
+})), fe = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.regex, n = "[a-zA-Z_][a-zA-Z0-9_.]*(!|\\?)?", r = {
 			$pattern: n,
@@ -5821,7 +5820,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			match: /\\[\s\S]/,
 			scope: "char.escape",
 			relevance: 0
-		}, s = "[/|([{<\"']", c = [
+		}, s = [
 			{
 				begin: /"/,
 				end: /"/
@@ -5854,42 +5853,42 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				begin: /</,
 				end: />/
 			}
-		], l = (e) => ({
+		], c = (e) => ({
 			scope: "char.escape",
 			begin: t.concat(/\\/, e),
 			relevance: 0
-		}), u = {
+		}), l = {
 			className: "string",
-			begin: "~[a-z](?=" + s + ")",
-			contains: c.map((t) => e.inherit(t, { contains: [
-				l(t.end),
+			begin: "~[a-z](?=[/|([{<\"'])",
+			contains: s.map((t) => e.inherit(t, { contains: [
+				c(t.end),
 				o,
 				i
 			] }))
-		}, d = {
+		}, u = {
 			className: "string",
-			begin: "~[A-Z](?=" + s + ")",
-			contains: c.map((t) => e.inherit(t, { contains: [l(t.end)] }))
-		}, f = {
+			begin: "~[A-Z](?=[/|([{<\"'])",
+			contains: s.map((t) => e.inherit(t, { contains: [c(t.end)] }))
+		}, d = {
 			className: "regex",
 			variants: [{
-				begin: "~r(?=" + s + ")",
-				contains: c.map((n) => e.inherit(n, {
+				begin: "~r(?=[/|([{<\"'])",
+				contains: s.map((n) => e.inherit(n, {
 					end: t.concat(n.end, /[uismxfU]{0,7}/),
 					contains: [
-						l(n.end),
+						c(n.end),
 						o,
 						i
 					]
 				}))
 			}, {
-				begin: "~R(?=" + s + ")",
-				contains: c.map((n) => e.inherit(n, {
+				begin: "~R(?=[/|([{<\"'])",
+				contains: s.map((n) => e.inherit(n, {
 					end: t.concat(n.end, /[uismxfU]{0,7}/),
-					contains: [l(n.end)]
+					contains: [c(n.end)]
 				}))
 			}]
-		}, p = {
+		}, f = {
 			className: "string",
 			contains: [e.BACKSLASH_ESCAPE, i],
 			variants: [
@@ -5930,7 +5929,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: /"/
 				}
 			]
-		}, m = {
+		}, p = {
 			className: "function",
 			beginKeywords: "def defp defmacro defmacrop",
 			end: /\B\b/,
@@ -5938,23 +5937,23 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				begin: n,
 				endsParent: !0
 			})]
-		}, h = e.inherit(m, {
+		}, m = e.inherit(p, {
 			className: "class",
 			beginKeywords: "defimpl defmodule defprotocol defrecord",
 			end: /\bdo\b|$|;/
-		}), g = [
-			p,
+		}), h = [
 			f,
 			d,
 			u,
+			l,
 			e.HASH_COMMENT_MODE,
-			h,
 			m,
+			p,
 			{ begin: "::" },
 			{
 				className: "symbol",
 				begin: ":(?![\\s:])",
-				contains: [p, { begin: "[a-zA-Z_]\\w*[!?=]?|[-+~]@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?" }],
+				contains: [f, { begin: "[a-zA-Z_]\\w*[!?=]?|[-+~]@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?" }],
 				relevance: 0
 			},
 			{
@@ -5973,15 +5972,15 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				begin: "(\\$\\W)|((\\$|@@?)(\\w+))"
 			}
 		];
-		return i.contains = g, {
+		return i.contains = h, {
 			name: "Elixir",
 			aliases: ["ex", "exs"],
 			keywords: r,
-			contains: g
+			contains: h
 		};
 	}
 	t.exports = n;
-})), X = /* @__PURE__ */ o(((e, t) => {
+})), pe = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = { variants: [e.COMMENT("--", "$"), e.COMMENT(/\{-/, /-\}/, { contains: ["self"] })] }, n = {
 			className: "type",
@@ -6088,51 +6087,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				"__ENCODING__"
 			],
 			"variable.language": ["self", "super"],
-			keyword: [
-				"alias",
-				"and",
-				"begin",
-				"BEGIN",
-				"break",
-				"case",
-				"class",
-				"defined",
-				"do",
-				"else",
-				"elsif",
-				"end",
-				"END",
-				"ensure",
-				"for",
-				"if",
-				"in",
-				"module",
-				"next",
-				"not",
-				"or",
-				"redo",
-				"require",
-				"rescue",
-				"retry",
-				"return",
-				"then",
-				"undef",
-				"unless",
-				"until",
-				"when",
-				"while",
-				"yield",
-				...[
-					"include",
-					"extend",
-					"prepend",
-					"public",
-					"private",
-					"protected",
-					"raise",
-					"throw"
-				]
-			],
+			keyword: /* @__PURE__ */ "alias.and.begin.BEGIN.break.case.class.defined.do.else.elsif.end.END.ensure.for.if.in.module.next.not.or.redo.require.rescue.retry.return.then.undef.unless.until.when.while.yield.include.extend.prepend.public.private.protected.raise.throw".split("."),
 			built_in: [
 				"proc",
 				"lambda",
@@ -6440,7 +6395,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), _e = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "[a-z'][a-zA-Z0-9_']*", n = "(" + t + ":[a-z'][a-zA-Z0-9_']*|[a-z'][a-zA-Z0-9_']*)", r = {
+		let t = "[a-z'][a-zA-Z0-9_']*", n = "(" + t + ":" + t + "|" + t + ")", r = {
 			keyword: "after and andalso|10 band begin bnot bor bsl bzr bxor case catch cond div end fun if let not of orelse|10 query receive rem try when xor maybe else",
 			literal: "false true"
 		}, i = e.COMMENT("%", "$"), a = {
@@ -6839,7 +6794,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), Se = /* @__PURE__ */ o(((e, t) => {
+})), Z = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return new RegExp(e.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"), "m");
 	}
@@ -7078,7 +7033,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = c;
-})), Ce = /* @__PURE__ */ o(((e, t) => {
+})), Se = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.regex, n = {
 			keyword: "abort acronym acronyms alias all and assign binary card diag display else eq file files for free ge gt if integer le loop lt maximizing minimizing model models ne negative no not option options or ord positive prod put putpage puttl repeat sameas semicont semiint smax smin solve sos1 sos2 sum system table then until using while xor yes",
@@ -7203,7 +7158,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), we = /* @__PURE__ */ o(((e, t) => {
+})), Ce = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = {
 			keyword: "bool break call callexe checkinterrupt clear clearg closeall cls comlog compile continue create debug declare delete disable dlibrary dllcall do dos ed edit else elseif enable end endfor endif endp endo errorlog errorlogat expr external fn for format goto gosub graph if keyword let lib library line load loadarray loadexe loadf loadk loadm loadp loads loadx local locate loopnextindex lprint lpwidth lshow matrix msym ndpclex new open output outwidth plot plotsym pop prcsn print printdos proc push retp return rndcon rndmod rndmult rndseed run save saveall screen scroll setarray show sparse stop string struct system trace trap threadfor threadendfor threadbegin threadjoin threadstat threadend until use while winprint ne ge le gt lt and xor or not eq eqv",
@@ -7354,7 +7309,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), Te = /* @__PURE__ */ o(((e, t) => {
+})), we = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = e.regex, n = {
 			$pattern: /[A-Z]+|%/,
@@ -7474,7 +7429,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), Ee = /* @__PURE__ */ o(((e, t) => {
+})), Te = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "Gherkin",
@@ -7514,7 +7469,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), De = /* @__PURE__ */ o(((e, t) => {
+})), Ee = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "GLSL",
@@ -7538,7 +7493,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), Oe = /* @__PURE__ */ o(((e, t) => {
+})), De = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		return {
 			name: "GML",
@@ -7559,7 +7514,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		};
 	}
 	t.exports = n;
-})), Z = /* @__PURE__ */ o(((e, t) => {
+})), Oe = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
 		let t = {
 			keyword: [
@@ -8551,72 +8506,72 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), ze = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "[a-zA-Z_\\-!.?+*=<>&#'][a-zA-Z_\\-!.?+*=<>&#'0-9/;:]*", n = {
-			$pattern: t,
+		let t = "a-zA-Z_\\-!.?+*=<>&#'", n = "[" + t + "][" + t + "0-9/;:]*", r = {
+			$pattern: n,
 			built_in: "!= % %= & &= * ** **= *= *map + += , --build-class-- --import-- -= . / // //= /= < << <<= <= = > >= >> >>= @ @= ^ ^= abs accumulate all and any ap-compose ap-dotimes ap-each ap-each-while ap-filter ap-first ap-if ap-last ap-map ap-map-when ap-pipe ap-reduce ap-reject apply as-> ascii assert assoc bin break butlast callable calling-module-name car case cdr chain chr coll? combinations compile compress cond cons cons? continue count curry cut cycle dec def default-method defclass defmacro defmacro-alias defmacro/g! defmain defmethod defmulti defn defn-alias defnc defnr defreader defseq del delattr delete-route dict-comp dir disassemble dispatch-reader-macro distinct divmod do doto drop drop-last drop-while empty? end-sequence eval eval-and-compile eval-when-compile even? every? except exec filter first flatten float? fn fnc fnr for for* format fraction genexpr gensym get getattr global globals group-by hasattr hash hex id identity if if* if-not if-python2 import in inc input instance? integer integer-char? integer? interleave interpose is is-coll is-cons is-empty is-even is-every is-float is-instance is-integer is-integer-char is-iterable is-iterator is-keyword is-neg is-none is-not is-numeric is-odd is-pos is-string is-symbol is-zero isinstance islice issubclass iter iterable? iterate iterator? keyword keyword? lambda last len let lif lif-not list* list-comp locals loop macro-error macroexpand macroexpand-1 macroexpand-all map max merge-with method-decorator min multi-decorator multicombinations name neg? next none? nonlocal not not-in not? nth numeric? oct odd? open or ord partition permutations pos? post-route postwalk pow prewalk print product profile/calls profile/cpu put-route quasiquote quote raise range read read-str recursive-replace reduce remove repeat repeatedly repr require rest round route route-with-methods rwm second seq set-comp setattr setv some sorted string string? sum switch symbol? take take-nth take-while tee try unless unquote unquote-splicing vars walk when while with with* with-decorator with-gensyms xi xor yield yield-from zero? zip zip-longest | |= ~"
-		}, r = {
-			begin: t,
-			relevance: 0
 		}, i = {
+			begin: n,
+			relevance: 0
+		}, a = {
 			className: "number",
 			begin: "[-+]?\\d+(\\.\\d+)?",
 			relevance: 0
-		}, a = e.inherit(e.QUOTE_STRING_MODE, { illegal: null }), o = e.COMMENT(";", "$", { relevance: 0 }), s = {
+		}, o = e.inherit(e.QUOTE_STRING_MODE, { illegal: null }), s = e.COMMENT(";", "$", { relevance: 0 }), c = {
 			className: "literal",
 			begin: /\b([Tt]rue|[Ff]alse|nil|None)\b/
-		}, c = {
+		}, l = {
 			begin: "[\\[\\{]",
 			end: "[\\]\\}]",
 			relevance: 0
-		}, l = {
+		}, u = {
 			className: "comment",
-			begin: "\\^" + t
-		}, u = e.COMMENT("\\^\\{", "\\}"), d = {
+			begin: "\\^" + n
+		}, d = e.COMMENT("\\^\\{", "\\}"), f = {
 			className: "symbol",
-			begin: "[:]{1,2}" + t
-		}, f = {
+			begin: "[:]{1,2}" + n
+		}, p = {
 			begin: "\\(",
 			end: "\\)"
-		}, p = {
+		}, m = {
 			endsWithParent: !0,
 			relevance: 0
-		}, m = {
+		}, h = {
 			className: "name",
 			relevance: 0,
-			keywords: n,
-			begin: t,
-			starts: p
-		}, h = [
-			f,
-			a,
-			l,
-			u,
+			keywords: r,
+			begin: n,
+			starts: m
+		}, g = [
+			p,
 			o,
+			u,
 			d,
-			c,
-			i,
 			s,
-			r
+			f,
+			l,
+			a,
+			c,
+			i
 		];
-		return f.contains = [
+		return p.contains = [
 			e.COMMENT("comment", ""),
-			m,
-			p
-		], p.contains = h, c.contains = h, {
+			h,
+			m
+		], m.contains = g, l.contains = g, {
 			name: "Hy",
 			aliases: ["hylang"],
 			illegal: /\S/,
 			contains: [
 				e.SHEBANG(),
-				f,
-				a,
-				l,
-				u,
+				p,
 				o,
+				u,
 				d,
-				c,
-				i,
-				s
+				s,
+				f,
+				l,
+				a,
+				c
 			]
 		};
 	}
@@ -8911,7 +8866,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		return n === -1 ? "" : e.replace(t, (r) => o(e, t, n - 1));
 	}
 	function s(e) {
-		let t = e.regex, n = "[À-ʸa-zA-Z_$][À-ʸa-zA-Z_$0-9]*", r = n + o("(?:<" + n + "~~~(?:\\s*,\\s*[À-ʸa-zA-Z_$][À-ʸa-zA-Z_$0-9]*~~~)*>)?", /~~~/g, 2), i = {
+		let t = e.regex, n = "[À-ʸa-zA-Z_$][À-ʸa-zA-Z_$0-9]*", r = n + o("(?:<" + n + "~~~(?:\\s*,\\s*" + n + "~~~)*>)?", /~~~/g, 2), i = {
 			keyword: /* @__PURE__ */ "synchronized.abstract.private.var.static.if.const .for.while.strictfp.finally.protected.import.native.final.void.enum.else.break.transient.catch.instanceof.volatile.case.assert.package.default.public.try.switch.continue.throws.protected.public.private.module.requires.exports.do.sealed.yield.permits.goto.when".split("."),
 			literal: [
 				"false",
@@ -9872,26 +9827,23 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = o;
 })), Ze = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "[a-zA-Z_][\\w.]*", n = "<\\?(lasso(script)?|=)", r = "\\]|\\?>", i = {
-			$pattern: t + "|&[lg]t;",
+		let t = "<\\?(lasso(script)?|=)", n = "\\]|\\?>", r = {
+			$pattern: "[a-zA-Z_][\\w.]*|&[lg]t;",
 			literal: "true false none minimal full all void and or not bw nbw ew new cn ncn lt lte gt gte eq neq rx nrx ft",
 			built_in: "array date decimal duration integer map pair string tag xml null boolean bytes keyword list locale queue set stack staticarray local var variable global data self inherited currentcapture givenblock",
 			keyword: "cache database_names database_schemanames database_tablenames define_tag define_type email_batch encode_set html_comment handle handle_error header if inline iterate ljax_target link link_currentaction link_currentgroup link_currentrecord link_detail link_firstgroup link_firstrecord link_lastgroup link_lastrecord link_nextgroup link_nextrecord link_prevgroup link_prevrecord log loop namespace_using output_none portal private protect records referer referrer repeating resultset rows search_args search_arguments select sort_args sort_arguments thread_atomic value_list while abort case else fail_if fail_ifnot fail if_empty if_false if_null if_true loop_abort loop_continue loop_count params params_up return return_value run_children soap_definetag soap_lastrequest soap_lastresponse tag_name ascending average by define descending do equals frozen group handle_failure import in into join let match max min on order parent protected provide public require returnhome skip split_thread sum take thread to trait type where with yield yieldhome"
-		}, a = e.COMMENT("<!--", "-->", { relevance: 0 }), o = {
+		}, i = e.COMMENT("<!--", "-->", { relevance: 0 }), a = {
 			className: "meta",
 			begin: "\\[noprocess\\]",
 			starts: {
 				end: "\\[/noprocess\\]",
 				returnEnd: !0,
-				contains: [a]
+				contains: [i]
 			}
-		}, s = {
+		}, o = {
 			className: "meta",
-			begin: "\\[/noprocess|" + n
-		}, c = {
-			className: "symbol",
-			begin: "'" + t + "'"
-		}, l = [
+			begin: "\\[/noprocess|" + t
+		}, s = [
 			e.C_LINE_COMMENT_MODE,
 			e.C_BLOCK_COMMENT_MODE,
 			e.inherit(e.C_NUMBER_MODE, { begin: e.C_NUMBER_RE + "|(-?infinity|NaN)\\b" }),
@@ -9902,7 +9854,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				begin: "`",
 				end: "`"
 			},
-			{ variants: [{ begin: "[#$]" + t }, {
+			{ variants: [{ begin: "[#$][a-zA-Z_][\\w.]*" }, {
 				begin: "#",
 				end: "\\d+",
 				illegal: "\\W"
@@ -9910,68 +9862,71 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			{
 				className: "type",
 				begin: "::\\s*",
-				end: t,
+				end: "[a-zA-Z_][\\w.]*",
 				illegal: "\\W"
 			},
 			{
 				className: "params",
 				variants: [{
-					begin: "-(?!infinity)" + t,
+					begin: "-(?!infinity)[a-zA-Z_][\\w.]*",
 					relevance: 0
 				}, { begin: "(\\.\\.\\.)" }]
 			},
 			{
 				begin: /(->|\.)\s*/,
 				relevance: 0,
-				contains: [c]
+				contains: [{
+					className: "symbol",
+					begin: "'[a-zA-Z_][\\w.]*'"
+				}]
 			},
 			{
 				className: "class",
 				beginKeywords: "define",
 				returnEnd: !0,
 				end: "\\(|=>",
-				contains: [e.inherit(e.TITLE_MODE, { begin: t + "(=(?!>))?|[-+*/%](?!>)" })]
+				contains: [e.inherit(e.TITLE_MODE, { begin: "[a-zA-Z_][\\w.]*(=(?!>))?|[-+*/%](?!>)" })]
 			}
 		];
 		return {
 			name: "Lasso",
 			aliases: ["ls", "lassoscript"],
 			case_insensitive: !0,
-			keywords: i,
+			keywords: r,
 			contains: [
 				{
 					className: "meta",
-					begin: r,
+					begin: n,
 					relevance: 0,
 					starts: {
-						end: "\\[|" + n,
+						end: "\\[|" + t,
 						returnEnd: !0,
 						relevance: 0,
-						contains: [a]
+						contains: [i]
 					}
 				},
+				a,
 				o,
-				s,
 				{
 					className: "meta",
 					begin: "\\[no_square_brackets",
 					starts: {
 						end: "\\[/no_square_brackets\\]",
-						keywords: i,
+						keywords: r,
 						contains: [
 							{
 								className: "meta",
-								begin: r,
+								begin: n,
 								relevance: 0,
 								starts: {
-									end: "\\[noprocess\\]|" + n,
+									end: "\\[noprocess\\]|" + t,
 									returnEnd: !0,
-									contains: [a]
+									contains: [i]
 								}
 							},
-							o,
-							s
-						].concat(l)
+							a,
+							o
+						].concat(s)
 					}
 				},
 				{
@@ -9985,7 +9940,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					end: "lasso9$",
 					relevance: 10
 				}
-			].concat(l)
+			].concat(s)
 		};
 	}
 	t.exports = n;
@@ -10152,7 +10107,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		return {
 			name: "LaTeX",
 			aliases: ["tex"],
-			contains: [...[
+			contains: [
 				...["verb", "lstinline"].map((e) => p(e, { contains: [h()] })),
 				p("mint", f(u, { contains: [h()] })),
 				p("mintinline", f(u, { contains: [_(), h()] })),
@@ -10168,8 +10123,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						"L"
 					].map((t) => m(t + "Verbatim" + e, f(d, g(t + "Verbatim" + e))))
 				])),
-				m("minted", f(d, f(u, g("minted"))))
-			], ...a]
+				m("minted", f(d, f(u, g("minted")))),
+				...a
+			]
 		};
 	}
 	t.exports = n;
@@ -10312,52 +10268,52 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		"spelling-error"
 	].sort().reverse(), l = (/* @__PURE__ */ "accent-color.align-content.align-items.align-self.alignment-baseline.all.anchor-name.animation.animation-composition.animation-delay.animation-direction.animation-duration.animation-fill-mode.animation-iteration-count.animation-name.animation-play-state.animation-range.animation-range-end.animation-range-start.animation-timeline.animation-timing-function.appearance.aspect-ratio.backdrop-filter.backface-visibility.background.background-attachment.background-blend-mode.background-clip.background-color.background-image.background-origin.background-position.background-position-x.background-position-y.background-repeat.background-size.baseline-shift.block-size.border.border-block.border-block-color.border-block-end.border-block-end-color.border-block-end-style.border-block-end-width.border-block-start.border-block-start-color.border-block-start-style.border-block-start-width.border-block-style.border-block-width.border-bottom.border-bottom-color.border-bottom-left-radius.border-bottom-right-radius.border-bottom-style.border-bottom-width.border-collapse.border-color.border-end-end-radius.border-end-start-radius.border-image.border-image-outset.border-image-repeat.border-image-slice.border-image-source.border-image-width.border-inline.border-inline-color.border-inline-end.border-inline-end-color.border-inline-end-style.border-inline-end-width.border-inline-start.border-inline-start-color.border-inline-start-style.border-inline-start-width.border-inline-style.border-inline-width.border-left.border-left-color.border-left-style.border-left-width.border-radius.border-right.border-right-color.border-right-style.border-right-width.border-spacing.border-start-end-radius.border-start-start-radius.border-style.border-top.border-top-color.border-top-left-radius.border-top-right-radius.border-top-style.border-top-width.border-width.bottom.box-align.box-decoration-break.box-direction.box-flex.box-flex-group.box-lines.box-ordinal-group.box-orient.box-pack.box-shadow.box-sizing.break-after.break-before.break-inside.caption-side.caret-color.clear.clip.clip-path.clip-rule.color.color-interpolation.color-interpolation-filters.color-profile.color-rendering.color-scheme.column-count.column-fill.column-gap.column-rule.column-rule-color.column-rule-style.column-rule-width.column-span.column-width.columns.contain.contain-intrinsic-block-size.contain-intrinsic-height.contain-intrinsic-inline-size.contain-intrinsic-size.contain-intrinsic-width.container.container-name.container-type.content.content-visibility.counter-increment.counter-reset.counter-set.cue.cue-after.cue-before.cursor.cx.cy.direction.display.dominant-baseline.empty-cells.enable-background.field-sizing.fill.fill-opacity.fill-rule.filter.flex.flex-basis.flex-direction.flex-flow.flex-grow.flex-shrink.flex-wrap.float.flood-color.flood-opacity.flow.font.font-display.font-family.font-feature-settings.font-kerning.font-language-override.font-optical-sizing.font-palette.font-size.font-size-adjust.font-smooth.font-smoothing.font-stretch.font-style.font-synthesis.font-synthesis-position.font-synthesis-small-caps.font-synthesis-style.font-synthesis-weight.font-variant.font-variant-alternates.font-variant-caps.font-variant-east-asian.font-variant-emoji.font-variant-ligatures.font-variant-numeric.font-variant-position.font-variation-settings.font-weight.forced-color-adjust.gap.glyph-orientation-horizontal.glyph-orientation-vertical.grid.grid-area.grid-auto-columns.grid-auto-flow.grid-auto-rows.grid-column.grid-column-end.grid-column-start.grid-gap.grid-row.grid-row-end.grid-row-start.grid-template.grid-template-areas.grid-template-columns.grid-template-rows.hanging-punctuation.height.hyphenate-character.hyphenate-limit-chars.hyphens.icon.image-orientation.image-rendering.image-resolution.ime-mode.initial-letter.initial-letter-align.inline-size.inset.inset-area.inset-block.inset-block-end.inset-block-start.inset-inline.inset-inline-end.inset-inline-start.isolation.justify-content.justify-items.justify-self.kerning.left.letter-spacing.lighting-color.line-break.line-height.line-height-step.list-style.list-style-image.list-style-position.list-style-type.margin.margin-block.margin-block-end.margin-block-start.margin-bottom.margin-inline.margin-inline-end.margin-inline-start.margin-left.margin-right.margin-top.margin-trim.marker.marker-end.marker-mid.marker-start.marks.mask.mask-border.mask-border-mode.mask-border-outset.mask-border-repeat.mask-border-slice.mask-border-source.mask-border-width.mask-clip.mask-composite.mask-image.mask-mode.mask-origin.mask-position.mask-repeat.mask-size.mask-type.masonry-auto-flow.math-depth.math-shift.math-style.max-block-size.max-height.max-inline-size.max-width.min-block-size.min-height.min-inline-size.min-width.mix-blend-mode.nav-down.nav-index.nav-left.nav-right.nav-up.none.normal.object-fit.object-position.offset.offset-anchor.offset-distance.offset-path.offset-position.offset-rotate.opacity.order.orphans.outline.outline-color.outline-offset.outline-style.outline-width.overflow.overflow-anchor.overflow-block.overflow-clip-margin.overflow-inline.overflow-wrap.overflow-x.overflow-y.overlay.overscroll-behavior.overscroll-behavior-block.overscroll-behavior-inline.overscroll-behavior-x.overscroll-behavior-y.padding.padding-block.padding-block-end.padding-block-start.padding-bottom.padding-inline.padding-inline-end.padding-inline-start.padding-left.padding-right.padding-top.page.page-break-after.page-break-before.page-break-inside.paint-order.pause.pause-after.pause-before.perspective.perspective-origin.place-content.place-items.place-self.pointer-events.position.position-anchor.position-visibility.print-color-adjust.quotes.r.resize.rest.rest-after.rest-before.right.rotate.row-gap.ruby-align.ruby-position.scale.scroll-behavior.scroll-margin.scroll-margin-block.scroll-margin-block-end.scroll-margin-block-start.scroll-margin-bottom.scroll-margin-inline.scroll-margin-inline-end.scroll-margin-inline-start.scroll-margin-left.scroll-margin-right.scroll-margin-top.scroll-padding.scroll-padding-block.scroll-padding-block-end.scroll-padding-block-start.scroll-padding-bottom.scroll-padding-inline.scroll-padding-inline-end.scroll-padding-inline-start.scroll-padding-left.scroll-padding-right.scroll-padding-top.scroll-snap-align.scroll-snap-stop.scroll-snap-type.scroll-timeline.scroll-timeline-axis.scroll-timeline-name.scrollbar-color.scrollbar-gutter.scrollbar-width.shape-image-threshold.shape-margin.shape-outside.shape-rendering.speak.speak-as.src.stop-color.stop-opacity.stroke.stroke-dasharray.stroke-dashoffset.stroke-linecap.stroke-linejoin.stroke-miterlimit.stroke-opacity.stroke-width.tab-size.table-layout.text-align.text-align-all.text-align-last.text-anchor.text-combine-upright.text-decoration.text-decoration-color.text-decoration-line.text-decoration-skip.text-decoration-skip-ink.text-decoration-style.text-decoration-thickness.text-emphasis.text-emphasis-color.text-emphasis-position.text-emphasis-style.text-indent.text-justify.text-orientation.text-overflow.text-rendering.text-shadow.text-size-adjust.text-transform.text-underline-offset.text-underline-position.text-wrap.text-wrap-mode.text-wrap-style.timeline-scope.top.touch-action.transform.transform-box.transform-origin.transform-style.transition.transition-behavior.transition-delay.transition-duration.transition-property.transition-timing-function.translate.unicode-bidi.user-modify.user-select.vector-effect.vertical-align.view-timeline.view-timeline-axis.view-timeline-inset.view-timeline-name.view-transition-name.visibility.voice-balance.voice-duration.voice-family.voice-pitch.voice-range.voice-rate.voice-stress.voice-volume.white-space.white-space-collapse.widows.width.will-change.word-break.word-spacing.word-wrap.writing-mode.x.y.z-index.zoom".split(".")).sort().reverse(), u = s.concat(c).sort().reverse();
 	function d(e) {
-		let t = n(e), r = u, i = "[\\w-]+", d = "(" + i + "|@\\{[\\w-]+\\})", f = [], p = [], m = function(e) {
+		let t = n(e), r = u, i = "([\\w-]+|@\\{[\\w-]+\\})", d = [], f = [], p = function(e) {
 			return {
 				className: "string",
 				begin: "~?" + e + ".*?" + e
 			};
-		}, h = function(e, t, n) {
+		}, m = function(e, t, n) {
 			return {
 				className: e,
 				begin: t,
 				relevance: n
 			};
-		}, g = {
+		}, h = {
 			$pattern: /[a-z-]+/,
 			keyword: "and or not only",
 			attribute: o.join(" ")
-		}, _ = {
+		}, g = {
 			begin: "\\(",
 			end: "\\)",
-			contains: p,
-			keywords: g,
+			contains: f,
+			keywords: h,
 			relevance: 0
 		};
-		p.push(e.C_LINE_COMMENT_MODE, e.C_BLOCK_COMMENT_MODE, m("'"), m("\""), t.CSS_NUMBER_MODE, {
+		f.push(e.C_LINE_COMMENT_MODE, e.C_BLOCK_COMMENT_MODE, p("'"), p("\""), t.CSS_NUMBER_MODE, {
 			begin: "(url|data-uri)\\(",
 			starts: {
 				className: "string",
 				end: "[\\)\\n]",
 				excludeEnd: !0
 			}
-		}, t.HEXCOLOR, _, h("variable", "@@?" + i, 10), h("variable", "@\\{" + i + "\\}"), h("built_in", "~?`[^`]*?`"), {
+		}, t.HEXCOLOR, g, m("variable", "@@?[\\w-]+", 10), m("variable", "@\\{[\\w-]+\\}"), m("built_in", "~?`[^`]*?`"), {
 			className: "attribute",
-			begin: i + "\\s*:",
+			begin: "[\\w-]+\\s*:",
 			end: ":",
 			returnBegin: !0,
 			excludeEnd: !0
 		}, t.IMPORTANT, { beginKeywords: "and not" }, t.FUNCTION_DISPATCH);
-		let v = p.concat({
+		let _ = f.concat({
 			begin: /\{/,
 			end: /\}/,
-			contains: f
-		}), y = {
+			contains: d
+		}), v = {
 			beginKeywords: "when",
 			endsWithParent: !0,
-			contains: [{ beginKeywords: "and not" }].concat(p)
-		}, b = {
-			begin: d + "\\s*:",
+			contains: [{ beginKeywords: "and not" }].concat(f)
+		}, y = {
+			begin: i + "\\s*:",
 			returnBegin: !0,
 			end: /[;}]/,
 			relevance: 0,
@@ -10372,37 +10328,37 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 						endsWithParent: !0,
 						illegal: "[<=$]",
 						relevance: 0,
-						contains: p
+						contains: f
 					}
 				}
 			]
-		}, x = {
+		}, b = {
 			className: "keyword",
 			begin: "@(import|media|charset|font-face|(-[a-z]+-)?keyframes|supports|document|namespace|page|viewport|host)\\b",
 			starts: {
 				end: "[;{}]",
-				keywords: g,
+				keywords: h,
 				returnEnd: !0,
-				contains: p,
+				contains: f,
 				relevance: 0
 			}
-		}, S = {
+		}, x = {
 			className: "variable",
 			variants: [{
-				begin: "@" + i + "\\s*:",
+				begin: "@[\\w-]+\\s*:",
 				relevance: 15
-			}, { begin: "@" + i }],
+			}, { begin: "@[\\w-]+" }],
 			starts: {
 				end: "[;}]",
 				returnEnd: !0,
-				contains: v
+				contains: _
 			}
-		}, C = {
+		}, S = {
 			variants: [{
 				begin: "[\\.#:&\\[>]",
 				end: "[;{}]"
 			}, {
-				begin: d,
+				begin: i,
 				end: /\{/
 			}],
 			returnBegin: !0,
@@ -10412,18 +10368,18 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			contains: [
 				e.C_LINE_COMMENT_MODE,
 				e.C_BLOCK_COMMENT_MODE,
-				y,
-				h("keyword", "all\\b"),
-				h("variable", "@\\{" + i + "\\}"),
+				v,
+				m("keyword", "all\\b"),
+				m("variable", "@\\{[\\w-]+\\}"),
 				{
 					begin: "\\b(" + a.join("|") + ")\\b",
 					className: "selector-tag"
 				},
 				t.CSS_NUMBER_MODE,
-				h("selector-tag", d, 0),
-				h("selector-id", "#" + d),
-				h("selector-class", "\\." + d, 0),
-				h("selector-tag", "&", 0),
+				m("selector-tag", i, 0),
+				m("selector-id", "#" + i),
+				m("selector-class", "\\." + i, 0),
+				m("selector-tag", "&", 0),
 				t.ATTRIBUTE_SELECTOR_MODE,
 				{
 					className: "selector-pseudo",
@@ -10437,21 +10393,21 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					begin: /\(/,
 					end: /\)/,
 					relevance: 0,
-					contains: v
+					contains: _
 				},
 				{ begin: "!important" },
 				t.FUNCTION_DISPATCH
 			]
-		}, w = {
+		}, C = {
 			begin: `[\\w-]+:(:)?(${r.join("|")})`,
 			returnBegin: !0,
-			contains: [C]
+			contains: [S]
 		};
-		return f.push(e.C_LINE_COMMENT_MODE, e.C_BLOCK_COMMENT_MODE, x, S, w, b, C, y, t.FUNCTION_DISPATCH), {
+		return d.push(e.C_LINE_COMMENT_MODE, e.C_BLOCK_COMMENT_MODE, b, x, C, y, S, v, t.FUNCTION_DISPATCH), {
 			name: "Less",
 			case_insensitive: !0,
 			illegal: "[=>'/<($\"]",
-			contains: f
+			contains: d
 		};
 	}
 	t.exports = d;
@@ -10471,7 +10427,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{ begin: "#(o|O)[0-7]+(/[0-7]+)?" },
 				{ begin: "#(x|X)[0-9a-fA-F]+(/[0-9a-fA-F]+)?" },
 				{
-					begin: "#(c|C)\\(" + r + " +(-|\\+)?\\d+(\\.\\d+|\\/\\d+)?((d|e|f|l|s|D|E|F|L|S)(\\+|-)?\\d+)?",
+					begin: "#(c|C)\\(" + r + " +" + r,
 					end: "\\)"
 				}
 			]
@@ -10515,7 +10471,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				},
 				{ begin: "'" + n }
 			]
-		}, p = { variants: [{ begin: "'" + t }, { begin: "#'" + t + "(::[a-zA-Z_\\-+\\*\\/<=>&#][a-zA-Z0-9_\\-+*\\/<=>&#!]*)*" }] }, m = {
+		}, p = { variants: [{ begin: "'" + t }, { begin: "#'" + t + "(::" + t + ")*" }] }, m = {
 			begin: "\\(\\s*",
 			end: "\\)"
 		}, h = {
@@ -10954,7 +10910,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			begin: t,
 			end: n,
 			contains: ["self"]
-		}, i = [e.COMMENT("--(?!" + t + ")", "$"), e.COMMENT("--" + t, n, {
+		}, i = [e.COMMENT("--(?!\\[=*\\[)", "$"), e.COMMENT("--\\[=*\\[", n, {
 			contains: [r],
 			relevance: 10
 		})];
@@ -11119,9 +11075,9 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = r;
 })), ut = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "('|\\.')+", n = {
+		let t = {
 			relevance: 0,
-			contains: [{ begin: t }]
+			contains: [{ begin: "('|\\.')+" }]
 		};
 		return {
 			name: "Matlab",
@@ -11150,17 +11106,17 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					className: "built_in",
 					begin: /true|false/,
 					relevance: 0,
-					starts: n
+					starts: t
 				},
 				{
-					begin: "[a-zA-Z][a-zA-Z_0-9]*" + t,
+					begin: "[a-zA-Z][a-zA-Z_0-9]*('|\\.')+",
 					relevance: 0
 				},
 				{
 					className: "number",
 					begin: e.C_NUMBER_RE,
 					relevance: 0,
-					starts: n
+					starts: t
 				},
 				{
 					className: "string",
@@ -11171,14 +11127,14 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{
 					begin: /\]|\}|\)/,
 					relevance: 0,
-					starts: n
+					starts: t
 				},
 				{
 					className: "string",
 					begin: "\"",
 					end: "\"",
 					contains: [{ begin: "\"\"" }],
-					starts: n
+					starts: t
 				},
 				e.COMMENT("^\\s*%\\{\\s*$", "^\\s*%\\}\\s*$"),
 				e.COMMENT("%", "$")
@@ -11684,7 +11640,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			{ begin: e.IDENT_RE + "\\\\" + e.IDENT_RE }
 		];
 		r.contains = i;
-		let a = e.inherit(e.TITLE_MODE, { begin: n }), o = {
+		let a = e.inherit(e.TITLE_MODE, { begin: n }), o = "(\\(.*\\)\\s*)?\\B[-=]>", s = {
 			className: "params",
 			begin: "\\([^\\(]",
 			returnBegin: !0,
@@ -11704,20 +11660,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				e.COMMENT("--", "$"),
 				{
 					className: "function",
-					begin: "^\\s*" + n + "\\s*=\\s*(\\(.*\\)\\s*)?\\B[-=]>",
+					begin: "^\\s*" + n + "\\s*=\\s*" + o,
 					end: "[-=]>",
 					returnBegin: !0,
-					contains: [a, o]
+					contains: [a, s]
 				},
 				{
 					begin: /[\(,:=]\s*/,
 					relevance: 0,
 					contains: [{
 						className: "function",
-						begin: "(\\(.*\\)\\s*)?\\B[-=]>",
+						begin: o,
 						end: "[-=]>",
 						returnBegin: !0,
-						contains: [o]
+						contains: [s]
 					}]
 				},
 				{
@@ -13624,9 +13580,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), Ht = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "[ \\t\\f]*", n = t + "[:=][ \\t\\f]*";
-		"" + n;
-		let r = "([^\\\\:= \\t\\f\\n]|\\\\.)+";
+		let t = "([^\\\\:= \\t\\f\\n]|\\\\.)+";
 		return {
 			name: ".properties",
 			disableAutodetect: !0,
@@ -13636,10 +13590,10 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				e.COMMENT("^\\s*[!#]", "$"),
 				{
 					returnBegin: !0,
-					variants: [{ begin: r + n }, { begin: r + "[ \\t\\f]+" }],
+					variants: [{ begin: t + "[ \\t\\f]*[:=][ \\t\\f]*" }, { begin: t + "[ \\t\\f]+" }],
 					contains: [{
 						className: "attr",
-						begin: r,
+						begin: t,
 						endsParent: !0
 					}],
 					starts: {
@@ -13655,7 +13609,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				},
 				{
 					className: "attr",
-					begin: r + t + "$"
+					begin: t + "[ \\t\\f]*" + "$"
 				}
 			]
 		};
@@ -15119,19 +15073,17 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), sn = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "[^\\(\\)\\[\\]\\{\\}\",'`;#|\\\\\\s]+", n = "(-|\\+)?\\d+([./]\\d+)?";
-		n + "";
-		let r = {
+		let t = "[^\\(\\)\\[\\]\\{\\}\",'`;#|\\\\\\s]+", n = {
 			$pattern: t,
 			built_in: "case-lambda call/cc class define-class exit-handler field import inherit init-field interface let*-values let-values let/ec mixin opt-lambda override protect provide public rename require require-for-syntax syntax syntax-case syntax-error unit/sig unless when with-syntax and begin call-with-current-continuation call-with-input-file call-with-output-file case cond define define-syntax delay do dynamic-wind else for-each if lambda let let* let-syntax letrec letrec-syntax map or syntax-rules ' * + , ,@ - ... / ; < <= = => > >= ` abs acos angle append apply asin assoc assq assv atan boolean? caar cadr call-with-input-file call-with-output-file call-with-values car cdddar cddddr cdr ceiling char->integer char-alphabetic? char-ci<=? char-ci<? char-ci=? char-ci>=? char-ci>? char-downcase char-lower-case? char-numeric? char-ready? char-upcase char-upper-case? char-whitespace? char<=? char<? char=? char>=? char>? char? close-input-port close-output-port complex? cons cos current-input-port current-output-port denominator display eof-object? eq? equal? eqv? eval even? exact->inexact exact? exp expt floor force gcd imag-part inexact->exact inexact? input-port? integer->char integer? interaction-environment lcm length list list->string list->vector list-ref list-tail list? load log magnitude make-polar make-rectangular make-string make-vector max member memq memv min modulo negative? newline not null-environment null? number->string number? numerator odd? open-input-file open-output-file output-port? pair? peek-char port? positive? procedure? quasiquote quote quotient rational? rationalize read read-char real-part real? remainder reverse round scheme-report-environment set! set-car! set-cdr! sin sqrt string string->list string->number string->symbol string-append string-ci<=? string-ci<? string-ci=? string-ci>=? string-ci>? string-copy string-fill! string-length string-ref string-set! string<=? string<? string=? string>=? string>? string? substring symbol->string symbol? tan transcript-off transcript-on truncate values vector vector->list vector-fill! vector-length vector-ref vector-set! with-input-from-file with-output-to-file write write-char zero?"
-		}, i = {
+		}, r = {
 			className: "literal",
 			begin: "(#t|#f|#\\\\" + t + "|#\\\\.)"
-		}, a = {
+		}, i = {
 			className: "number",
 			variants: [
 				{
-					begin: n,
+					begin: "(-|\\+)?\\d+([./]\\d+)?",
 					relevance: 0
 				},
 				{
@@ -15142,35 +15094,35 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				{ begin: "#o[0-7]+(/[0-7]+)?" },
 				{ begin: "#x[0-9a-f]+(/[0-9a-f]+)?" }
 			]
-		}, o = e.QUOTE_STRING_MODE, s = [e.COMMENT(";", "$", { relevance: 0 }), e.COMMENT("#\\|", "\\|#")], c = {
+		}, a = e.QUOTE_STRING_MODE, o = [e.COMMENT(";", "$", { relevance: 0 }), e.COMMENT("#\\|", "\\|#")], s = {
 			begin: t,
 			relevance: 0
-		}, l = {
+		}, c = {
 			className: "symbol",
 			begin: "'" + t
-		}, u = {
+		}, l = {
 			endsWithParent: !0,
 			relevance: 0
-		}, d = {
+		}, u = {
 			variants: [{ begin: /'/ }, { begin: "`" }],
 			contains: [{
 				begin: "\\(",
 				end: "\\)",
 				contains: [
 					"self",
-					i,
-					o,
+					r,
 					a,
-					c,
-					l
+					i,
+					s,
+					c
 				]
 			}]
-		}, f = {
+		}, d = {
 			className: "name",
 			relevance: 0,
 			begin: t,
-			keywords: r
-		}, p = {
+			keywords: n
+		}, f = {
 			variants: [{
 				begin: "\\(",
 				end: "\\)"
@@ -15183,7 +15135,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					begin: /lambda/,
 					endsWithParent: !0,
 					returnBegin: !0,
-					contains: [f, {
+					contains: [d, {
 						endsParent: !0,
 						variants: [{
 							begin: /\(/,
@@ -15192,33 +15144,33 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 							begin: /\[/,
 							end: /\]/
 						}],
-						contains: [c]
+						contains: [s]
 					}]
 				},
-				f,
-				u
+				d,
+				l
 			]
 		};
-		return u.contains = [
+		return l.contains = [
+			r,
 			i,
 			a,
-			o,
+			s,
 			c,
-			l,
-			d,
-			p
-		].concat(s), {
+			u,
+			f
+		].concat(o), {
 			name: "Scheme",
 			aliases: ["scm"],
 			illegal: /\S/,
 			contains: [
 				e.SHEBANG(),
+				i,
 				a,
-				o,
-				l,
-				d,
-				p
-			].concat(s)
+				c,
+				u,
+				f
+			].concat(o)
 		};
 	}
 	t.exports = n;
@@ -15549,7 +15501,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				r,
 				n,
 				{
-					begin: "\\|[ ]*" + t + "([ ]+[a-z][a-zA-Z0-9_]*)*[ ]*\\|",
+					begin: "\\|[ ]*" + t + "([ ]+" + t + ")*[ ]*\\|",
 					returnBegin: !0,
 					end: /\|/,
 					illegal: /\S/,
@@ -16083,22 +16035,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 		let t = n(e), r = {
 			className: "variable",
 			begin: "\\$" + e.IDENT_RE
-		}, i = [
-			"charset",
-			"css",
-			"debug",
-			"extend",
-			"font-face",
-			"for",
-			"import",
-			"include",
-			"keyframes",
-			"media",
-			"mixin",
-			"page",
-			"warn",
-			"while"
-		], u = "(?=[.\\s\\n[:,(])";
+		};
 		return {
 			name: "Stylus",
 			aliases: ["styl"],
@@ -16124,11 +16061,11 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				e.C_BLOCK_COMMENT_MODE,
 				t.HEXCOLOR,
 				{
-					begin: "\\.[a-zA-Z][a-zA-Z0-9_-]*" + u,
+					begin: "\\.[a-zA-Z][a-zA-Z0-9_-]*(?=[.\\s\\n[:,(])",
 					className: "selector-class"
 				},
 				{
-					begin: "#[a-zA-Z][a-zA-Z0-9_-]*" + u,
+					begin: "#[a-zA-Z][a-zA-Z0-9_-]*(?=[.\\s\\n[:,(])",
 					className: "selector-id"
 				},
 				{
@@ -16159,7 +16096,22 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				},
 				{
 					className: "keyword",
-					begin: "@((-(o|moz|ms|webkit)-)?(" + i.join("|") + "))\\b"
+					begin: "@((-(o|moz|ms|webkit)-)?(" + [
+						"charset",
+						"css",
+						"debug",
+						"extend",
+						"font-face",
+						"for",
+						"import",
+						"include",
+						"keyframes",
+						"media",
+						"mixin",
+						"page",
+						"warn",
+						"while"
+					].join("|") + "))\\b"
 				},
 				r,
 				t.CSS_NUMBER_MODE,
@@ -16512,36 +16464,36 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				z("##"),
 				z("###")
 			]
-		}, ee = [e.BACKSLASH_ESCAPE, {
+		}, V = [e.BACKSLASH_ESCAPE, {
 			begin: /\[/,
 			end: /\]/,
 			relevance: 0,
 			contains: [e.BACKSLASH_ESCAPE]
-		}], te = {
+		}], ee = {
 			begin: /\/[^\s](?=[^/\n]*\/)/,
 			end: /\//,
-			contains: ee
-		}, V = (e) => {
+			contains: V
+		}, H = (e) => {
 			let t = i(e, /\//), n = i(/\//, e);
 			return {
 				begin: t,
 				end: n,
-				contains: [...ee, {
+				contains: [...V, {
 					scope: "comment",
 					begin: `#(?!.*${n})`,
 					end: /$/
 				}]
 			};
-		}, ne = {
+		}, te = {
 			scope: "regexp",
 			variants: [
-				V("###"),
-				V("##"),
-				V("#"),
-				te
+				H("###"),
+				H("##"),
+				H("#"),
+				ee
 			]
-		}, H = { match: i(/`/, x, /`/) }, U = [
-			H,
+		}, ne = { match: i(/`/, x, /`/) }, U = [
+			ne,
 			{
 				className: "variable",
 				match: /\$\d+/
@@ -16612,7 +16564,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			]
 		};
 		G.contains.push(re);
-		let ie = {
+		let K = {
 			begin: /\(/,
 			end: /\)/,
 			relevance: 0,
@@ -16625,7 +16577,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					relevance: 0
 				},
 				...a,
-				ne,
+				te,
 				...O,
 				...k,
 				...j,
@@ -16635,12 +16587,12 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				...W,
 				G
 			]
-		}, K = {
+		}, q = {
 			begin: /</,
 			end: />/,
 			keywords: "repeat each",
 			contains: [...a, G]
-		}, ae = {
+		}, ie = {
 			begin: /\(/,
 			end: /\)/,
 			keywords: D,
@@ -16664,36 +16616,36 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				B,
 				...W,
 				G,
-				ie
+				K
 			],
 			endsParent: !0,
 			illegal: /["']/
-		}, oe = {
+		}, ae = {
 			match: [
 				/(func|macro)/,
 				/\s+/,
-				o(H.match, x, v)
+				o(ne.match, x, v)
 			],
 			className: {
 				1: "keyword",
 				3: "title.function"
 			},
 			contains: [
-				K,
-				ae,
+				q,
+				ie,
 				t
 			],
 			illegal: [/\[/, /%/]
-		}, se = {
+		}, J = {
 			match: [/\b(?:subscript|init[?!]?)/, /\s*(?=[<(])/],
 			className: { 1: "keyword" },
 			contains: [
-				K,
-				ae,
+				q,
+				ie,
 				t
 			],
 			illegal: /\[|%/
-		}, ce = {
+		}, oe = {
 			match: [
 				/operator/,
 				/\s+/,
@@ -16703,7 +16655,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				1: "keyword",
 				3: "title"
 			}
-		}, le = {
+		}, Y = {
 			begin: [
 				/precedencegroup/,
 				/\s+/,
@@ -16716,7 +16668,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			contains: [G],
 			keywords: [...p, ...f],
 			end: /}/
-		}, q = {
+		}, X = {
 			match: [
 				/class\b/,
 				/\s+/,
@@ -16729,7 +16681,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				3: "keyword",
 				5: "title.function"
 			}
-		}, ue = {
+		}, se = {
 			match: [
 				/class\b/,
 				/\s+/,
@@ -16739,7 +16691,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				1: "keyword",
 				3: "keyword"
 			}
-		}, de = {
+		}, ce = {
 			begin: [
 				/(struct|protocol|class|extension|enum|actor)/,
 				/\s+/,
@@ -16752,7 +16704,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			},
 			keywords: D,
 			contains: [
-				K,
+				q,
 				...O,
 				{
 					begin: /:/,
@@ -16788,20 +16740,20 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 			keywords: D,
 			contains: [
 				...a,
-				oe,
+				ae,
+				J,
+				X,
 				se,
-				q,
-				ue,
-				de,
 				ce,
-				le,
+				oe,
+				Y,
 				{
 					beginKeywords: "import",
 					end: /$/,
 					contains: [...a],
 					relevance: 0
 				},
-				ne,
+				te,
 				...O,
 				...k,
 				...j,
@@ -16810,7 +16762,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				...U,
 				...W,
 				G,
-				ie
+				K
 			]
 		};
 	}
@@ -18031,8 +17983,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), Fn = /* @__PURE__ */ o(((e, t) => {
 	function n(e) {
-		let t = "\\d(_|\\d)*";
-		return "" + t, t + "", t + "", {
+		return {
 			name: "VHDL",
 			case_insensitive: !0,
 			keywords: {
@@ -18759,49 +18710,49 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 	t.exports = n;
 })), Q = (/* @__PURE__ */ c((/* @__PURE__ */ o(((e, t) => {
 	var n = l();
-	n.registerLanguage("1c", u()), n.registerLanguage("abnf", d()), n.registerLanguage("accesslog", f()), n.registerLanguage("actionscript", p()), n.registerLanguage("ada", m()), n.registerLanguage("angelscript", h()), n.registerLanguage("apache", g()), n.registerLanguage("applescript", _()), n.registerLanguage("arcade", v()), n.registerLanguage("arduino", y()), n.registerLanguage("armasm", b()), n.registerLanguage("xml", x()), n.registerLanguage("asciidoc", S()), n.registerLanguage("aspectj", C()), n.registerLanguage("autohotkey", w()), n.registerLanguage("autoit", T()), n.registerLanguage("avrasm", E()), n.registerLanguage("awk", D()), n.registerLanguage("axapta", O()), n.registerLanguage("bash", k()), n.registerLanguage("basic", A()), n.registerLanguage("bnf", j()), n.registerLanguage("brainfuck", M()), n.registerLanguage("c", N()), n.registerLanguage("cal", P()), n.registerLanguage("capnproto", F()), n.registerLanguage("ceylon", I()), n.registerLanguage("clean", L()), n.registerLanguage("clojure", R()), n.registerLanguage("clojure-repl", z()), n.registerLanguage("cmake", B()), n.registerLanguage("coffeescript", ee()), n.registerLanguage("coq", te()), n.registerLanguage("cos", V()), n.registerLanguage("cpp", ne()), n.registerLanguage("crmsh", H()), n.registerLanguage("crystal", U()), n.registerLanguage("csharp", W()), n.registerLanguage("csp", G()), n.registerLanguage("css", re()), n.registerLanguage("d", ie()), n.registerLanguage("markdown", K()), n.registerLanguage("dart", ae()), n.registerLanguage("delphi", oe()), n.registerLanguage("diff", se()), n.registerLanguage("django", ce()), n.registerLanguage("dns", le()), n.registerLanguage("dockerfile", q()), n.registerLanguage("dos", ue()), n.registerLanguage("dsconfig", de()), n.registerLanguage("dts", fe()), n.registerLanguage("dust", J()), n.registerLanguage("ebnf", pe()), n.registerLanguage("elixir", Y()), n.registerLanguage("elm", X()), n.registerLanguage("ruby", me()), n.registerLanguage("erb", he()), n.registerLanguage("erlang-repl", ge()), n.registerLanguage("erlang", _e()), n.registerLanguage("excel", ve()), n.registerLanguage("fix", ye()), n.registerLanguage("flix", be()), n.registerLanguage("fortran", xe()), n.registerLanguage("fsharp", Se()), n.registerLanguage("gams", Ce()), n.registerLanguage("gauss", we()), n.registerLanguage("gcode", Te()), n.registerLanguage("gherkin", Ee()), n.registerLanguage("glsl", De()), n.registerLanguage("gml", Oe()), n.registerLanguage("go", Z()), n.registerLanguage("golo", ke()), n.registerLanguage("gradle", Ae()), n.registerLanguage("graphql", je()), n.registerLanguage("groovy", Me()), n.registerLanguage("haml", Ne()), n.registerLanguage("handlebars", Pe()), n.registerLanguage("haskell", Fe()), n.registerLanguage("haxe", Ie()), n.registerLanguage("hsp", Le()), n.registerLanguage("http", Re()), n.registerLanguage("hy", ze()), n.registerLanguage("inform7", Be()), n.registerLanguage("ini", Ve()), n.registerLanguage("irpf90", He()), n.registerLanguage("isbl", Ue()), n.registerLanguage("java", We()), n.registerLanguage("javascript", Ge()), n.registerLanguage("jboss-cli", Ke()), n.registerLanguage("json", qe()), n.registerLanguage("julia", Je()), n.registerLanguage("julia-repl", Ye()), n.registerLanguage("kotlin", Xe()), n.registerLanguage("lasso", Ze()), n.registerLanguage("latex", Qe()), n.registerLanguage("ldif", $e()), n.registerLanguage("leaf", et()), n.registerLanguage("less", tt()), n.registerLanguage("lisp", nt()), n.registerLanguage("livecodeserver", rt()), n.registerLanguage("livescript", it()), n.registerLanguage("llvm", at()), n.registerLanguage("lsl", ot()), n.registerLanguage("lua", st()), n.registerLanguage("makefile", ct()), n.registerLanguage("mathematica", lt()), n.registerLanguage("matlab", ut()), n.registerLanguage("maxima", dt()), n.registerLanguage("mel", ft()), n.registerLanguage("mercury", pt()), n.registerLanguage("mipsasm", mt()), n.registerLanguage("mizar", ht()), n.registerLanguage("perl", gt()), n.registerLanguage("mojolicious", _t()), n.registerLanguage("monkey", vt()), n.registerLanguage("moonscript", yt()), n.registerLanguage("n1ql", bt()), n.registerLanguage("nestedtext", xt()), n.registerLanguage("nginx", St()), n.registerLanguage("nim", Ct()), n.registerLanguage("nix", wt()), n.registerLanguage("node-repl", Tt()), n.registerLanguage("nsis", Et()), n.registerLanguage("objectivec", Dt()), n.registerLanguage("ocaml", Ot()), n.registerLanguage("openscad", kt()), n.registerLanguage("oxygene", At()), n.registerLanguage("parser3", jt()), n.registerLanguage("pf", Mt()), n.registerLanguage("pgsql", Nt()), n.registerLanguage("php", Pt()), n.registerLanguage("php-template", Ft()), n.registerLanguage("plaintext", It()), n.registerLanguage("pony", Lt()), n.registerLanguage("powershell", Rt()), n.registerLanguage("processing", zt()), n.registerLanguage("profile", Bt()), n.registerLanguage("prolog", Vt()), n.registerLanguage("properties", Ht()), n.registerLanguage("protobuf", Ut()), n.registerLanguage("puppet", Wt()), n.registerLanguage("purebasic", Gt()), n.registerLanguage("python", Kt()), n.registerLanguage("python-repl", qt()), n.registerLanguage("q", Jt()), n.registerLanguage("qml", Yt()), n.registerLanguage("r", Xt()), n.registerLanguage("reasonml", Zt()), n.registerLanguage("rib", Qt()), n.registerLanguage("roboconf", $t()), n.registerLanguage("routeros", en()), n.registerLanguage("rsl", tn()), n.registerLanguage("ruleslanguage", nn()), n.registerLanguage("rust", rn()), n.registerLanguage("sas", an()), n.registerLanguage("scala", on()), n.registerLanguage("scheme", sn()), n.registerLanguage("scilab", cn()), n.registerLanguage("scss", ln()), n.registerLanguage("shell", un()), n.registerLanguage("smali", dn()), n.registerLanguage("smalltalk", fn()), n.registerLanguage("sml", pn()), n.registerLanguage("sqf", mn()), n.registerLanguage("sql", hn()), n.registerLanguage("stan", gn()), n.registerLanguage("stata", _n()), n.registerLanguage("step21", vn()), n.registerLanguage("stylus", yn()), n.registerLanguage("subunit", bn()), n.registerLanguage("swift", xn()), n.registerLanguage("taggerscript", Sn()), n.registerLanguage("yaml", Cn()), n.registerLanguage("tap", wn()), n.registerLanguage("tcl", Tn()), n.registerLanguage("thrift", En()), n.registerLanguage("tp", Dn()), n.registerLanguage("twig", On()), n.registerLanguage("typescript", kn()), n.registerLanguage("vala", An()), n.registerLanguage("vbnet", jn()), n.registerLanguage("vbscript", Mn()), n.registerLanguage("vbscript-html", Nn()), n.registerLanguage("verilog", Pn()), n.registerLanguage("vhdl", Fn()), n.registerLanguage("vim", In()), n.registerLanguage("wasm", Ln()), n.registerLanguage("wren", Rn()), n.registerLanguage("x86asm", zn()), n.registerLanguage("xl", Bn()), n.registerLanguage("xquery", Vn()), n.registerLanguage("zephir", Hn()), n.HighlightJS = n, n.default = n, t.exports = n;
+	n.registerLanguage("1c", u()), n.registerLanguage("abnf", d()), n.registerLanguage("accesslog", f()), n.registerLanguage("actionscript", p()), n.registerLanguage("ada", m()), n.registerLanguage("angelscript", h()), n.registerLanguage("apache", g()), n.registerLanguage("applescript", _()), n.registerLanguage("arcade", v()), n.registerLanguage("arduino", y()), n.registerLanguage("armasm", b()), n.registerLanguage("xml", x()), n.registerLanguage("asciidoc", S()), n.registerLanguage("aspectj", C()), n.registerLanguage("autohotkey", w()), n.registerLanguage("autoit", T()), n.registerLanguage("avrasm", E()), n.registerLanguage("awk", D()), n.registerLanguage("axapta", O()), n.registerLanguage("bash", k()), n.registerLanguage("basic", A()), n.registerLanguage("bnf", j()), n.registerLanguage("brainfuck", M()), n.registerLanguage("c", N()), n.registerLanguage("cal", P()), n.registerLanguage("capnproto", F()), n.registerLanguage("ceylon", I()), n.registerLanguage("clean", L()), n.registerLanguage("clojure", R()), n.registerLanguage("clojure-repl", z()), n.registerLanguage("cmake", B()), n.registerLanguage("coffeescript", V()), n.registerLanguage("coq", ee()), n.registerLanguage("cos", H()), n.registerLanguage("cpp", te()), n.registerLanguage("crmsh", ne()), n.registerLanguage("crystal", U()), n.registerLanguage("csharp", W()), n.registerLanguage("csp", G()), n.registerLanguage("css", re()), n.registerLanguage("d", K()), n.registerLanguage("markdown", q()), n.registerLanguage("dart", ie()), n.registerLanguage("delphi", ae()), n.registerLanguage("diff", J()), n.registerLanguage("django", oe()), n.registerLanguage("dns", Y()), n.registerLanguage("dockerfile", X()), n.registerLanguage("dos", se()), n.registerLanguage("dsconfig", ce()), n.registerLanguage("dts", le()), n.registerLanguage("dust", ue()), n.registerLanguage("ebnf", de()), n.registerLanguage("elixir", fe()), n.registerLanguage("elm", pe()), n.registerLanguage("ruby", me()), n.registerLanguage("erb", he()), n.registerLanguage("erlang-repl", ge()), n.registerLanguage("erlang", _e()), n.registerLanguage("excel", ve()), n.registerLanguage("fix", ye()), n.registerLanguage("flix", be()), n.registerLanguage("fortran", xe()), n.registerLanguage("fsharp", Z()), n.registerLanguage("gams", Se()), n.registerLanguage("gauss", Ce()), n.registerLanguage("gcode", we()), n.registerLanguage("gherkin", Te()), n.registerLanguage("glsl", Ee()), n.registerLanguage("gml", De()), n.registerLanguage("go", Oe()), n.registerLanguage("golo", ke()), n.registerLanguage("gradle", Ae()), n.registerLanguage("graphql", je()), n.registerLanguage("groovy", Me()), n.registerLanguage("haml", Ne()), n.registerLanguage("handlebars", Pe()), n.registerLanguage("haskell", Fe()), n.registerLanguage("haxe", Ie()), n.registerLanguage("hsp", Le()), n.registerLanguage("http", Re()), n.registerLanguage("hy", ze()), n.registerLanguage("inform7", Be()), n.registerLanguage("ini", Ve()), n.registerLanguage("irpf90", He()), n.registerLanguage("isbl", Ue()), n.registerLanguage("java", We()), n.registerLanguage("javascript", Ge()), n.registerLanguage("jboss-cli", Ke()), n.registerLanguage("json", qe()), n.registerLanguage("julia", Je()), n.registerLanguage("julia-repl", Ye()), n.registerLanguage("kotlin", Xe()), n.registerLanguage("lasso", Ze()), n.registerLanguage("latex", Qe()), n.registerLanguage("ldif", $e()), n.registerLanguage("leaf", et()), n.registerLanguage("less", tt()), n.registerLanguage("lisp", nt()), n.registerLanguage("livecodeserver", rt()), n.registerLanguage("livescript", it()), n.registerLanguage("llvm", at()), n.registerLanguage("lsl", ot()), n.registerLanguage("lua", st()), n.registerLanguage("makefile", ct()), n.registerLanguage("mathematica", lt()), n.registerLanguage("matlab", ut()), n.registerLanguage("maxima", dt()), n.registerLanguage("mel", ft()), n.registerLanguage("mercury", pt()), n.registerLanguage("mipsasm", mt()), n.registerLanguage("mizar", ht()), n.registerLanguage("perl", gt()), n.registerLanguage("mojolicious", _t()), n.registerLanguage("monkey", vt()), n.registerLanguage("moonscript", yt()), n.registerLanguage("n1ql", bt()), n.registerLanguage("nestedtext", xt()), n.registerLanguage("nginx", St()), n.registerLanguage("nim", Ct()), n.registerLanguage("nix", wt()), n.registerLanguage("node-repl", Tt()), n.registerLanguage("nsis", Et()), n.registerLanguage("objectivec", Dt()), n.registerLanguage("ocaml", Ot()), n.registerLanguage("openscad", kt()), n.registerLanguage("oxygene", At()), n.registerLanguage("parser3", jt()), n.registerLanguage("pf", Mt()), n.registerLanguage("pgsql", Nt()), n.registerLanguage("php", Pt()), n.registerLanguage("php-template", Ft()), n.registerLanguage("plaintext", It()), n.registerLanguage("pony", Lt()), n.registerLanguage("powershell", Rt()), n.registerLanguage("processing", zt()), n.registerLanguage("profile", Bt()), n.registerLanguage("prolog", Vt()), n.registerLanguage("properties", Ht()), n.registerLanguage("protobuf", Ut()), n.registerLanguage("puppet", Wt()), n.registerLanguage("purebasic", Gt()), n.registerLanguage("python", Kt()), n.registerLanguage("python-repl", qt()), n.registerLanguage("q", Jt()), n.registerLanguage("qml", Yt()), n.registerLanguage("r", Xt()), n.registerLanguage("reasonml", Zt()), n.registerLanguage("rib", Qt()), n.registerLanguage("roboconf", $t()), n.registerLanguage("routeros", en()), n.registerLanguage("rsl", tn()), n.registerLanguage("ruleslanguage", nn()), n.registerLanguage("rust", rn()), n.registerLanguage("sas", an()), n.registerLanguage("scala", on()), n.registerLanguage("scheme", sn()), n.registerLanguage("scilab", cn()), n.registerLanguage("scss", ln()), n.registerLanguage("shell", un()), n.registerLanguage("smali", dn()), n.registerLanguage("smalltalk", fn()), n.registerLanguage("sml", pn()), n.registerLanguage("sqf", mn()), n.registerLanguage("sql", hn()), n.registerLanguage("stan", gn()), n.registerLanguage("stata", _n()), n.registerLanguage("step21", vn()), n.registerLanguage("stylus", yn()), n.registerLanguage("subunit", bn()), n.registerLanguage("swift", xn()), n.registerLanguage("taggerscript", Sn()), n.registerLanguage("yaml", Cn()), n.registerLanguage("tap", wn()), n.registerLanguage("tcl", Tn()), n.registerLanguage("thrift", En()), n.registerLanguage("tp", Dn()), n.registerLanguage("twig", On()), n.registerLanguage("typescript", kn()), n.registerLanguage("vala", An()), n.registerLanguage("vbnet", jn()), n.registerLanguage("vbscript", Mn()), n.registerLanguage("vbscript-html", Nn()), n.registerLanguage("verilog", Pn()), n.registerLanguage("vhdl", Fn()), n.registerLanguage("vim", In()), n.registerLanguage("wasm", Ln()), n.registerLanguage("wren", Rn()), n.registerLanguage("x86asm", zn()), n.registerLanguage("xl", Bn()), n.registerLanguage("xquery", Vn()), n.registerLanguage("zephir", Hn()), n.HighlightJS = n, n.default = n, t.exports = n;
 })))())).default;
 //#endregion
 //#region plugin/highlight/plugin.js
 (function(e, t) {
-	var n, r = "hljs-ln", i = "hljs-ln-line", a = "hljs-ln-code", o = "hljs-ln-numbers", s = "hljs-ln-n", c = "data-line-number", l = /\r\n|\r|\n/g;
-	function u(e) {
+	var n, r = "hljs-ln", i = "hljs-ln-code", a = "hljs-ln-n", o = "data-line-number", s = /\r\n|\r|\n/g;
+	function c(e) {
 		for (var t = e.toString(), n = e.anchorNode; n.nodeName !== "TD";) n = n.parentNode;
 		for (var r = e.focusNode; r.nodeName !== "TD";) r = r.parentNode;
-		var i = parseInt(n.dataset.lineNumber), o = parseInt(r.dataset.lineNumber);
-		if (i == o) return t;
-		var s, l = n.textContent, u = r.textContent;
-		for (o < i && (s = i, i = o, o = s, s = l, l = u, u = s); t.indexOf(l) !== 0;) l = l.slice(1);
+		var a = parseInt(n.dataset.lineNumber), s = parseInt(r.dataset.lineNumber);
+		if (a == s) return t;
+		var c, l = n.textContent, u = r.textContent;
+		for (s < a && (c = a, a = s, s = c, c = l, l = u, u = c); t.indexOf(l) !== 0;) l = l.slice(1);
 		for (; t.lastIndexOf(u) === -1;) u = u.slice(0, -1);
 		for (var d = l, f = function(e) {
 			for (var t = e; t.nodeName !== "TABLE";) t = t.parentNode;
 			return t;
-		}(n), p = i + 1; p < o; ++p) {
-			var m = g(".{0}[{1}=\"{2}\"]", [
-				a,
-				c,
+		}(n), p = a + 1; p < s; ++p) {
+			var h = m(".{0}[{1}=\"{2}\"]", [
+				i,
+				o,
 				p
 			]);
-			d += "\n" + f.querySelector(m).textContent;
+			d += "\n" + f.querySelector(h).textContent;
 		}
 		return d += "\n" + u;
 	}
-	function d(n) {
+	function l(n) {
 		try {
 			var r = t.querySelectorAll("code.hljs,code.nohighlight");
-			for (var i in r) r.hasOwnProperty(i) && (r[i].classList.contains("nohljsln") || f(r[i], n));
+			for (var i in r) r.hasOwnProperty(i) && (r[i].classList.contains("nohljsln") || u(r[i], n));
 		} catch (t) {
 			e.console.error("LineNumbers error: ", t);
 		}
 	}
-	function f(e, t) {
-		typeof e == "object" && (e.innerHTML = p(e, t));
+	function u(e, t) {
+		typeof e == "object" && (e.innerHTML = d(e, t));
 	}
-	function p(e, t) {
-		var n, u, d = (n = e, {
+	function d(e, t) {
+		var n, c, l = (n = e, {
 			singleLine: function(e) {
 				return !!e.singleLine && e.singleLine;
-			}(u = (u = t) || {}),
+			}(c = (c = t) || {}),
 			startFrom: function(e, t) {
 				var n = 1;
 				isFinite(t.startFrom) && (n = t.startFrom);
@@ -18813,59 +18764,59 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 					var n = Number(e);
 					return isFinite(n) ? n : t;
 				}(r, 1)), n;
-			}(n, u)
+			}(n, c)
 		});
 		return function e(t) {
 			var n = t.childNodes;
 			for (var r in n) {
 				var i;
-				n.hasOwnProperty(r) && (i = n[r], 0 < (i.textContent.trim().match(l) || []).length && (0 < i.childNodes.length ? e(i) : m(i.parentNode)));
+				n.hasOwnProperty(r) && (i = n[r], 0 < (i.textContent.trim().match(s) || []).length && (0 < i.childNodes.length ? e(i) : f(i.parentNode)));
 			}
 		}(e), function(e, t) {
-			var n = h(e);
+			var n = p(e);
 			if (n[n.length - 1].trim() === "" && n.pop(), 1 < n.length || t.singleLine) {
-				for (var l = "", u = 0, d = n.length; u < d; u++) l += g("<tr><td class=\"{0} {1}\" {3}=\"{5}\"><div class=\"{2}\" {3}=\"{5}\"></div></td><td class=\"{0} {4}\" {3}=\"{5}\">{6}</td></tr>", [
-					i,
-					o,
-					s,
-					c,
+				for (var s = "", c = 0, l = n.length; c < l; c++) s += m("<tr><td class=\"{0} {1}\" {3}=\"{5}\"><div class=\"{2}\" {3}=\"{5}\"></div></td><td class=\"{0} {4}\" {3}=\"{5}\">{6}</td></tr>", [
+					"hljs-ln-line",
+					"hljs-ln-numbers",
 					a,
-					u + t.startFrom,
-					0 < n[u].length ? n[u] : " "
+					o,
+					i,
+					c + t.startFrom,
+					0 < n[c].length ? n[c] : " "
 				]);
-				return g("<table class=\"{0}\">{1}</table>", [r, l]);
+				return m("<table class=\"{0}\">{1}</table>", [r, s]);
 			}
 			return e;
-		}(e.innerHTML, d);
+		}(e.innerHTML, l);
 	}
-	function m(e) {
+	function f(e) {
 		var t = e.className;
 		if (/hljs-/.test(t)) {
-			for (var n = h(e.innerHTML), r = 0, i = ""; r < n.length; r++) i += g("<span class=\"{0}\">{1}</span>\n", [t, 0 < n[r].length ? n[r] : " "]);
+			for (var n = p(e.innerHTML), r = 0, i = ""; r < n.length; r++) i += m("<span class=\"{0}\">{1}</span>\n", [t, 0 < n[r].length ? n[r] : " "]);
 			e.innerHTML = i.trim();
 		}
 	}
-	function h(e) {
-		return e.length === 0 ? [] : e.split(l);
+	function p(e) {
+		return e.length === 0 ? [] : e.split(s);
 	}
-	function g(e, t) {
+	function m(e, t) {
 		return e.replace(/\{(\d+)\}/g, function(e, n) {
 			return t[n] === void 0 ? e : t[n];
 		});
 	}
 	Q ? (Q.initLineNumbersOnLoad = function(n) {
-		t.readyState === "interactive" || t.readyState === "complete" ? d(n) : e.addEventListener("DOMContentLoaded", function() {
-			d(n);
+		t.readyState === "interactive" || t.readyState === "complete" ? l(n) : e.addEventListener("DOMContentLoaded", function() {
+			l(n);
 		});
-	}, Q.lineNumbersBlock = f, Q.lineNumbersValue = function(e, t) {
+	}, Q.lineNumbersBlock = u, Q.lineNumbersValue = function(e, t) {
 		if (typeof e == "string") {
 			var n = document.createElement("code");
-			return n.innerHTML = e, p(n, t);
+			return n.innerHTML = e, d(n, t);
 		}
-	}, (n = t.createElement("style")).type = "text/css", n.innerHTML = g(".{0}{border-collapse:collapse}.{0} td{padding:0}.{1}:before{content:attr({2})}", [
+	}, (n = t.createElement("style")).type = "text/css", n.innerHTML = m(".{0}{border-collapse:collapse}.{0} td{padding:0}.{1}:before{content:attr({2})}", [
 		r,
-		s,
-		c
+		a,
+		o
 	]), t.getElementsByTagName("head")[0].appendChild(n)) : e.console.error("highlight.js not detected!"), document.addEventListener("copy", function(e) {
 		var t, n = window.getSelection();
 		!function(e) {
@@ -18873,7 +18824,7 @@ var e = Object.create, t = Object.defineProperty, n = Object.getOwnPropertyDescr
 				if (t.className && t.className.indexOf("hljs-ln-code") !== -1) return 1;
 				t = t.parentNode;
 			}
-		}(n.anchorNode) || (t = window.navigator.userAgent.indexOf("Edge") === -1 ? n.toString() : u(n), e.clipboardData.setData("text/plain", t), e.preventDefault());
+		}(n.anchorNode) || (t = window.navigator.userAgent.indexOf("Edge") === -1 ? n.toString() : c(n), e.clipboardData.setData("text/plain", t), e.preventDefault());
 	});
 })(window, document);
 var $ = {
@@ -18884,7 +18835,7 @@ var $ = {
 	hljs: Q,
 	init: function(e) {
 		let t = e.getConfig().highlight || {};
-		t.highlightOnLoad = typeof t.highlightOnLoad == "boolean" ? t.highlightOnLoad : !0, t.escapeHTML = typeof t.escapeHTML == "boolean" ? t.escapeHTML : !0, Array.from(e.getRevealElement().querySelectorAll("pre code")).forEach((e) => {
+		t.highlightOnLoad = typeof t.highlightOnLoad != "boolean" || t.highlightOnLoad, t.escapeHTML = typeof t.escapeHTML != "boolean" || t.escapeHTML, Array.from(e.getRevealElement().querySelectorAll("pre code")).forEach((e) => {
 			e.parentNode.classList.add("code-wrapper");
 			let n = e.querySelector("script[type=\"text/template\"]");
 			n && (e.textContent = n.innerHTML), e.hasAttribute("data-trim") && typeof e.innerHTML.trim == "function" && (e.innerHTML = Un(e)), t.escapeHTML && !e.hasAttribute("data-noescape") && (e.innerHTML = e.innerHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;")), e.addEventListener("focusout", function(e) {
@@ -18967,7 +18918,8 @@ var $ = {
 						start: t,
 						end: n
 					};
-				} else return {};
+				}
+				return {};
 			});
 		});
 	},

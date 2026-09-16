@@ -1,8 +1,6 @@
-//#region plugin/notes/speaker-view.html?raw
-var e = "<!--\n	NOTE: You need to build the notes plugin after making changes to this file.\n-->\n<html lang=\"en\">\n	<head>\n		<meta charset=\"utf-8\">\n\n		<title>reveal.js - Speaker View</title>\n\n		<style>\n			body {\n				font-family: Helvetica;\n				font-size: 18px;\n			}\n\n			#current-slide,\n			#upcoming-slide,\n			#speaker-controls {\n				padding: 6px;\n				box-sizing: border-box;\n				-moz-box-sizing: border-box;\n			}\n\n			#current-slide iframe,\n			#upcoming-slide iframe {\n				width: 100%;\n				height: 100%;\n				border: 1px solid #ddd;\n			}\n\n			#current-slide .label,\n			#upcoming-slide .label {\n				position: absolute;\n				top: 10px;\n				left: 10px;\n				z-index: 2;\n			}\n\n			#connection-status {\n				position: absolute;\n				top: 0;\n				left: 0;\n				width: 100%;\n				height: 100%;\n				z-index: 20;\n				padding: 30% 20% 20% 20%;\n				font-size: 18px;\n				color: #222;\n				background: #fff;\n				text-align: center;\n				box-sizing: border-box;\n				line-height: 1.4;\n			}\n\n			.overlay-element {\n				height: 34px;\n				line-height: 34px;\n				padding: 0 10px;\n				text-shadow: none;\n				background: rgba( 220, 220, 220, 0.8 );\n				color: #222;\n				font-size: 14px;\n			}\n\n			.overlay-element.interactive:hover {\n				background: rgba( 220, 220, 220, 1 );\n			}\n\n			#current-slide {\n				position: absolute;\n				width: 60%;\n				height: 100%;\n				top: 0;\n				left: 0;\n				padding-right: 0;\n			}\n\n			#upcoming-slide {\n				position: absolute;\n				width: 40%;\n				height: 40%;\n				right: 0;\n				top: 0;\n			}\n\n			/* Speaker controls */\n			#speaker-controls {\n				position: absolute;\n				top: 40%;\n				right: 0;\n				width: 40%;\n				height: 60%;\n				overflow: auto;\n				font-size: 18px;\n			}\n\n				.speaker-controls-time.hidden,\n				.speaker-controls-notes.hidden {\n					display: none;\n				}\n\n				.speaker-controls-time .label,\n				.speaker-controls-pace .label,\n				.speaker-controls-notes .label {\n					text-transform: uppercase;\n					font-weight: normal;\n					font-size: 0.66em;\n					color: #666;\n					margin: 0;\n				}\n\n				.speaker-controls-time, .speaker-controls-pace {\n					border-bottom: 1px solid rgba( 200, 200, 200, 0.5 );\n					margin-bottom: 10px;\n					padding: 10px 16px;\n					padding-bottom: 20px;\n					cursor: pointer;\n				}\n\n				.speaker-controls-time .reset-button {\n					opacity: 0;\n					float: right;\n					color: #666;\n					text-decoration: none;\n				}\n				.speaker-controls-time:hover .reset-button {\n					opacity: 1;\n				}\n\n				.speaker-controls-time .timer,\n				.speaker-controls-time .clock {\n					width: 50%;\n				}\n\n				.speaker-controls-time .timer,\n				.speaker-controls-time .clock,\n				.speaker-controls-time .pacing .hours-value,\n				.speaker-controls-time .pacing .minutes-value,\n				.speaker-controls-time .pacing .seconds-value {\n					font-size: 1.9em;\n				}\n\n				.speaker-controls-time .timer {\n					float: left;\n				}\n\n				.speaker-controls-time .clock {\n					float: right;\n					text-align: right;\n				}\n\n				.speaker-controls-time span.mute {\n					opacity: 0.3;\n				}\n\n				.speaker-controls-time .pacing-title {\n					margin-top: 5px;\n				}\n\n				.speaker-controls-time .pacing.ahead {\n					color: blue;\n				}\n\n				.speaker-controls-time .pacing.on-track {\n					color: green;\n				}\n\n				.speaker-controls-time .pacing.behind {\n					color: red;\n				}\n\n				.speaker-controls-notes {\n					padding: 10px 16px;\n				}\n\n				.speaker-controls-notes .value {\n					margin-top: 5px;\n					line-height: 1.4;\n					font-size: 1.2em;\n				}\n\n			/* Layout selector\xA0*/\n			#speaker-layout {\n				position: absolute;\n				top: 10px;\n				right: 10px;\n				color: #222;\n				z-index: 10;\n			}\n				#speaker-layout select {\n					position: absolute;\n					width: 100%;\n					height: 100%;\n					top: 0;\n					left: 0;\n					border: 0;\n					box-shadow: 0;\n					cursor: pointer;\n					opacity: 0;\n\n					font-size: 1em;\n					background-color: transparent;\n\n					-moz-appearance: none;\n					-webkit-appearance: none;\n					-webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n				}\n\n				#speaker-layout select:focus {\n					outline: none;\n					box-shadow: none;\n				}\n\n			.clear {\n				clear: both;\n			}\n\n			/* Speaker layout: Wide */\n			body[data-speaker-layout=\"wide\"] #current-slide,\n			body[data-speaker-layout=\"wide\"] #upcoming-slide {\n				width: 50%;\n				height: 45%;\n				padding: 6px;\n			}\n\n			body[data-speaker-layout=\"wide\"] #current-slide {\n				top: 0;\n				left: 0;\n			}\n\n			body[data-speaker-layout=\"wide\"] #upcoming-slide {\n				top: 0;\n				left: 50%;\n			}\n\n			body[data-speaker-layout=\"wide\"] #speaker-controls {\n				top: 45%;\n				left: 0;\n				width: 100%;\n				height: 50%;\n				font-size: 1.25em;\n			}\n\n			/* Speaker layout: Tall */\n			body[data-speaker-layout=\"tall\"] #current-slide,\n			body[data-speaker-layout=\"tall\"] #upcoming-slide {\n				width: 45%;\n				height: 50%;\n				padding: 6px;\n			}\n\n			body[data-speaker-layout=\"tall\"] #current-slide {\n				top: 0;\n				left: 0;\n			}\n\n			body[data-speaker-layout=\"tall\"] #upcoming-slide {\n				top: 50%;\n				left: 0;\n			}\n\n			body[data-speaker-layout=\"tall\"] #speaker-controls {\n				padding-top: 40px;\n				top: 0;\n				left: 45%;\n				width: 55%;\n				height: 100%;\n				font-size: 1.25em;\n			}\n\n			/* Speaker layout: Notes only */\n			body[data-speaker-layout=\"notes-only\"] #current-slide,\n			body[data-speaker-layout=\"notes-only\"] #upcoming-slide {\n				display: none;\n			}\n\n			body[data-speaker-layout=\"notes-only\"] #speaker-controls {\n				padding-top: 40px;\n				top: 0;\n				left: 0;\n				width: 100%;\n				height: 100%;\n				font-size: 1.25em;\n			}\n\n			@media screen and (max-width: 1080px) {\n				body[data-speaker-layout=\"default\"] #speaker-controls {\n					font-size: 16px;\n				}\n			}\n\n			@media screen and (max-width: 900px) {\n				body[data-speaker-layout=\"default\"] #speaker-controls {\n					font-size: 14px;\n				}\n			}\n\n			@media screen and (max-width: 800px) {\n				body[data-speaker-layout=\"default\"] #speaker-controls {\n					font-size: 12px;\n				}\n			}\n\n		</style>\n	</head>\n\n	<body>\n\n		<div id=\"connection-status\">Loading speaker view...</div>\n\n		<div id=\"current-slide\"></div>\n		<div id=\"upcoming-slide\"><span class=\"overlay-element label\">Upcoming</span></div>\n		<div id=\"speaker-controls\">\n			<div class=\"speaker-controls-time\">\n				<h4 class=\"label\">Time <span class=\"reset-button\">Click to Reset</span></h4>\n				<div class=\"clock\">\n					<span class=\"clock-value\">0:00 AM</span>\n				</div>\n				<div class=\"timer\">\n					<span class=\"hours-value\">00</span><span class=\"minutes-value\">:00</span><span class=\"seconds-value\">:00</span>\n				</div>\n				<div class=\"clear\"></div>\n\n				<h4 class=\"label pacing-title\" style=\"display: none\">Pacing – Time to finish current slide</h4>\n				<div class=\"pacing\" style=\"display: none\">\n					<span class=\"hours-value\">00</span><span class=\"minutes-value\">:00</span><span class=\"seconds-value\">:00</span>\n				</div>\n			</div>\n\n			<div class=\"speaker-controls-notes hidden\">\n				<h4 class=\"label\">Notes</h4>\n				<div class=\"value\"></div>\n			</div>\n		</div>\n		<div id=\"speaker-layout\" class=\"overlay-element interactive\">\n			<span class=\"speaker-layout-label\"></span>\n			<select class=\"speaker-layout-dropdown\"></select>\n		</div>\n\n		<script>\n\n			(function() {\n\n				var notes,\n					notesValue,\n					currentState,\n					currentSlide,\n					upcomingSlide,\n					layoutLabel,\n					layoutDropdown,\n					pendingCalls = {},\n					lastRevealApiCallId = 0,\n					connected = false\n\n				var connectionStatus = document.querySelector( '#connection-status' );\n\n				var SPEAKER_LAYOUTS = {\n					'default': 'Default',\n					'wide': 'Wide',\n					'tall': 'Tall',\n					'notes-only': 'Notes only'\n				};\n\n				setupLayout();\n\n				let openerOrigin;\n\n				try {\n					openerOrigin = window.opener.location.origin;\n				}\n				catch ( error ) { console.warn( error ) }\n\n				// In order to prevent XSS, the speaker view will only run if its\n				// opener has the same origin as itself\n				if( window.location.origin !== openerOrigin ) {\n					connectionStatus.innerHTML = 'Cross origin error.<br>The speaker window can only be opened from the same origin.';\n					return;\n				}\n\n				var connectionTimeout = setTimeout( function() {\n					connectionStatus.innerHTML = 'Error connecting to main window.<br>Please try closing and reopening the speaker view.';\n				}, 5000 );\n\n				window.addEventListener( 'message', function( event ) {\n\n					// Validate the origin of all messages to avoid parsing messages\n					// that aren't meant for us. Ignore when running off file:// so\n					// that the speaker view continues to work without a web server.\n					if( window.location.origin !== event.origin && window.location.origin !== 'file://' ) {\n						return\n					}\n\n					clearTimeout( connectionTimeout );\n					connectionStatus.style.display = 'none';\n\n					var data = JSON.parse( event.data );\n\n					// The overview mode is only useful to the reveal.js instance\n					// where navigation occurs so we don't sync it\n					if( data.state ) delete data.state.overview;\n\n					// Messages sent by the notes plugin inside of the main window\n					if( data && data.namespace === 'reveal-notes' ) {\n						if( data.type === 'connect' ) {\n							handleConnectMessage( data );\n						}\n						else if( data.type === 'state' ) {\n							handleStateMessage( data );\n						}\n						else if( data.type === 'return' ) {\n							pendingCalls[data.callId](data.result);\n							delete pendingCalls[data.callId];\n						}\n					}\n					// Messages sent by the reveal.js inside of the current slide preview\n					else if( data && data.namespace === 'reveal' ) {\n						const supportedEvents = [\n							'slidechanged',\n							'fragmentshown',\n							'fragmenthidden',\n							'paused',\n							'resumed',\n							'previewiframe',\n							'previewimage',\n							'previewvideo',\n							'closeoverlay'\n						];\n\n						if( /ready/.test( data.eventName ) ) {\n							// Send a message back to notify that the handshake is complete\n							window.opener.postMessage( JSON.stringify({ namespace: 'reveal-notes', type: 'connected'} ), '*' );\n						}\n						else if( supportedEvents.includes( data.eventName ) && currentState !== JSON.stringify( data.state ) ) {\n							dispatchStateToMainWindow( data.state );\n						}\n					}\n\n				} );\n\n				/**\n				 * Updates the presentation in the main window to match the state\n				 * of the presentation in the notes window.\n				 */\n				const dispatchStateToMainWindow = debounce(( state ) => {\n					window.opener.postMessage( JSON.stringify({ method: 'setState', args: [ state ]} ), '*' );\n				}, 500);\n\n				/**\n				 * Asynchronously calls the Reveal.js API of the main frame.\n				 */\n				function callRevealApi( methodName, methodArguments, callback ) {\n\n					var callId = ++lastRevealApiCallId;\n					pendingCalls[callId] = callback;\n					window.opener.postMessage( JSON.stringify( {\n						namespace: 'reveal-notes',\n						type: 'call',\n						callId: callId,\n						methodName: methodName,\n						arguments: methodArguments\n					} ), '*' );\n\n				}\n\n				/**\n				 * Called when the main window is trying to establish a\n				 * connection.\n				 */\n				function handleConnectMessage( data ) {\n\n					if( connected === false ) {\n						connected = true;\n\n						setupIframes( data );\n						setupKeyboard();\n						setupNotes();\n						setupTimer();\n						setupHeartbeat();\n					}\n\n				}\n\n				/**\n				 * Called when the main window sends an updated state.\n				 */\n				function handleStateMessage( data ) {\n\n					// Store the most recently set state to avoid circular loops\n					// applying the same state\n					currentState = JSON.stringify( data.state );\n\n					// No need for updating the notes in case of fragment changes\n					if ( data.notes ) {\n						notes.classList.remove( 'hidden' );\n						notesValue.style.whiteSpace = data.whitespace;\n						if( data.markdown ) {\n							notesValue.innerHTML = marked.parse( data.notes );\n						}\n						else {\n							notesValue.innerHTML = data.notes;\n						}\n					}\n					else {\n						notes.classList.add( 'hidden' );\n					}\n\n					// Don't show lightboxes in the upcoming slide\n					const { previewVideo, previewImage, previewIframe, ...upcomingState } = data.state;\n\n					// Update the note slides\n					currentSlide.contentWindow.postMessage( JSON.stringify({ method: 'setState', args: [ data.state ] }), '*' );\n					upcomingSlide.contentWindow.postMessage( JSON.stringify({ method: 'setState', args: [ upcomingState ] }), '*' );\n					upcomingSlide.contentWindow.postMessage( JSON.stringify({ method: 'next' }), '*' );\n\n				}\n\n				// Limit to max one state update per X ms\n				handleStateMessage = debounce( handleStateMessage, 200 );\n\n				/**\n				 * Forward keyboard events to the current slide window.\n				 * This enables keyboard events to work even if focus\n				 * isn't set on the current slide iframe.\n				 *\n				 * Block F5 default handling, it reloads and disconnects\n				 * the speaker notes window.\n				 */\n				function setupKeyboard() {\n\n					document.addEventListener( 'keydown', function( event ) {\n						if( event.keyCode === 116 || ( event.metaKey && event.keyCode === 82 ) ) {\n							event.preventDefault();\n							return false;\n						}\n						currentSlide.contentWindow.postMessage( JSON.stringify({ method: 'triggerKey', args: [ event.keyCode ] }), '*' );\n					} );\n\n				}\n\n				/**\n				 * Creates the preview iframes.\n				 */\n				function setupIframes( data ) {\n\n					var params = [\n						'receiver',\n						'progress=false',\n						'history=false',\n						'transition=none',\n						'autoSlide=0',\n						'backgroundTransition=none'\n					].join( '&' );\n\n					var urlSeparator = /\\?/.test(data.url) ? '&' : '?';\n					var hash = '#/' + data.state.indexh + '/' + data.state.indexv;\n					var currentURL = data.url + urlSeparator + params + '&scrollActivationWidth=false&postMessageEvents=true' + hash;\n					var upcomingURL = data.url + urlSeparator + params + '&scrollActivationWidth=false&controls=false' + hash;\n\n					currentSlide = document.createElement( 'iframe' );\n					currentSlide.setAttribute( 'width', 1280 );\n					currentSlide.setAttribute( 'height', 1024 );\n					currentSlide.setAttribute( 'src', currentURL );\n					document.querySelector( '#current-slide' ).appendChild( currentSlide );\n\n					upcomingSlide = document.createElement( 'iframe' );\n					upcomingSlide.setAttribute( 'width', 640 );\n					upcomingSlide.setAttribute( 'height', 512 );\n					upcomingSlide.setAttribute( 'src', upcomingURL );\n					document.querySelector( '#upcoming-slide' ).appendChild( upcomingSlide );\n\n				}\n\n				/**\n				 * Setup the notes UI.\n				 */\n				function setupNotes() {\n\n					notes = document.querySelector( '.speaker-controls-notes' );\n					notesValue = document.querySelector( '.speaker-controls-notes .value' );\n\n				}\n\n				/**\n				 * We send out a heartbeat at all times to ensure we can\n				 * reconnect with the main presentation window after reloads.\n				 */\n				function setupHeartbeat() {\n\n					setInterval( () => {\n						window.opener.postMessage( JSON.stringify({ namespace: 'reveal-notes', type: 'heartbeat'} ), '*' );\n					}, 1000 );\n\n				}\n\n				function getTimings( callback ) {\n\n					callRevealApi( 'getSlidesAttributes', [], function ( slideAttributes ) {\n						callRevealApi( 'getConfig', [], function ( config ) {\n							var totalTime = config.totalTime;\n							var minTimePerSlide = config.minimumTimePerSlide || 0;\n							var defaultTiming = config.defaultTiming;\n							if ((defaultTiming == null) && (totalTime == null)) {\n								callback(null);\n								return;\n							}\n							// Setting totalTime overrides defaultTiming\n							if (totalTime) {\n								defaultTiming = 0;\n							}\n							var timings = [];\n							for ( var i in slideAttributes ) {\n								var slide = slideAttributes[ i ];\n								var timing = defaultTiming;\n								if( slide.hasOwnProperty( 'data-timing' )) {\n									var t = slide[ 'data-timing' ];\n									timing = parseInt(t);\n									if( isNaN(timing) ) {\n										console.warn(\"Could not parse timing '\" + t + \"' of slide \" + i + \"; using default of \" + defaultTiming);\n										timing = defaultTiming;\n									}\n								}\n								timings.push(timing);\n							}\n							if ( totalTime ) {\n								// After we've allocated time to individual slides, we summarize it and\n								// subtract it from the total time\n								var remainingTime = totalTime - timings.reduce( function(a, b) { return a + b; }, 0 );\n								// The remaining time is divided by the number of slides that have 0 seconds\n								// allocated at the moment, giving the average time-per-slide on the remaining slides\n								var remainingSlides = (timings.filter( function(x) { return x == 0 }) ).length\n								var timePerSlide = Math.round( remainingTime / remainingSlides, 0 )\n								// And now we replace every zero-value timing with that average\n								timings = timings.map( function(x) { return (x==0 ? timePerSlide : x) } );\n							}\n							var slidesUnderMinimum = timings.filter( function(x) { return (x < minTimePerSlide) } ).length\n							if ( slidesUnderMinimum ) {\n								message = \"The pacing time for \" + slidesUnderMinimum + \" slide(s) is under the configured minimum of \" + minTimePerSlide + \" seconds. Check the data-timing attribute on individual slides, or consider increasing the totalTime or minimumTimePerSlide configuration options (or removing some slides).\";\n								alert(message);\n							}\n							callback( timings );\n						} );\n					} );\n\n				}\n\n				/**\n				 * Return the number of seconds allocated for presenting\n				 * all slides up to and including this one.\n				 */\n				function getTimeAllocated( timings, callback ) {\n\n					callRevealApi( 'getSlidePastCount', [], function ( currentSlide ) {\n						var allocated = 0;\n						for (var i in timings.slice(0, currentSlide + 1)) {\n							allocated += timings[i];\n						}\n						callback( allocated );\n					} );\n\n				}\n\n				/**\n				 * Create the timer and clock and start updating them\n				 * at an interval.\n				 */\n				function setupTimer() {\n\n					var start = new Date(),\n					timeEl = document.querySelector( '.speaker-controls-time' ),\n					clockEl = timeEl.querySelector( '.clock-value' ),\n					hoursEl = timeEl.querySelector( '.hours-value' ),\n					minutesEl = timeEl.querySelector( '.minutes-value' ),\n					secondsEl = timeEl.querySelector( '.seconds-value' ),\n					pacingTitleEl = timeEl.querySelector( '.pacing-title' ),\n					pacingEl = timeEl.querySelector( '.pacing' ),\n					pacingHoursEl = pacingEl.querySelector( '.hours-value' ),\n					pacingMinutesEl = pacingEl.querySelector( '.minutes-value' ),\n					pacingSecondsEl = pacingEl.querySelector( '.seconds-value' );\n\n					var timings = null;\n					getTimings( function ( _timings ) {\n\n						timings = _timings;\n						if (_timings !== null) {\n							pacingTitleEl.style.removeProperty('display');\n							pacingEl.style.removeProperty('display');\n						}\n\n						// Update once directly\n						_updateTimer();\n\n						// Then update every second\n						setInterval( _updateTimer, 1000 );\n\n					} );\n\n\n					function _resetTimer() {\n\n						if (timings == null) {\n							start = new Date();\n							_updateTimer();\n						}\n						else {\n							// Reset timer to beginning of current slide\n							getTimeAllocated( timings, function ( slideEndTimingSeconds ) {\n								var slideEndTiming = slideEndTimingSeconds * 1000;\n								callRevealApi( 'getSlidePastCount', [], function ( currentSlide ) {\n									var currentSlideTiming = timings[currentSlide] * 1000;\n									var previousSlidesTiming = slideEndTiming - currentSlideTiming;\n									var now = new Date();\n									start = new Date(now.getTime() - previousSlidesTiming);\n									_updateTimer();\n								} );\n							} );\n						}\n\n					}\n\n					timeEl.addEventListener( 'click', function() {\n						_resetTimer();\n						return false;\n					} );\n\n					function _displayTime( hrEl, minEl, secEl, time) {\n\n						var sign = Math.sign(time) == -1 ? \"-\" : \"\";\n						time = Math.abs(Math.round(time / 1000));\n						var seconds = time % 60;\n						var minutes = Math.floor( time / 60 ) % 60 ;\n						var hours = Math.floor( time / ( 60 * 60 )) ;\n						hrEl.innerHTML = sign + zeroPadInteger( hours );\n						if (hours == 0) {\n							hrEl.classList.add( 'mute' );\n						}\n						else {\n							hrEl.classList.remove( 'mute' );\n						}\n						minEl.innerHTML = ':' + zeroPadInteger( minutes );\n						if (hours == 0 && minutes == 0) {\n							minEl.classList.add( 'mute' );\n						}\n						else {\n							minEl.classList.remove( 'mute' );\n						}\n						secEl.innerHTML = ':' + zeroPadInteger( seconds );\n					}\n\n					function _updateTimer() {\n\n						var diff, hours, minutes, seconds,\n						now = new Date();\n\n						diff = now.getTime() - start.getTime();\n\n						clockEl.innerHTML = now.toLocaleTimeString( 'en-US', { hour12: true, hour: '2-digit', minute:'2-digit' } );\n						_displayTime( hoursEl, minutesEl, secondsEl, diff );\n						if (timings !== null) {\n							_updatePacing(diff);\n						}\n\n					}\n\n					function _updatePacing(diff) {\n\n						getTimeAllocated( timings, function ( slideEndTimingSeconds ) {\n							var slideEndTiming = slideEndTimingSeconds * 1000;\n\n							callRevealApi( 'getSlidePastCount', [], function ( currentSlide ) {\n								var currentSlideTiming = timings[currentSlide] * 1000;\n								var timeLeftCurrentSlide = slideEndTiming - diff;\n								if (timeLeftCurrentSlide < 0) {\n									pacingEl.className = 'pacing behind';\n								}\n								else if (timeLeftCurrentSlide < currentSlideTiming) {\n									pacingEl.className = 'pacing on-track';\n								}\n								else {\n									pacingEl.className = 'pacing ahead';\n								}\n								_displayTime( pacingHoursEl, pacingMinutesEl, pacingSecondsEl, timeLeftCurrentSlide );\n							} );\n						} );\n					}\n\n				}\n\n				/**\n				 * Sets up the speaker view layout and layout selector.\n				 */\n				function setupLayout() {\n\n					layoutDropdown = document.querySelector( '.speaker-layout-dropdown' );\n					layoutLabel = document.querySelector( '.speaker-layout-label' );\n\n					// Render the list of available layouts\n					for( var id in SPEAKER_LAYOUTS ) {\n						var option = document.createElement( 'option' );\n						option.setAttribute( 'value', id );\n						option.textContent = SPEAKER_LAYOUTS[ id ];\n						layoutDropdown.appendChild( option );\n					}\n\n					// Monitor the dropdown for changes\n					layoutDropdown.addEventListener( 'change', function( event ) {\n\n						setLayout( layoutDropdown.value );\n\n					}, false );\n\n					// Restore any currently persisted layout\n					setLayout( getLayout() );\n\n				}\n\n				/**\n				 * Sets a new speaker view layout. The layout is persisted\n				 * in local storage.\n				 */\n				function setLayout( value ) {\n\n					var title = SPEAKER_LAYOUTS[ value ];\n\n					layoutLabel.innerHTML = 'Layout' + ( title ? ( ': ' + title ) : '' );\n					layoutDropdown.value = value;\n\n					document.body.setAttribute( 'data-speaker-layout', value );\n\n					// Persist locally\n					if( supportsLocalStorage() ) {\n						window.localStorage.setItem( 'reveal-speaker-layout', value );\n					}\n\n				}\n\n				/**\n				 * Returns the ID of the most recently set speaker layout\n				 * or our default layout if none has been set.\n				 */\n				function getLayout() {\n\n					if( supportsLocalStorage() ) {\n						var layout = window.localStorage.getItem( 'reveal-speaker-layout' );\n						if( layout ) {\n							return layout;\n						}\n					}\n\n					// Default to the first record in the layouts hash\n					for( var id in SPEAKER_LAYOUTS ) {\n						return id;\n					}\n\n				}\n\n				function supportsLocalStorage() {\n\n					try {\n						localStorage.setItem('test', 'test');\n						localStorage.removeItem('test');\n						return true;\n					}\n					catch( e ) {\n						return false;\n					}\n\n				}\n\n				function zeroPadInteger( num ) {\n\n					var str = '00' + parseInt( num );\n					return str.substring( str.length - 2 );\n\n				}\n\n				/**\n				 * Limits the frequency at which a function can be called.\n				 */\n				function debounce( fn, ms ) {\n\n					var lastTime = 0,\n						timeout;\n\n					return function() {\n\n						var args = arguments;\n						var context = this;\n\n						clearTimeout( timeout );\n\n						var timeSinceLastCall = Date.now() - lastTime;\n						if( timeSinceLastCall > ms ) {\n							fn.apply( context, args );\n							lastTime = Date.now();\n						}\n						else {\n							timeout = setTimeout( function() {\n								fn.apply( context, args );\n								lastTime = Date.now();\n							}, ms - timeSinceLastCall );\n						}\n\n					}\n\n				}\n\n			})();\n\n		<\/script>\n	</body>\n</html>";
 //#endregion
 //#region node_modules/marked/lib/marked.esm.js
-function t() {
+function e() {
 	return {
 		async: !1,
 		breaks: !1,
@@ -16,28 +14,28 @@ function t() {
 		walkTokens: null
 	};
 }
-var n = t();
-function r(e) {
-	n = e;
+var t = e();
+function n(e) {
+	t = e;
 }
-var i = { exec: () => null };
-function a(e, t = "") {
+var r = { exec: () => null };
+function i(e, t = "") {
 	let n = typeof e == "string" ? e : e.source, r = {
 		replace: (e, t) => {
 			let i = typeof t == "string" ? t : t.source;
-			return i = i.replace(s.caret, "$1"), n = n.replace(e, i), r;
+			return i = i.replace(o.caret, "$1"), n = n.replace(e, i), r;
 		},
 		getRegex: () => new RegExp(n, t)
 	};
 	return r;
 }
-var o = (() => {
+var a = (() => {
 	try {
 		return !0;
 	} catch {
 		return !1;
 	}
-})(), s = {
+})(), o = {
 	codeRemoveIndent: /^(?: {1,4}| {0,3}\t)/gm,
 	outputLinkReplace: /\\([\[\]])/g,
 	indentCodeCompensation: /^(\s+)(?:```)/,
@@ -94,112 +92,114 @@ var o = (() => {
 	headingBeginRegex: (e) => RegExp(`^ {0,${Math.min(3, e - 1)}}#`),
 	htmlBeginRegex: (e) => RegExp(`^ {0,${Math.min(3, e - 1)}}<(?:[a-z].*>|!--)`, "i"),
 	blockquoteBeginRegex: (e) => RegExp(`^ {0,${Math.min(3, e - 1)}}>`)
-}, c = /^(?:[ \t]*(?:\n|$))+/, l = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, u = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/, d = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, f = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, p = / {0,3}(?:[*+-]|\d{1,9}[.)])/, m = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/, h = a(m).replace(/bull/g, p).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), ee = a(m).replace(/bull/g, p).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), g = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/, te = /^[^\n]+/, _ = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/, ne = a(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", _).replace("title", /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(), re = a(/^(bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g, p).getRegex(), v = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", y = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, ie = a("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", y).replace("tag", v).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), b = a(g).replace("hr", d).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", v).getRegex(), x = {
-	blockquote: a(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph", b).getRegex(),
-	code: l,
+}, s = /^(?:[ \t]*(?:\n|$))+/, c = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, l = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/, u = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, d = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, f = / {0,3}(?:[*+-]|\d{1,9}[.)])/, p = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/, m = i(p).replace(/bull/g, f).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), ee = i(p).replace(/bull/g, f).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), h = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/, te = /^[^\n]+/, g = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/, ne = i(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", g).replace("title", /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(), re = i(/^(bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g, f).getRegex(), _ = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", v = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, y = i("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", v).replace("tag", _).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), b = i(h).replace("hr", u).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", _).getRegex(), x = {
+	blockquote: i(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph", b).getRegex(),
+	code: c,
 	def: ne,
-	fences: u,
-	heading: f,
-	hr: d,
-	html: ie,
-	lheading: h,
+	fences: l,
+	heading: d,
+	hr: u,
+	html: y,
+	lheading: m,
 	list: re,
-	newline: c,
+	newline: s,
 	paragraph: b,
-	table: i,
+	table: r,
 	text: te
-}, S = a("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", d).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", v).getRegex(), ae = {
+}, S = i("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", u).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", _).getRegex(), ie = {
 	...x,
 	lheading: ee,
 	table: S,
-	paragraph: a(g).replace("hr", d).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", S).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", v).getRegex()
-}, oe = {
+	paragraph: i(h).replace("hr", u).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", S).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", _).getRegex()
+}, ae = {
 	...x,
-	html: a("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment", y).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
+	html: i("^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:\"[^\"]*\"|'[^']*'|\\s[^'\"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))").replace("comment", v).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
 	def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
 	heading: /^(#{1,6})(.*)(?:\n+|$)/,
-	fences: i,
+	fences: r,
 	lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
-	paragraph: a(g).replace("hr", d).replace("heading", " *#{1,6} *[^\n]").replace("lheading", h).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex()
-}, se = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, ce = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, C = /^( {2,}|\\)\n(?!\s*$)/, w = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, T = /[\p{P}\p{S}]/u, E = /[\s\p{P}\p{S}]/u, D = /[^\s\p{P}\p{S}]/u, le = a(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, E).getRegex(), O = /(?!~)[\p{P}\p{S}]/u, ue = /(?!~)[\s\p{P}\p{S}]/u, de = /(?:[^\s\p{P}\p{S}]|~)/u, fe = a(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", o ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), k = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, pe = a(k, "u").replace(/punct/g, T).getRegex(), me = a(k, "u").replace(/punct/g, O).getRegex(), A = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", he = a(A, "gu").replace(/notPunctSpace/g, D).replace(/punctSpace/g, E).replace(/punct/g, T).getRegex(), ge = a(A, "gu").replace(/notPunctSpace/g, de).replace(/punctSpace/g, ue).replace(/punct/g, O).getRegex(), _e = a("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, D).replace(/punctSpace/g, E).replace(/punct/g, T).getRegex(), ve = a(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, T).getRegex(), ye = a("^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, D).replace(/punctSpace/g, E).replace(/punct/g, T).getRegex(), be = a(/\\(punct)/, "gu").replace(/punct/g, T).getRegex(), xe = a(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), Se = a(y).replace("(?:-->|$)", "-->").getRegex(), j = a("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", Se).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), M = /(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/, Ce = a(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label", M).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]*/).replace("title", /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(), N = a(/^!?\[(label)\]\[(ref)\]/).replace("label", M).replace("ref", _).getRegex(), P = a(/^!?\[(ref)\](?:\[\])?/).replace("ref", _).getRegex(), we = a("reflink|nolink(?!\\()", "g").replace("reflink", N).replace("nolink", P).getRegex(), F = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, I = {
-	_backpedal: i,
-	anyPunctuation: be,
-	autolink: xe,
-	blockSkip: fe,
-	br: C,
-	code: ce,
-	del: i,
-	delLDelim: i,
-	delRDelim: i,
-	emStrongLDelim: pe,
-	emStrongRDelimAst: he,
-	emStrongRDelimUnd: _e,
-	escape: se,
-	link: Ce,
+	paragraph: i(h).replace("hr", u).replace("heading", " *#{1,6} *[^\n]").replace("lheading", m).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex()
+}, oe = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, C = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, w = /^( {2,}|\\)\n(?!\s*$)/, se = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, T = /[\p{P}\p{S}]/u, E = /[\s\p{P}\p{S}]/u, D = /[^\s\p{P}\p{S}]/u, ce = i(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, E).getRegex(), O = /(?!~)[\p{P}\p{S}]/u, le = /(?!~)[\s\p{P}\p{S}]/u, ue = /(?:[^\s\p{P}\p{S}]|~)/u, de = i(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", a ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), k = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, fe = i(k, "u").replace(/punct/g, T).getRegex(), pe = i(k, "u").replace(/punct/g, O).getRegex(), A = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", me = i(A, "gu").replace(/notPunctSpace/g, D).replace(/punctSpace/g, E).replace(/punct/g, T).getRegex(), he = i(A, "gu").replace(/notPunctSpace/g, ue).replace(/punctSpace/g, le).replace(/punct/g, O).getRegex(), ge = i("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, D).replace(/punctSpace/g, E).replace(/punct/g, T).getRegex(), _e = i(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, T).getRegex(), ve = i("^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, D).replace(/punctSpace/g, E).replace(/punct/g, T).getRegex(), ye = i(/\\(punct)/, "gu").replace(/punct/g, T).getRegex(), be = i(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), xe = i(v).replace("(?:-->|$)", "-->").getRegex(), j = i("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", xe).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), M = /(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/, Se = i(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label", M).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]*/).replace("title", /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(), N = i(/^!?\[(label)\]\[(ref)\]/).replace("label", M).replace("ref", g).getRegex(), P = i(/^!?\[(ref)\](?:\[\])?/).replace("ref", g).getRegex(), Ce = i("reflink|nolink(?!\\()", "g").replace("reflink", N).replace("nolink", P).getRegex(), F = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, I = {
+	_backpedal: r,
+	anyPunctuation: ye,
+	autolink: be,
+	blockSkip: de,
+	br: w,
+	code: C,
+	del: r,
+	delLDelim: r,
+	delRDelim: r,
+	emStrongLDelim: fe,
+	emStrongRDelimAst: me,
+	emStrongRDelimUnd: ge,
+	escape: oe,
+	link: Se,
 	nolink: P,
-	punctuation: le,
+	punctuation: ce,
 	reflink: N,
-	reflinkSearch: we,
+	reflinkSearch: Ce,
 	tag: j,
-	text: w,
-	url: i
-}, Te = {
+	text: se,
+	url: r
+}, we = {
 	...I,
-	link: a(/^!?\[(label)\]\((.*?)\)/).replace("label", M).getRegex(),
-	reflink: a(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", M).getRegex()
+	link: i(/^!?\[(label)\]\((.*?)\)/).replace("label", M).getRegex(),
+	reflink: i(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", M).getRegex()
 }, L = {
 	...I,
-	emStrongRDelimAst: ge,
-	emStrongLDelim: me,
-	delLDelim: ve,
-	delRDelim: ye,
-	url: a(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol", F).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),
+	emStrongRDelimAst: he,
+	emStrongLDelim: pe,
+	delLDelim: _e,
+	delRDelim: ve,
+	url: i(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol", F).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),
 	_backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,
 	del: /^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/,
-	text: a(/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol", F).getRegex()
-}, Ee = {
+	text: i(/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol", F).getRegex()
+}, Te = {
 	...L,
-	br: a(C).replace("{2,}", "*").getRegex(),
-	text: a(L.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
+	br: i(w).replace("{2,}", "*").getRegex(),
+	text: i(L.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
 }, R = {
 	normal: x,
-	gfm: ae,
-	pedantic: oe
+	gfm: ie,
+	pedantic: ae
 }, z = {
 	normal: I,
 	gfm: L,
-	breaks: Ee,
-	pedantic: Te
-}, De = {
+	breaks: Te,
+	pedantic: we
+}, Ee = {
 	"&": "&amp;",
 	"<": "&lt;",
 	">": "&gt;",
 	"\"": "&quot;",
 	"'": "&#39;"
-}, B = (e) => De[e];
+}, B = (e) => Ee[e];
 function V(e, t) {
 	if (t) {
-		if (s.escapeTest.test(e)) return e.replace(s.escapeReplace, B);
-	} else if (s.escapeTestNoEncode.test(e)) return e.replace(s.escapeReplaceNoEncode, B);
+		if (o.escapeTest.test(e)) return e.replace(o.escapeReplace, B);
+	} else if (o.escapeTestNoEncode.test(e)) return e.replace(o.escapeReplaceNoEncode, B);
 	return e;
 }
 function H(e) {
 	try {
-		e = encodeURI(e).replace(s.percentDecode, "%");
+		e = encodeURI(e).replace(o.percentDecode, "%");
 	} catch {
 		return null;
 	}
 	return e;
 }
 function U(e, t) {
-	let n = e.replace(s.findPipe, (e, t, n) => {
+	let n = e.replace(o.findPipe, (e, t, n) => {
 		let r = !1, i = t;
 		for (; --i >= 0 && n[i] === "\\";) r = !r;
 		return r ? "|" : " |";
-	}).split(s.splitPipe), r = 0;
-	if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), t) if (n.length > t) n.splice(t);
-	else for (; n.length < t;) n.push("");
-	for (; r < n.length; r++) n[r] = n[r].trim().replace(s.slashPipe, "|");
+	}).split(o.splitPipe), r = 0;
+	if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), t) {
+		if (n.length > t) n.splice(t);
+		else for (; n.length < t;) n.push("");
+	}
+	for (; r < n.length; r++) n[r] = n[r].trim().replace(o.slashPipe, "|");
 	return n;
 }
 function W(e, t, n) {
@@ -214,7 +214,7 @@ function W(e, t, n) {
 	}
 	return e.slice(0, r - i);
 }
-function Oe(e, t) {
+function De(e, t) {
 	if (e.indexOf(t[1]) === -1) return -1;
 	let n = 0;
 	for (let r = 0; r < e.length; r++) if (e[r] === "\\") r++;
@@ -222,7 +222,7 @@ function Oe(e, t) {
 	else if (e[r] === t[1] && (n--, n < 0)) return r;
 	return n > 0 ? -2 : -1;
 }
-function ke(e, t = 0) {
+function Oe(e, t = 0) {
 	let n = t, r = "";
 	for (let t of e) if (t === "	") {
 		let e = 4 - n % 4;
@@ -243,7 +243,7 @@ function G(e, t, n, r, i) {
 	};
 	return r.state.inLink = !1, c;
 }
-function Ae(e, t, n) {
+function ke(e, t, n) {
 	let r = e.match(n.other.indentCodeCompensation);
 	if (r === null) return t;
 	let i = r[1];
@@ -259,7 +259,7 @@ var K = class {
 	rules;
 	lexer;
 	constructor(e) {
-		this.options = e || n;
+		this.options = e || t;
 	}
 	space(e) {
 		let t = this.rules.block.newline.exec(e);
@@ -283,7 +283,7 @@ var K = class {
 	fences(e) {
 		let t = this.rules.block.fences.exec(e);
 		if (t) {
-			let e = t[0], n = Ae(e, t[3] || "", this.rules);
+			let e = t[0], n = ke(e, t[3] || "", this.rules);
 			return {
 				type: "code",
 				raw: e,
@@ -338,7 +338,8 @@ ${c}` : c;
 					let t = u, a = t.raw + "\n" + e.join("\n"), o = this.blockquote(a);
 					i[i.length - 1] = o, n = n.substring(0, n.length - t.raw.length) + o.raw, r = r.substring(0, r.length - t.text.length) + o.text;
 					break;
-				} else if (u?.type === "list") {
+				}
+				if (u?.type === "list") {
 					let t = u, a = t.raw + "\n" + e.join("\n"), o = this.list(a);
 					i[i.length - 1] = o, n = n.substring(0, n.length - u.raw.length) + o.raw, r = r.substring(0, r.length - t.raw.length) + o.raw, e = a.substring(i.at(-1).raw.length).split("\n");
 					continue;
@@ -369,7 +370,7 @@ ${c}` : c;
 				let n = !1, r = "", s = "";
 				if (!(t = a.exec(e)) || this.rules.block.hr.test(e)) break;
 				r = t[0], e = e.substring(r.length);
-				let c = ke(t[2].split("\n", 1)[0], t[1].length), l = e.split("\n", 1)[0], u = !c.trim(), d = 0;
+				let c = Oe(t[2].split("\n", 1)[0], t[1].length), l = e.split("\n", 1)[0], u = !c.trim(), d = 0;
 				if (this.options.pedantic ? (d = 2, s = c.trimStart()) : u ? d = t[1].length + 1 : (d = c.search(this.rules.other.nonSpaceChar), d = d > 4 ? 1 : d, s = c.slice(d), d += t[1].length), u && this.rules.other.blankLine.test(l) && (r += l + "\n", e = e.substring(l.length + 1), n = !0), !n) {
 					let t = this.rules.other.nextBulletRegex(d), n = this.rules.other.hrRegex(d), i = this.rules.other.fencesBeginRegex(d), a = this.rules.other.headingBeginRegex(d), o = this.rules.other.htmlBeginRegex(d), f = this.rules.other.blockquoteBeginRegex(d);
 					for (; e;) {
@@ -544,7 +545,7 @@ ${c}` : c;
 				let t = W(e.slice(0, -1), "\\");
 				if ((e.length - t.length) % 2 == 0) return;
 			} else {
-				let e = Oe(t[2], "()");
+				let e = De(t[2], "()");
 				if (e === -2) return;
 				if (e > -1) {
 					let n = (t[0].indexOf("!") === 0 ? 5 : 4) + t[1].length + e;
@@ -586,7 +587,8 @@ ${c}` : c;
 				if (a = [...i].length, r[3] || r[4]) {
 					o += a;
 					continue;
-				} else if ((r[5] || r[6]) && n % 3 && !((n + a) % 3)) {
+				}
+				if ((r[5] || r[6]) && n % 3 && !((n + a) % 3)) {
 					s += a;
 					continue;
 				}
@@ -713,17 +715,17 @@ ${c}` : c;
 	inlineQueue;
 	tokenizer;
 	constructor(e) {
-		this.tokens = [], this.tokens.links = Object.create(null), this.options = e || n, this.options.tokenizer = this.options.tokenizer || new K(), this.tokenizer = this.options.tokenizer, this.tokenizer.options = this.options, this.tokenizer.lexer = this, this.inlineQueue = [], this.state = {
+		this.tokens = [], this.tokens.links = Object.create(null), this.options = e || t, this.options.tokenizer = this.options.tokenizer || new K(), this.tokenizer = this.options.tokenizer, this.tokenizer.options = this.options, this.tokenizer.lexer = this, this.inlineQueue = [], this.state = {
 			inLink: !1,
 			inRawBlock: !1,
 			top: !0
 		};
-		let t = {
-			other: s,
+		let n = {
+			other: o,
 			block: R.normal,
 			inline: z.normal
 		};
-		this.options.pedantic ? (t.block = R.pedantic, t.inline = z.pedantic) : this.options.gfm && (t.block = R.gfm, this.options.breaks ? t.inline = z.breaks : t.inline = z.gfm), this.tokenizer.rules = t;
+		this.options.pedantic ? (n.block = R.pedantic, n.inline = z.pedantic) : this.options.gfm && (n.block = R.gfm, n.inline = this.options.breaks ? z.breaks : z.gfm), this.tokenizer.rules = n;
 	}
 	static get rules() {
 		return {
@@ -738,7 +740,7 @@ ${c}` : c;
 		return new e(n).inlineTokens(t);
 	}
 	lex(e) {
-		e = e.replace(s.carriageReturn, "\n"), this.blockTokens(e, this.tokens);
+		e = e.replace(o.carriageReturn, "\n"), this.blockTokens(e, this.tokens);
 		for (let e = 0; e < this.inlineQueue.length; e++) {
 			let t = this.inlineQueue[e];
 			this.inlineTokens(t.src, t.tokens);
@@ -746,7 +748,7 @@ ${c}` : c;
 		return this.inlineQueue = [], this.tokens;
 	}
 	blockTokens(e, t = [], n = !1) {
-		for (this.tokenizer.lexer = this, this.options.pedantic && (e = e.replace(s.tabCharGlobal, "    ").replace(s.spaceLine, "")); e;) {
+		for (this.tokenizer.lexer = this, this.options.pedantic && (e = e.replace(o.tabCharGlobal, "    ").replace(o.spaceLine, "")); e;) {
 			let r;
 			if (this.options.extensions?.block?.some((n) => (r = n.call({ lexer: this }, e, t)) ? (e = e.substring(r.raw.length), t.push(r), !0) : !1)) continue;
 			if (r = this.tokenizer.space(e)) {
@@ -804,10 +806,10 @@ ${c}` : c;
 			}
 			let i = e;
 			if (this.options.extensions?.startBlock) {
-				let t = Infinity, n = e.slice(1), r;
+				let t = 1 / 0, n = e.slice(1), r;
 				this.options.extensions.startBlock.forEach((e) => {
 					r = e.call({ lexer: this }, n), typeof r == "number" && r >= 0 && (t = Math.min(t, r));
-				}), t < Infinity && t >= 0 && (i = e.substring(0, t + 1));
+				}), t < 1 / 0 && t >= 0 && (i = e.substring(0, t + 1));
 			}
 			if (this.state.top && (r = this.tokenizer.paragraph(i))) {
 				let a = t.at(-1);
@@ -825,7 +827,8 @@ ${c}` : c;
 				if (this.options.silent) {
 					console.error(t);
 					break;
-				} else throw Error(t);
+				}
+				throw Error(t);
 			}
 		}
 		return this.state.top = !0, t;
@@ -896,10 +899,10 @@ ${c}` : c;
 			}
 			let i = e;
 			if (this.options.extensions?.startInline) {
-				let t = Infinity, n = e.slice(1), r;
+				let t = 1 / 0, n = e.slice(1), r;
 				this.options.extensions.startInline.forEach((e) => {
 					r = e.call({ lexer: this }, n), typeof r == "number" && r >= 0 && (t = Math.min(t, r));
-				}), t < Infinity && t >= 0 && (i = e.substring(0, t + 1));
+				}), t < 1 / 0 && t >= 0 && (i = e.substring(0, t + 1));
 			}
 			if (r = this.tokenizer.inlineText(i)) {
 				e = e.substring(r.raw.length), r.raw.slice(-1) !== "_" && (o = r.raw.slice(-1)), a = !0;
@@ -912,7 +915,8 @@ ${c}` : c;
 				if (this.options.silent) {
 					console.error(t);
 					break;
-				} else throw Error(t);
+				}
+				throw Error(t);
 			}
 		}
 		return t;
@@ -921,13 +925,13 @@ ${c}` : c;
 	options;
 	parser;
 	constructor(e) {
-		this.options = e || n;
+		this.options = e || t;
 	}
 	space(e) {
 		return "";
 	}
 	code({ text: e, lang: t, escaped: n }) {
-		let r = (t || "").match(s.notSpaceStart)?.[0], i = e.replace(s.endingNewline, "") + "\n";
+		let r = (t || "").match(o.notSpaceStart)?.[0], i = e.replace(o.endingNewline, "") + "\n";
 		return r ? "<pre><code class=\"language-" + V(r) + "\">" + (n ? i : V(i, !0)) + "</code></pre>\n" : "<pre><code>" + (n ? i : V(i, !0)) + "</code></pre>\n";
 	}
 	blockquote({ tokens: e }) {
@@ -1060,7 +1064,7 @@ ${e}</tr>
 	renderer;
 	textRenderer;
 	constructor(e) {
-		this.options = e || n, this.options.renderer = this.options.renderer || new J(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new Y();
+		this.options = e || t, this.options.renderer = this.options.renderer || new J(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new Y();
 	}
 	static parse(t, n) {
 		return new e(n).parse(t);
@@ -1210,15 +1214,15 @@ ${e}</tr>
 	options;
 	block;
 	constructor(e) {
-		this.options = e || n;
+		this.options = e || t;
 	}
-	static passThroughHooks = new Set([
+	static passThroughHooks = /* @__PURE__ */ new Set([
 		"preprocess",
 		"postprocess",
 		"processAllTokens",
 		"emStrongMask"
 	]);
-	static passThroughHooksRespectAsync = new Set([
+	static passThroughHooksRespectAsync = /* @__PURE__ */ new Set([
 		"preprocess",
 		"postprocess",
 		"processAllTokens"
@@ -1242,7 +1246,7 @@ ${e}</tr>
 		return this.block ? X.parse : X.parseInline;
 	}
 }, Q = new class {
-	defaults = t();
+	defaults = e();
 	options = this.setOptions;
 	parse = this.parseMarkdown(!0);
 	parseInline = this.parseMarkdown(!1);
@@ -1272,7 +1276,7 @@ ${e}</tr>
 			default: {
 				let e = r;
 				this.defaults.extensions?.childTokens?.[e.type] ? this.defaults.extensions.childTokens[e.type].forEach((r) => {
-					let i = e[r].flat(Infinity);
+					let i = e[r].flat(1 / 0);
 					n = n.concat(this.walkTokens(i, t));
 				}) : e.tokens && (n = n.concat(this.walkTokens(e.tokens, t)));
 			}
@@ -1337,14 +1341,14 @@ ${e}</tr>
 					if (!(n in t)) throw Error(`hook '${n}' does not exist`);
 					if (["options", "block"].includes(n)) continue;
 					let r = n, i = e.hooks[r], a = t[r];
-					Z.passThroughHooks.has(n) ? t[r] = (e) => {
+					t[r] = Z.passThroughHooks.has(n) ? (e) => {
 						if (this.defaults.async && Z.passThroughHooksRespectAsync.has(n)) return (async () => {
 							let n = await i.call(t, e);
 							return a.call(t, n);
 						})();
 						let r = i.call(t, e);
 						return a.call(t, r);
-					} : t[r] = (...e) => {
+					} : (...e) => {
 						if (this.defaults.async) return (async () => {
 							let n = await i.apply(t, e);
 							return n === !1 && (n = await a.apply(t, e)), n;
@@ -1421,101 +1425,101 @@ function $(e, t) {
 	return Q.parse(e, t);
 }
 $.options = $.setOptions = function(e) {
-	return Q.setOptions(e), $.defaults = Q.defaults, r($.defaults), $;
-}, $.getDefaults = t, $.defaults = n, $.use = function(...e) {
-	return Q.use(...e), $.defaults = Q.defaults, r($.defaults), $;
+	return Q.setOptions(e), $.defaults = Q.defaults, n($.defaults), $;
+}, $.getDefaults = e, $.defaults = t, $.use = function(...e) {
+	return Q.use(...e), $.defaults = Q.defaults, n($.defaults), $;
 }, $.walkTokens = function(e, t) {
 	return Q.walkTokens(e, t);
 }, $.parseInline = Q.parseInline, $.Parser = X, $.parser = X.parse, $.Renderer = J, $.TextRenderer = Y, $.Lexer = q, $.lexer = q.lex, $.Tokenizer = K, $.Hooks = Z, $.parse = $, $.options, $.setOptions, $.use, $.walkTokens, $.parseInline, X.parse, q.lex;
 //#endregion
 //#region plugin/notes/index.ts
-var je = () => {
-	let t, n = null, r;
-	function i() {
-		if (n && !n.closed) n.focus();
+var Ae = () => {
+	let e, t = null, n;
+	function r() {
+		if (t && !t.closed) t.focus();
 		else {
-			if (n = window.open("about:blank", "reveal.js - Notes", "width=1100,height=700"), n.marked = $, n.document.write(e), !n) {
+			if (t = window.open("about:blank", "reveal.js - Notes", "width=1100,height=700"), t.marked = $, t.document.write("<!--\n	NOTE: You need to build the notes plugin after making changes to this file.\n-->\n<html lang=\"en\">\n	<head>\n		<meta charset=\"utf-8\">\n\n		<title>reveal.js - Speaker View</title>\n\n		<style>\n			body {\n				font-family: Helvetica;\n				font-size: 18px;\n			}\n\n			#current-slide,\n			#upcoming-slide,\n			#speaker-controls {\n				padding: 6px;\n				box-sizing: border-box;\n				-moz-box-sizing: border-box;\n			}\n\n			#current-slide iframe,\n			#upcoming-slide iframe {\n				width: 100%;\n				height: 100%;\n				border: 1px solid #ddd;\n			}\n\n			#current-slide .label,\n			#upcoming-slide .label {\n				position: absolute;\n				top: 10px;\n				left: 10px;\n				z-index: 2;\n			}\n\n			#connection-status {\n				position: absolute;\n				top: 0;\n				left: 0;\n				width: 100%;\n				height: 100%;\n				z-index: 20;\n				padding: 30% 20% 20% 20%;\n				font-size: 18px;\n				color: #222;\n				background: #fff;\n				text-align: center;\n				box-sizing: border-box;\n				line-height: 1.4;\n			}\n\n			.overlay-element {\n				height: 34px;\n				line-height: 34px;\n				padding: 0 10px;\n				text-shadow: none;\n				background: rgba( 220, 220, 220, 0.8 );\n				color: #222;\n				font-size: 14px;\n			}\n\n			.overlay-element.interactive:hover {\n				background: rgba( 220, 220, 220, 1 );\n			}\n\n			#current-slide {\n				position: absolute;\n				width: 60%;\n				height: 100%;\n				top: 0;\n				left: 0;\n				padding-right: 0;\n			}\n\n			#upcoming-slide {\n				position: absolute;\n				width: 40%;\n				height: 40%;\n				right: 0;\n				top: 0;\n			}\n\n			/* Speaker controls */\n			#speaker-controls {\n				position: absolute;\n				top: 40%;\n				right: 0;\n				width: 40%;\n				height: 60%;\n				overflow: auto;\n				font-size: 18px;\n			}\n\n				.speaker-controls-time.hidden,\n				.speaker-controls-notes.hidden {\n					display: none;\n				}\n\n				.speaker-controls-time .label,\n				.speaker-controls-pace .label,\n				.speaker-controls-notes .label {\n					text-transform: uppercase;\n					font-weight: normal;\n					font-size: 0.66em;\n					color: #666;\n					margin: 0;\n				}\n\n				.speaker-controls-time, .speaker-controls-pace {\n					border-bottom: 1px solid rgba( 200, 200, 200, 0.5 );\n					margin-bottom: 10px;\n					padding: 10px 16px;\n					padding-bottom: 20px;\n					cursor: pointer;\n				}\n\n				.speaker-controls-time .reset-button {\n					opacity: 0;\n					float: right;\n					color: #666;\n					text-decoration: none;\n				}\n				.speaker-controls-time:hover .reset-button {\n					opacity: 1;\n				}\n\n				.speaker-controls-time .timer,\n				.speaker-controls-time .clock {\n					width: 50%;\n				}\n\n				.speaker-controls-time .timer,\n				.speaker-controls-time .clock,\n				.speaker-controls-time .pacing .hours-value,\n				.speaker-controls-time .pacing .minutes-value,\n				.speaker-controls-time .pacing .seconds-value {\n					font-size: 1.9em;\n				}\n\n				.speaker-controls-time .timer {\n					float: left;\n				}\n\n				.speaker-controls-time .clock {\n					float: right;\n					text-align: right;\n				}\n\n				.speaker-controls-time span.mute {\n					opacity: 0.3;\n				}\n\n				.speaker-controls-time .pacing-title {\n					margin-top: 5px;\n				}\n\n				.speaker-controls-time .pacing.ahead {\n					color: blue;\n				}\n\n				.speaker-controls-time .pacing.on-track {\n					color: green;\n				}\n\n				.speaker-controls-time .pacing.behind {\n					color: red;\n				}\n\n				.speaker-controls-notes {\n					padding: 10px 16px;\n				}\n\n				.speaker-controls-notes .value {\n					margin-top: 5px;\n					line-height: 1.4;\n					font-size: 1.2em;\n				}\n\n			/* Layout selector\xA0*/\n			#speaker-layout {\n				position: absolute;\n				top: 10px;\n				right: 10px;\n				color: #222;\n				z-index: 10;\n			}\n				#speaker-layout select {\n					position: absolute;\n					width: 100%;\n					height: 100%;\n					top: 0;\n					left: 0;\n					border: 0;\n					box-shadow: 0;\n					cursor: pointer;\n					opacity: 0;\n\n					font-size: 1em;\n					background-color: transparent;\n\n					-moz-appearance: none;\n					-webkit-appearance: none;\n					-webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n				}\n\n				#speaker-layout select:focus {\n					outline: none;\n					box-shadow: none;\n				}\n\n			.clear {\n				clear: both;\n			}\n\n			/* Speaker layout: Wide */\n			body[data-speaker-layout=\"wide\"] #current-slide,\n			body[data-speaker-layout=\"wide\"] #upcoming-slide {\n				width: 50%;\n				height: 45%;\n				padding: 6px;\n			}\n\n			body[data-speaker-layout=\"wide\"] #current-slide {\n				top: 0;\n				left: 0;\n			}\n\n			body[data-speaker-layout=\"wide\"] #upcoming-slide {\n				top: 0;\n				left: 50%;\n			}\n\n			body[data-speaker-layout=\"wide\"] #speaker-controls {\n				top: 45%;\n				left: 0;\n				width: 100%;\n				height: 50%;\n				font-size: 1.25em;\n			}\n\n			/* Speaker layout: Tall */\n			body[data-speaker-layout=\"tall\"] #current-slide,\n			body[data-speaker-layout=\"tall\"] #upcoming-slide {\n				width: 45%;\n				height: 50%;\n				padding: 6px;\n			}\n\n			body[data-speaker-layout=\"tall\"] #current-slide {\n				top: 0;\n				left: 0;\n			}\n\n			body[data-speaker-layout=\"tall\"] #upcoming-slide {\n				top: 50%;\n				left: 0;\n			}\n\n			body[data-speaker-layout=\"tall\"] #speaker-controls {\n				padding-top: 40px;\n				top: 0;\n				left: 45%;\n				width: 55%;\n				height: 100%;\n				font-size: 1.25em;\n			}\n\n			/* Speaker layout: Notes only */\n			body[data-speaker-layout=\"notes-only\"] #current-slide,\n			body[data-speaker-layout=\"notes-only\"] #upcoming-slide {\n				display: none;\n			}\n\n			body[data-speaker-layout=\"notes-only\"] #speaker-controls {\n				padding-top: 40px;\n				top: 0;\n				left: 0;\n				width: 100%;\n				height: 100%;\n				font-size: 1.25em;\n			}\n\n			@media screen and (max-width: 1080px) {\n				body[data-speaker-layout=\"default\"] #speaker-controls {\n					font-size: 16px;\n				}\n			}\n\n			@media screen and (max-width: 900px) {\n				body[data-speaker-layout=\"default\"] #speaker-controls {\n					font-size: 14px;\n				}\n			}\n\n			@media screen and (max-width: 800px) {\n				body[data-speaker-layout=\"default\"] #speaker-controls {\n					font-size: 12px;\n				}\n			}\n\n		</style>\n	</head>\n\n	<body>\n\n		<div id=\"connection-status\">Loading speaker view...</div>\n\n		<div id=\"current-slide\"></div>\n		<div id=\"upcoming-slide\"><span class=\"overlay-element label\">Upcoming</span></div>\n		<div id=\"speaker-controls\">\n			<div class=\"speaker-controls-time\">\n				<h4 class=\"label\">Time <span class=\"reset-button\">Click to Reset</span></h4>\n				<div class=\"clock\">\n					<span class=\"clock-value\">0:00 AM</span>\n				</div>\n				<div class=\"timer\">\n					<span class=\"hours-value\">00</span><span class=\"minutes-value\">:00</span><span class=\"seconds-value\">:00</span>\n				</div>\n				<div class=\"clear\"></div>\n\n				<h4 class=\"label pacing-title\" style=\"display: none\">Pacing – Time to finish current slide</h4>\n				<div class=\"pacing\" style=\"display: none\">\n					<span class=\"hours-value\">00</span><span class=\"minutes-value\">:00</span><span class=\"seconds-value\">:00</span>\n				</div>\n			</div>\n\n			<div class=\"speaker-controls-notes hidden\">\n				<h4 class=\"label\">Notes</h4>\n				<div class=\"value\"></div>\n			</div>\n		</div>\n		<div id=\"speaker-layout\" class=\"overlay-element interactive\">\n			<span class=\"speaker-layout-label\"></span>\n			<select class=\"speaker-layout-dropdown\"></select>\n		</div>\n\n		<script>\n\n			(function() {\n\n				var notes,\n					notesValue,\n					currentState,\n					currentSlide,\n					upcomingSlide,\n					layoutLabel,\n					layoutDropdown,\n					pendingCalls = {},\n					lastRevealApiCallId = 0,\n					connected = false\n\n				var connectionStatus = document.querySelector( '#connection-status' );\n\n				var SPEAKER_LAYOUTS = {\n					'default': 'Default',\n					'wide': 'Wide',\n					'tall': 'Tall',\n					'notes-only': 'Notes only'\n				};\n\n				setupLayout();\n\n				let openerOrigin;\n\n				try {\n					openerOrigin = window.opener.location.origin;\n				}\n				catch ( error ) { console.warn( error ) }\n\n				// In order to prevent XSS, the speaker view will only run if its\n				// opener has the same origin as itself\n				if( window.location.origin !== openerOrigin ) {\n					connectionStatus.innerHTML = 'Cross origin error.<br>The speaker window can only be opened from the same origin.';\n					return;\n				}\n\n				var connectionTimeout = setTimeout( function() {\n					connectionStatus.innerHTML = 'Error connecting to main window.<br>Please try closing and reopening the speaker view.';\n				}, 5000 );\n\n				window.addEventListener( 'message', function( event ) {\n\n					// Validate the origin of all messages to avoid parsing messages\n					// that aren't meant for us. Ignore when running off file:// so\n					// that the speaker view continues to work without a web server.\n					if( window.location.origin !== event.origin && window.location.origin !== 'file://' ) {\n						return\n					}\n\n					clearTimeout( connectionTimeout );\n					connectionStatus.style.display = 'none';\n\n					var data = JSON.parse( event.data );\n\n					// The overview mode is only useful to the reveal.js instance\n					// where navigation occurs so we don't sync it\n					if( data.state ) delete data.state.overview;\n\n					// Messages sent by the notes plugin inside of the main window\n					if( data && data.namespace === 'reveal-notes' ) {\n						if( data.type === 'connect' ) {\n							handleConnectMessage( data );\n						}\n						else if( data.type === 'state' ) {\n							handleStateMessage( data );\n						}\n						else if( data.type === 'return' ) {\n							pendingCalls[data.callId](data.result);\n							delete pendingCalls[data.callId];\n						}\n					}\n					// Messages sent by the reveal.js inside of the current slide preview\n					else if( data && data.namespace === 'reveal' ) {\n						const supportedEvents = [\n							'slidechanged',\n							'fragmentshown',\n							'fragmenthidden',\n							'paused',\n							'resumed',\n							'previewiframe',\n							'previewimage',\n							'previewvideo',\n							'closeoverlay'\n						];\n\n						if( /ready/.test( data.eventName ) ) {\n							// Send a message back to notify that the handshake is complete\n							window.opener.postMessage( JSON.stringify({ namespace: 'reveal-notes', type: 'connected'} ), '*' );\n						}\n						else if( supportedEvents.includes( data.eventName ) && currentState !== JSON.stringify( data.state ) ) {\n							dispatchStateToMainWindow( data.state );\n						}\n					}\n\n				} );\n\n				/**\n				 * Updates the presentation in the main window to match the state\n				 * of the presentation in the notes window.\n				 */\n				const dispatchStateToMainWindow = debounce(( state ) => {\n					window.opener.postMessage( JSON.stringify({ method: 'setState', args: [ state ]} ), '*' );\n				}, 500);\n\n				/**\n				 * Asynchronously calls the Reveal.js API of the main frame.\n				 */\n				function callRevealApi( methodName, methodArguments, callback ) {\n\n					var callId = ++lastRevealApiCallId;\n					pendingCalls[callId] = callback;\n					window.opener.postMessage( JSON.stringify( {\n						namespace: 'reveal-notes',\n						type: 'call',\n						callId: callId,\n						methodName: methodName,\n						arguments: methodArguments\n					} ), '*' );\n\n				}\n\n				/**\n				 * Called when the main window is trying to establish a\n				 * connection.\n				 */\n				function handleConnectMessage( data ) {\n\n					if( connected === false ) {\n						connected = true;\n\n						setupIframes( data );\n						setupKeyboard();\n						setupNotes();\n						setupTimer();\n						setupHeartbeat();\n					}\n\n				}\n\n				/**\n				 * Called when the main window sends an updated state.\n				 */\n				function handleStateMessage( data ) {\n\n					// Store the most recently set state to avoid circular loops\n					// applying the same state\n					currentState = JSON.stringify( data.state );\n\n					// No need for updating the notes in case of fragment changes\n					if ( data.notes ) {\n						notes.classList.remove( 'hidden' );\n						notesValue.style.whiteSpace = data.whitespace;\n						if( data.markdown ) {\n							notesValue.innerHTML = marked.parse( data.notes );\n						}\n						else {\n							notesValue.innerHTML = data.notes;\n						}\n					}\n					else {\n						notes.classList.add( 'hidden' );\n					}\n\n					// Don't show lightboxes in the upcoming slide\n					const { previewVideo, previewImage, previewIframe, ...upcomingState } = data.state;\n\n					// Update the note slides\n					currentSlide.contentWindow.postMessage( JSON.stringify({ method: 'setState', args: [ data.state ] }), '*' );\n					upcomingSlide.contentWindow.postMessage( JSON.stringify({ method: 'setState', args: [ upcomingState ] }), '*' );\n					upcomingSlide.contentWindow.postMessage( JSON.stringify({ method: 'next' }), '*' );\n\n				}\n\n				// Limit to max one state update per X ms\n				handleStateMessage = debounce( handleStateMessage, 200 );\n\n				/**\n				 * Forward keyboard events to the current slide window.\n				 * This enables keyboard events to work even if focus\n				 * isn't set on the current slide iframe.\n				 *\n				 * Block F5 default handling, it reloads and disconnects\n				 * the speaker notes window.\n				 */\n				function setupKeyboard() {\n\n					document.addEventListener( 'keydown', function( event ) {\n						if( event.keyCode === 116 || ( event.metaKey && event.keyCode === 82 ) ) {\n							event.preventDefault();\n							return false;\n						}\n						currentSlide.contentWindow.postMessage( JSON.stringify({ method: 'triggerKey', args: [ event.keyCode ] }), '*' );\n					} );\n\n				}\n\n				/**\n				 * Creates the preview iframes.\n				 */\n				function setupIframes( data ) {\n\n					var params = [\n						'receiver',\n						'progress=false',\n						'history=false',\n						'transition=none',\n						'autoSlide=0',\n						'backgroundTransition=none'\n					].join( '&' );\n\n					var urlSeparator = /\\?/.test(data.url) ? '&' : '?';\n					var hash = '#/' + data.state.indexh + '/' + data.state.indexv;\n					var currentURL = data.url + urlSeparator + params + '&scrollActivationWidth=false&postMessageEvents=true' + hash;\n					var upcomingURL = data.url + urlSeparator + params + '&scrollActivationWidth=false&controls=false' + hash;\n\n					currentSlide = document.createElement( 'iframe' );\n					currentSlide.setAttribute( 'width', 1280 );\n					currentSlide.setAttribute( 'height', 1024 );\n					currentSlide.setAttribute( 'src', currentURL );\n					document.querySelector( '#current-slide' ).appendChild( currentSlide );\n\n					upcomingSlide = document.createElement( 'iframe' );\n					upcomingSlide.setAttribute( 'width', 640 );\n					upcomingSlide.setAttribute( 'height', 512 );\n					upcomingSlide.setAttribute( 'src', upcomingURL );\n					document.querySelector( '#upcoming-slide' ).appendChild( upcomingSlide );\n\n				}\n\n				/**\n				 * Setup the notes UI.\n				 */\n				function setupNotes() {\n\n					notes = document.querySelector( '.speaker-controls-notes' );\n					notesValue = document.querySelector( '.speaker-controls-notes .value' );\n\n				}\n\n				/**\n				 * We send out a heartbeat at all times to ensure we can\n				 * reconnect with the main presentation window after reloads.\n				 */\n				function setupHeartbeat() {\n\n					setInterval( () => {\n						window.opener.postMessage( JSON.stringify({ namespace: 'reveal-notes', type: 'heartbeat'} ), '*' );\n					}, 1000 );\n\n				}\n\n				function getTimings( callback ) {\n\n					callRevealApi( 'getSlidesAttributes', [], function ( slideAttributes ) {\n						callRevealApi( 'getConfig', [], function ( config ) {\n							var totalTime = config.totalTime;\n							var minTimePerSlide = config.minimumTimePerSlide || 0;\n							var defaultTiming = config.defaultTiming;\n							if ((defaultTiming == null) && (totalTime == null)) {\n								callback(null);\n								return;\n							}\n							// Setting totalTime overrides defaultTiming\n							if (totalTime) {\n								defaultTiming = 0;\n							}\n							var timings = [];\n							for ( var i in slideAttributes ) {\n								var slide = slideAttributes[ i ];\n								var timing = defaultTiming;\n								if( slide.hasOwnProperty( 'data-timing' )) {\n									var t = slide[ 'data-timing' ];\n									timing = parseInt(t);\n									if( isNaN(timing) ) {\n										console.warn(\"Could not parse timing '\" + t + \"' of slide \" + i + \"; using default of \" + defaultTiming);\n										timing = defaultTiming;\n									}\n								}\n								timings.push(timing);\n							}\n							if ( totalTime ) {\n								// After we've allocated time to individual slides, we summarize it and\n								// subtract it from the total time\n								var remainingTime = totalTime - timings.reduce( function(a, b) { return a + b; }, 0 );\n								// The remaining time is divided by the number of slides that have 0 seconds\n								// allocated at the moment, giving the average time-per-slide on the remaining slides\n								var remainingSlides = (timings.filter( function(x) { return x == 0 }) ).length\n								var timePerSlide = Math.round( remainingTime / remainingSlides, 0 )\n								// And now we replace every zero-value timing with that average\n								timings = timings.map( function(x) { return (x==0 ? timePerSlide : x) } );\n							}\n							var slidesUnderMinimum = timings.filter( function(x) { return (x < minTimePerSlide) } ).length\n							if ( slidesUnderMinimum ) {\n								message = \"The pacing time for \" + slidesUnderMinimum + \" slide(s) is under the configured minimum of \" + minTimePerSlide + \" seconds. Check the data-timing attribute on individual slides, or consider increasing the totalTime or minimumTimePerSlide configuration options (or removing some slides).\";\n								alert(message);\n							}\n							callback( timings );\n						} );\n					} );\n\n				}\n\n				/**\n				 * Return the number of seconds allocated for presenting\n				 * all slides up to and including this one.\n				 */\n				function getTimeAllocated( timings, callback ) {\n\n					callRevealApi( 'getSlidePastCount', [], function ( currentSlide ) {\n						var allocated = 0;\n						for (var i in timings.slice(0, currentSlide + 1)) {\n							allocated += timings[i];\n						}\n						callback( allocated );\n					} );\n\n				}\n\n				/**\n				 * Create the timer and clock and start updating them\n				 * at an interval.\n				 */\n				function setupTimer() {\n\n					var start = new Date(),\n					timeEl = document.querySelector( '.speaker-controls-time' ),\n					clockEl = timeEl.querySelector( '.clock-value' ),\n					hoursEl = timeEl.querySelector( '.hours-value' ),\n					minutesEl = timeEl.querySelector( '.minutes-value' ),\n					secondsEl = timeEl.querySelector( '.seconds-value' ),\n					pacingTitleEl = timeEl.querySelector( '.pacing-title' ),\n					pacingEl = timeEl.querySelector( '.pacing' ),\n					pacingHoursEl = pacingEl.querySelector( '.hours-value' ),\n					pacingMinutesEl = pacingEl.querySelector( '.minutes-value' ),\n					pacingSecondsEl = pacingEl.querySelector( '.seconds-value' );\n\n					var timings = null;\n					getTimings( function ( _timings ) {\n\n						timings = _timings;\n						if (_timings !== null) {\n							pacingTitleEl.style.removeProperty('display');\n							pacingEl.style.removeProperty('display');\n						}\n\n						// Update once directly\n						_updateTimer();\n\n						// Then update every second\n						setInterval( _updateTimer, 1000 );\n\n					} );\n\n\n					function _resetTimer() {\n\n						if (timings == null) {\n							start = new Date();\n							_updateTimer();\n						}\n						else {\n							// Reset timer to beginning of current slide\n							getTimeAllocated( timings, function ( slideEndTimingSeconds ) {\n								var slideEndTiming = slideEndTimingSeconds * 1000;\n								callRevealApi( 'getSlidePastCount', [], function ( currentSlide ) {\n									var currentSlideTiming = timings[currentSlide] * 1000;\n									var previousSlidesTiming = slideEndTiming - currentSlideTiming;\n									var now = new Date();\n									start = new Date(now.getTime() - previousSlidesTiming);\n									_updateTimer();\n								} );\n							} );\n						}\n\n					}\n\n					timeEl.addEventListener( 'click', function() {\n						_resetTimer();\n						return false;\n					} );\n\n					function _displayTime( hrEl, minEl, secEl, time) {\n\n						var sign = Math.sign(time) == -1 ? \"-\" : \"\";\n						time = Math.abs(Math.round(time / 1000));\n						var seconds = time % 60;\n						var minutes = Math.floor( time / 60 ) % 60 ;\n						var hours = Math.floor( time / ( 60 * 60 )) ;\n						hrEl.innerHTML = sign + zeroPadInteger( hours );\n						if (hours == 0) {\n							hrEl.classList.add( 'mute' );\n						}\n						else {\n							hrEl.classList.remove( 'mute' );\n						}\n						minEl.innerHTML = ':' + zeroPadInteger( minutes );\n						if (hours == 0 && minutes == 0) {\n							minEl.classList.add( 'mute' );\n						}\n						else {\n							minEl.classList.remove( 'mute' );\n						}\n						secEl.innerHTML = ':' + zeroPadInteger( seconds );\n					}\n\n					function _updateTimer() {\n\n						var diff, hours, minutes, seconds,\n						now = new Date();\n\n						diff = now.getTime() - start.getTime();\n\n						clockEl.innerHTML = now.toLocaleTimeString( 'en-US', { hour12: true, hour: '2-digit', minute:'2-digit' } );\n						_displayTime( hoursEl, minutesEl, secondsEl, diff );\n						if (timings !== null) {\n							_updatePacing(diff);\n						}\n\n					}\n\n					function _updatePacing(diff) {\n\n						getTimeAllocated( timings, function ( slideEndTimingSeconds ) {\n							var slideEndTiming = slideEndTimingSeconds * 1000;\n\n							callRevealApi( 'getSlidePastCount', [], function ( currentSlide ) {\n								var currentSlideTiming = timings[currentSlide] * 1000;\n								var timeLeftCurrentSlide = slideEndTiming - diff;\n								if (timeLeftCurrentSlide < 0) {\n									pacingEl.className = 'pacing behind';\n								}\n								else if (timeLeftCurrentSlide < currentSlideTiming) {\n									pacingEl.className = 'pacing on-track';\n								}\n								else {\n									pacingEl.className = 'pacing ahead';\n								}\n								_displayTime( pacingHoursEl, pacingMinutesEl, pacingSecondsEl, timeLeftCurrentSlide );\n							} );\n						} );\n					}\n\n				}\n\n				/**\n				 * Sets up the speaker view layout and layout selector.\n				 */\n				function setupLayout() {\n\n					layoutDropdown = document.querySelector( '.speaker-layout-dropdown' );\n					layoutLabel = document.querySelector( '.speaker-layout-label' );\n\n					// Render the list of available layouts\n					for( var id in SPEAKER_LAYOUTS ) {\n						var option = document.createElement( 'option' );\n						option.setAttribute( 'value', id );\n						option.textContent = SPEAKER_LAYOUTS[ id ];\n						layoutDropdown.appendChild( option );\n					}\n\n					// Monitor the dropdown for changes\n					layoutDropdown.addEventListener( 'change', function( event ) {\n\n						setLayout( layoutDropdown.value );\n\n					}, false );\n\n					// Restore any currently persisted layout\n					setLayout( getLayout() );\n\n				}\n\n				/**\n				 * Sets a new speaker view layout. The layout is persisted\n				 * in local storage.\n				 */\n				function setLayout( value ) {\n\n					var title = SPEAKER_LAYOUTS[ value ];\n\n					layoutLabel.innerHTML = 'Layout' + ( title ? ( ': ' + title ) : '' );\n					layoutDropdown.value = value;\n\n					document.body.setAttribute( 'data-speaker-layout', value );\n\n					// Persist locally\n					if( supportsLocalStorage() ) {\n						window.localStorage.setItem( 'reveal-speaker-layout', value );\n					}\n\n				}\n\n				/**\n				 * Returns the ID of the most recently set speaker layout\n				 * or our default layout if none has been set.\n				 */\n				function getLayout() {\n\n					if( supportsLocalStorage() ) {\n						var layout = window.localStorage.getItem( 'reveal-speaker-layout' );\n						if( layout ) {\n							return layout;\n						}\n					}\n\n					// Default to the first record in the layouts hash\n					for( var id in SPEAKER_LAYOUTS ) {\n						return id;\n					}\n\n				}\n\n				function supportsLocalStorage() {\n\n					try {\n						localStorage.setItem('test', 'test');\n						localStorage.removeItem('test');\n						return true;\n					}\n					catch( e ) {\n						return false;\n					}\n\n				}\n\n				function zeroPadInteger( num ) {\n\n					var str = '00' + parseInt( num );\n					return str.substring( str.length - 2 );\n\n				}\n\n				/**\n				 * Limits the frequency at which a function can be called.\n				 */\n				function debounce( fn, ms ) {\n\n					var lastTime = 0,\n						timeout;\n\n					return function() {\n\n						var args = arguments;\n						var context = this;\n\n						clearTimeout( timeout );\n\n						var timeSinceLastCall = Date.now() - lastTime;\n						if( timeSinceLastCall > ms ) {\n							fn.apply( context, args );\n							lastTime = Date.now();\n						}\n						else {\n							timeout = setTimeout( function() {\n								fn.apply( context, args );\n								lastTime = Date.now();\n							}, ms - timeSinceLastCall );\n						}\n\n					}\n\n				}\n\n			})();\n\n		<\/script>\n	</body>\n</html>"), !t) {
 				alert("Speaker view popup failed to open. Please make sure popups are allowed and reopen the speaker view.");
 				return;
 			}
-			o();
+			a();
 		}
 	}
-	function a(e) {
-		n && !n.closed ? n.focus() : (n = e, window.addEventListener("message", u), d());
+	function i(e) {
+		t && !t.closed ? t.focus() : (t = e, window.addEventListener("message", l), u());
 	}
-	function o() {
-		let e = r.getConfig().url, i = typeof e == "string" ? e : window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search;
-		t = setInterval(function() {
-			n.postMessage(JSON.stringify({
+	function a() {
+		let r = n.getConfig().url, i = typeof r == "string" ? r : window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search;
+		e = setInterval(function() {
+			t.postMessage(JSON.stringify({
 				namespace: "reveal-notes",
 				type: "connect",
-				state: r.getState(),
+				state: n.getState(),
 				url: i
 			}), "*");
-		}, 500), window.addEventListener("message", u);
+		}, 500), window.addEventListener("message", l);
 	}
-	function s(e, t, i) {
-		let a = r[e].apply(r, t);
-		n.postMessage(JSON.stringify({
+	function o(e, r, i) {
+		let a = n[e].apply(n, r);
+		t.postMessage(JSON.stringify({
 			namespace: "reveal-notes",
 			type: "return",
 			result: a,
 			callId: i
 		}), "*");
 	}
-	function c(e) {
-		let t = r.getCurrentSlide(), i = t.querySelectorAll("aside.notes"), a = t.querySelector(".current-fragment"), o = {
+	function s(e) {
+		let r = n.getCurrentSlide(), i = r.querySelectorAll("aside.notes"), a = r.querySelector(".current-fragment"), o = {
 			namespace: "reveal-notes",
 			type: "state",
 			notes: "",
 			markdown: !1,
 			whitespace: "normal",
-			state: r.getState()
+			state: n.getState()
 		};
-		if (t.hasAttribute("data-notes") && (o.notes = t.getAttribute("data-notes"), o.whitespace = "pre-wrap"), a) {
+		if (r.hasAttribute("data-notes") && (o.notes = r.getAttribute("data-notes"), o.whitespace = "pre-wrap"), a) {
 			let e = a.querySelector("aside.notes");
 			e ? (o.notes = e.innerHTML, o.markdown = typeof e.getAttribute("data-markdown") == "string", i = null) : a.hasAttribute("data-notes") && (o.notes = a.getAttribute("data-notes"), o.whitespace = "pre-wrap", i = null);
 		}
-		i && i.length && (i = Array.from(i).filter((e) => e.closest(".fragment") === null), o.notes = i.map((e) => e.innerHTML).join("\n"), o.markdown = i[0] && typeof i[0].getAttribute("data-markdown") == "string"), n.postMessage(JSON.stringify(o), "*");
+		i && i.length && (i = Array.from(i).filter((e) => e.closest(".fragment") === null), o.notes = i.map((e) => e.innerHTML).join("\n"), o.markdown = i[0] && typeof i[0].getAttribute("data-markdown") == "string"), t.postMessage(JSON.stringify(o), "*");
 	}
-	function l(e) {
+	function c(e) {
 		try {
 			return window.location.origin === e.source.location.origin;
 		} catch {
 			return !1;
 		}
 	}
-	function u(e) {
-		if (l(e)) try {
-			let n = JSON.parse(e.data);
-			n && n.namespace === "reveal-notes" && n.type === "connected" ? (clearInterval(t), d()) : n && n.namespace === "reveal-notes" && n.type === "call" && s(n.methodName, n.arguments, n.callId);
+	function l(t) {
+		if (c(t)) try {
+			let n = JSON.parse(t.data);
+			n && n.namespace === "reveal-notes" && n.type === "connected" ? (clearInterval(e), u()) : n && n.namespace === "reveal-notes" && n.type === "call" && o(n.methodName, n.arguments, n.callId);
 		} catch {}
 	}
-	function d() {
-		r.on("slidechanged", c), r.on("fragmentshown", c), r.on("fragmenthidden", c), r.on("overviewhidden", c), r.on("overviewshown", c), r.on("paused", c), r.on("resumed", c), r.on("previewiframe", c), r.on("previewimage", c), r.on("previewvideo", c), r.on("closeoverlay", c), c();
+	function u() {
+		n.on("slidechanged", s), n.on("fragmentshown", s), n.on("fragmenthidden", s), n.on("overviewhidden", s), n.on("overviewshown", s), n.on("paused", s), n.on("resumed", s), n.on("previewiframe", s), n.on("previewimage", s), n.on("previewvideo", s), n.on("closeoverlay", s), s();
 	}
 	return {
 		id: "notes",
 		init: function(e) {
-			r = e, /receiver/i.test(window.location.search) || (window.location.search.match(/(\?|\&)notes/gi) === null ? window.addEventListener("message", (e) => {
-				if (!n && typeof e.data == "string") {
+			n = e, /receiver/i.test(window.location.search) || (window.location.search.match(/(\?|\&)notes/gi) === null ? window.addEventListener("message", (e) => {
+				if (!t && typeof e.data == "string") {
 					let t;
 					try {
 						t = JSON.parse(e.data);
 					} catch {}
-					t && t.namespace === "reveal-notes" && t.type === "heartbeat" && a(e.source);
+					t && t.namespace === "reveal-notes" && t.type === "heartbeat" && i(e.source);
 				}
-			}) : i(), r.addKeyBinding({
+			}) : r(), n.addKeyBinding({
 				keyCode: 83,
 				key: "S",
 				description: "Speaker notes view"
 			}, function() {
-				i();
+				r();
 			}));
 		},
-		open: i
+		open: r
 	};
 };
 //#endregion
-export { je as default };
+export { Ae as default };

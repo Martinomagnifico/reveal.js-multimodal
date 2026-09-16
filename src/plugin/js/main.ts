@@ -1,12 +1,17 @@
 import type { RevealApi } from "reveal.js";
 import type { Config } from "./config";
 import { originalConfig } from "./config";
+import { FocusKeeper } from "./functions/focus";
 import { loadModalContent } from "./functions/load-modal-content";
 import {
+	blockWheel,
 	isScroller,
+	lockEscape,
 	lockNav,
-	setPresetConfigs,
-	spaceEscapeHide,
+	setKeyboardCondition,
+	setupEscapeLock,
+	spaceHide,
+	unlockEscape,
 	unlockNav,
 } from "./functions/navigation";
 import { preloadFromSlide } from "./functions/preload";
@@ -32,6 +37,7 @@ export class Multimodal {
 	private readonly revealMargin: number;
 	private sync?: SpeakerSync;
 	private scrollFollower?: ScrollFollower;
+	private focusKeeper?: FocusKeeper;
 
 	private constructor(deck: RevealApi, options: Config, modal: Modal, revealEl: HTMLElement) {
 		this.deck = deck;
@@ -39,6 +45,10 @@ export class Multimodal {
 		this.modal = modal;
 		this.revealEl = revealEl;
 		this.revealMargin = deck.getConfig().margin ?? 0;
+		// The speaker view's preview is an iframe, and focus there would take it from the speaker's own window
+		if (!isSpeakerView()) {
+			this.focusKeeper = new FocusKeeper(revealEl, modal);
+		}
 	}
 
 	static async create(deck: RevealApi, options: Config): Promise<Multimodal> {
@@ -50,7 +60,9 @@ export class Multimodal {
 		const modal = Modal.create(deck);
 		const multimodal = new Multimodal(deck, options, modal, revealEl);
 
-		setPresetConfigs(deck, modal);
+		setKeyboardCondition(deck, modal);
+		setupEscapeLock(modal);
+		blockWheel(modal);
 		await setupOptions(modal, options, originalConfig);
 
 		multimodal.setupEventHandlers();
@@ -64,11 +76,13 @@ export class Multimodal {
 		return multimodal;
 	}
 
-	private escapePressed = (event: KeyboardEvent): void => {
+	private keyPressed = (event: KeyboardEvent): void => {
+		if (!this.modal.isOpen) return;
+
 		if (event.key === "Escape") {
-			if (this.modal.isOpen) {
-				this.modal.hide();
-			}
+			this.modal.hide();
+		} else {
+			spaceHide(event, this.deck, this.modal);
 		}
 	};
 
@@ -203,11 +217,9 @@ export class Multimodal {
 		this.modal.on("multimodal:show", () => {
 			this.revealEl.classList.add("multimodal-open");
 			this.sync?.sendOpen(this.modal.triggerElement);
-			document.addEventListener("keydown", this.escapePressed);
-
-			if (!this.modal.modalElement.closest(".reveal-scroll")) {
-				spaceEscapeHide(this.deck, this.modal);
-			}
+			document.addEventListener("keydown", this.keyPressed);
+			lockEscape();
+			this.focusKeeper?.hold();
 
 			const closeOnClickOutside = (event: MouseEvent) => {
 				if (this.modal.isLocked) return;
@@ -225,7 +237,7 @@ export class Multimodal {
 
 		this.modal.on("multimodal:shown", () => {
 			if (this.modal.triggerElement?.dataset.modalNavblock === "true") {
-				lockNav(this.deck, this.modal);
+				lockNav(this.modal);
 			}
 
 			if (this.modal.modalElement.dataset.modalType === "html") {
@@ -273,8 +285,10 @@ export class Multimodal {
 			}
 
 			this.scrollFollower?.detach();
-			unlockNav(this.deck, this.modal);
-			document.removeEventListener("keydown", this.escapePressed);
+			unlockNav(this.modal);
+			document.removeEventListener("keydown", this.keyPressed);
+			unlockEscape();
+			this.focusKeeper?.release();
 
 			const video = this.modal.modalDialog.querySelector("video");
 			if (video) {

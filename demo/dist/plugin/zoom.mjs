@@ -24,12 +24,13 @@ var e = {
 	});
 	function s(t, n) {
 		var r = l();
-		if (t.width = t.width || 1, t.height = t.height || 1, t.x -= (window.innerWidth - t.width * n) / 2, t.y -= (window.innerHeight - t.height * n) / 2, o) if (n === 1) document.body.style.transform = "";
-		else {
-			var i = r.x + "px " + r.y + "px", a = "translate(" + -t.x + "px," + -t.y + "px) scale(" + n + ")";
-			document.body.style.transformOrigin = i, document.body.style.transform = a;
-		}
-		else n === 1 ? (document.body.style.position = "", document.body.style.left = "", document.body.style.top = "", document.body.style.width = "", document.body.style.height = "", document.body.style.zoom = "") : (document.body.style.position = "relative", document.body.style.left = -(r.x + t.x) / n + "px", document.body.style.top = -(r.y + t.y) / n + "px", document.body.style.width = n * 100 + "%", document.body.style.height = n * 100 + "%", document.body.style.zoom = n);
+		if (t.width = t.width || 1, t.height = t.height || 1, t.x -= (window.innerWidth - t.width * n) / 2, t.y -= (window.innerHeight - t.height * n) / 2, o) {
+			if (n === 1) document.body.style.transform = "";
+			else {
+				var i = r.x + "px " + r.y + "px", a = "translate(" + -t.x + "px," + -t.y + "px) scale(" + n + ")";
+				document.body.style.transformOrigin = i, document.body.style.transform = a;
+			}
+		} else n === 1 ? (document.body.style.position = "", document.body.style.left = "", document.body.style.top = "", document.body.style.width = "", document.body.style.height = "", document.body.style.zoom = "") : (document.body.style.position = "relative", document.body.style.left = -(r.x + t.x) / n + "px", document.body.style.top = -(r.y + t.y) / n + "px", document.body.style.width = n * 100 + "%", document.body.style.height = n * 100 + "%", document.body.style.zoom = n);
 		e = n, document.documentElement.classList && (e === 1 ? document.documentElement.classList.remove("zoomed") : document.documentElement.classList.add("zoomed"));
 	}
 	function c() {

@@ -1,5 +1,3 @@
-import type { RevealConfig } from "reveal.js";
-
 export type ModalEventListener = (action: string, ...args: unknown[]) => void;
 
 export interface ModalEventDetail {
@@ -9,12 +7,6 @@ export interface ModalEventDetail {
 	dialog: HTMLElement;
 	body: HTMLElement;
 	args: unknown[];
-}
-
-export interface PresetConfigs {
-	keyboard: RevealConfig["keyboard"];
-	mouseWheel: RevealConfig["mouseWheel"];
-	scrollProgress: RevealConfig["scrollProgress"];
 }
 
 // Reveal's slide events

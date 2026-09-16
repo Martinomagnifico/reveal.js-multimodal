@@ -194,8 +194,10 @@ function B(e, t) {
 		for (; --i >= 0 && n[i] === "\\";) r = !r;
 		return r ? "|" : " |";
 	}).split(o.splitPipe), r = 0;
-	if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), t) if (n.length > t) n.splice(t);
-	else for (; n.length < t;) n.push("");
+	if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), t) {
+		if (n.length > t) n.splice(t);
+		else for (; n.length < t;) n.push("");
+	}
 	for (; r < n.length; r++) n[r] = n[r].trim().replace(o.slashPipe, "|");
 	return n;
 }
@@ -335,7 +337,8 @@ ${c}` : c;
 					let t = u, a = t.raw + "\n" + e.join("\n"), o = this.blockquote(a);
 					i[i.length - 1] = o, n = n.substring(0, n.length - t.raw.length) + o.raw, r = r.substring(0, r.length - t.text.length) + o.text;
 					break;
-				} else if (u?.type === "list") {
+				}
+				if (u?.type === "list") {
 					let t = u, a = t.raw + "\n" + e.join("\n"), o = this.list(a);
 					i[i.length - 1] = o, n = n.substring(0, n.length - u.raw.length) + o.raw, r = r.substring(0, r.length - t.raw.length) + o.raw, e = a.substring(i.at(-1).raw.length).split("\n");
 					continue;
@@ -583,7 +586,8 @@ ${c}` : c;
 				if (a = [...i].length, r[3] || r[4]) {
 					o += a;
 					continue;
-				} else if ((r[5] || r[6]) && n % 3 && !((n + a) % 3)) {
+				}
+				if ((r[5] || r[6]) && n % 3 && !((n + a) % 3)) {
 					s += a;
 					continue;
 				}
@@ -720,7 +724,7 @@ ${c}` : c;
 			block: F.normal,
 			inline: I.normal
 		};
-		this.options.pedantic ? (n.block = F.pedantic, n.inline = I.pedantic) : this.options.gfm && (n.block = F.gfm, this.options.breaks ? n.inline = I.breaks : n.inline = I.gfm), this.tokenizer.rules = n;
+		this.options.pedantic ? (n.block = F.pedantic, n.inline = I.pedantic) : this.options.gfm && (n.block = F.gfm, n.inline = this.options.breaks ? I.breaks : I.gfm), this.tokenizer.rules = n;
 	}
 	static get rules() {
 		return {
@@ -801,10 +805,10 @@ ${c}` : c;
 			}
 			let i = e;
 			if (this.options.extensions?.startBlock) {
-				let t = Infinity, n = e.slice(1), r;
+				let t = 1 / 0, n = e.slice(1), r;
 				this.options.extensions.startBlock.forEach((e) => {
 					r = e.call({ lexer: this }, n), typeof r == "number" && r >= 0 && (t = Math.min(t, r));
-				}), t < Infinity && t >= 0 && (i = e.substring(0, t + 1));
+				}), t < 1 / 0 && t >= 0 && (i = e.substring(0, t + 1));
 			}
 			if (this.state.top && (r = this.tokenizer.paragraph(i))) {
 				let a = t.at(-1);
@@ -822,7 +826,8 @@ ${c}` : c;
 				if (this.options.silent) {
 					console.error(t);
 					break;
-				} else throw Error(t);
+				}
+				throw Error(t);
 			}
 		}
 		return this.state.top = !0, t;
@@ -893,10 +898,10 @@ ${c}` : c;
 			}
 			let i = e;
 			if (this.options.extensions?.startInline) {
-				let t = Infinity, n = e.slice(1), r;
+				let t = 1 / 0, n = e.slice(1), r;
 				this.options.extensions.startInline.forEach((e) => {
 					r = e.call({ lexer: this }, n), typeof r == "number" && r >= 0 && (t = Math.min(t, r));
-				}), t < Infinity && t >= 0 && (i = e.substring(0, t + 1));
+				}), t < 1 / 0 && t >= 0 && (i = e.substring(0, t + 1));
 			}
 			if (r = this.tokenizer.inlineText(i)) {
 				e = e.substring(r.raw.length), r.raw.slice(-1) !== "_" && (o = r.raw.slice(-1)), a = !0;
@@ -909,7 +914,8 @@ ${c}` : c;
 				if (this.options.silent) {
 					console.error(t);
 					break;
-				} else throw Error(t);
+				}
+				throw Error(t);
 			}
 		}
 		return t;
@@ -1209,13 +1215,13 @@ ${e}</tr>
 	constructor(e) {
 		this.options = e || t;
 	}
-	static passThroughHooks = new Set([
+	static passThroughHooks = /* @__PURE__ */ new Set([
 		"preprocess",
 		"postprocess",
 		"processAllTokens",
 		"emStrongMask"
 	]);
-	static passThroughHooksRespectAsync = new Set([
+	static passThroughHooksRespectAsync = /* @__PURE__ */ new Set([
 		"preprocess",
 		"postprocess",
 		"processAllTokens"
@@ -1269,7 +1275,7 @@ ${e}</tr>
 			default: {
 				let e = r;
 				this.defaults.extensions?.childTokens?.[e.type] ? this.defaults.extensions.childTokens[e.type].forEach((r) => {
-					let i = e[r].flat(Infinity);
+					let i = e[r].flat(1 / 0);
 					n = n.concat(this.walkTokens(i, t));
 				}) : e.tokens && (n = n.concat(this.walkTokens(e.tokens, t)));
 			}
@@ -1334,14 +1340,14 @@ ${e}</tr>
 					if (!(n in t)) throw Error(`hook '${n}' does not exist`);
 					if (["options", "block"].includes(n)) continue;
 					let r = n, i = e.hooks[r], a = t[r];
-					J.passThroughHooks.has(n) ? t[r] = (e) => {
+					t[r] = J.passThroughHooks.has(n) ? (e) => {
 						if (this.defaults.async && J.passThroughHooksRespectAsync.has(n)) return (async () => {
 							let n = await i.call(t, e);
 							return a.call(t, n);
 						})();
 						let r = i.call(t, e);
 						return a.call(t, r);
-					} : t[r] = (...e) => {
+					} : (...e) => {
 						if (this.defaults.async) return (async () => {
 							let n = await i.apply(t, e);
 							return n === !1 && (n = await a.apply(t, e)), n;
@@ -1599,8 +1605,8 @@ var Ke = "\r?\n---\r?\n", qe = null, Je = "^s*notes?:", Ye = "\\.element\\s*?(.+
 			}
 		}
 		if (t.nodeType === Node.COMMENT_NODE) {
-			let a = n;
-			a && (a.tagName === "UL" || a.tagName === "OL") && (a = a.lastElementChild || a), l(t, a, r) === !1 && l(t, e, i);
+			let a = n, o = /\n[ \t]*\n/.test(t.previousSibling?.nodeValue || "");
+			a && (a.tagName === "UL" || a.tagName === "OL") && !o && (a = a.lastElementChild || a), l(t, a, r) === !1 && l(t, e, i);
 		}
 	}
 	function d() {
@@ -1628,7 +1634,7 @@ var Ke = "\r?\n---\r?\n", qe = null, Je = "^s*notes?:", Ye = "\\.element\\s*?(.+
 			} };
 			return i === !0 && !r && (c.listitem = function(e) {
 				return `<li class="fragment">${e.tokens ? this.parser.parseInline(e.tokens) : e.text || ""}</li>`;
-			}), t = new Y(), t.use({
+			}), t = new Y({ renderer: { space: ({ raw: e }) => e } }), t.use({
 				renderer: c,
 				...o
 			}), a && t.use(Ge()), s(e.getRevealElement()).then(d);

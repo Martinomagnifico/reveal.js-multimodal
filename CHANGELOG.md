@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.6] - 2026-09-16
+
+### Added
+- Focus moves into an open modal, the rest of the presentation is inert, and focus returns on closing
+- In fullscreen, Escape closes an open modal before it leaves fullscreen (Chrome and Edge)
+
+### Fixed
+- Opening or closing a modal no longer shifts a centered slide
+- The close button is no longer hidden from screen readers
+- A closed modal no longer stays over the slides, invisible, when the browser skips the end of its fade. This happened.
+- A closing modal no longer takes clicks while it fades out
+
 ## [1.1.5] - 2026-09-14
 
 ### Added
