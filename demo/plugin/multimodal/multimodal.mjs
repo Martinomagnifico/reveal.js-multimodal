@@ -1,7 +1,7 @@
  /*****************************************************************
  *
  * reveal.js-multimodal for Reveal.js 
- * Version 1.1.6
+ * Version 1.1.7
  * 
  * @link
  * https://github.com/martinomagnifico/reveal.js-multimodal
@@ -2283,7 +2283,11 @@ var Z = "multimodal", Dn = (e) => e.dataset.modalUrl || e.getAttribute("href") |
 	}
 	targets() {
 		if (this.isPreview) return this.mainWindow ? [this.mainWindow] : [];
-		for (let e of this.peers) e.closed && this.peers.delete(e);
+		for (let e of this.peers) try {
+			e.closed && this.peers.delete(e);
+		} catch {
+			this.peers.delete(e);
+		}
 		return Array.from(this.peers);
 	}
 	post(e, t) {
@@ -2299,7 +2303,7 @@ var Z = "multimodal", Dn = (e) => e.dataset.modalUrl || e.getAttribute("href") |
 		}
 	}
 	onMessage = (e) => {
-		if (e.origin !== window.location.origin || typeof e.data != "string") return;
+		if (typeof e.data != "string") return;
 		let t;
 		try {
 			t = JSON.parse(e.data);
@@ -2307,24 +2311,30 @@ var Z = "multimodal", Dn = (e) => e.dataset.modalUrl || e.getAttribute("href") |
 			return;
 		}
 		if (!t || t.namespace !== Z) return;
+		let n = e.source;
 		if (t.type === "hello") {
-			let t = e.source;
-			if (this.isPreview || !t) return;
-			this.peers.add(t), this.openMessage && this.post(t, this.openMessage);
+			if (this.isPreview || !n) return;
+			try {
+				if (n.parent?.opener !== window.self) return;
+			} catch {
+				return;
+			}
+			this.peers.add(n), this.openMessage && this.post(n, this.openMessage);
 			return;
 		}
+		if (!n || (this.isPreview ? n !== this.mainWindow : !this.peers.has(n))) return;
 		if (t.type === "scroll") {
 			this.handlers.scroll(t.at);
 			return;
 		}
-		let n = JSON.stringify(t);
-		if (n === this.lastState) return;
-		if (this.lastState = n, t.type === "close") {
+		let r = JSON.stringify(t);
+		if (r === this.lastState) return;
+		if (this.lastState = r, t.type === "close") {
 			this.openMessage = void 0, this.handlers.close();
 			return;
 		}
-		let r = this.resolve(t);
-		r && (this.openMessage = t, this.handlers.open(r));
+		let i = this.resolve(t);
+		i && (this.openMessage = t, this.handlers.open(i));
 	};
 }, An = "\n	<div class=\"multimodal\" id=\"multimodal\" aria-hidden=\"true\">\n		<div class=\"mm-max\">\n			<div class=\"mm-dialog\">\n				<button class=\"mm-close\" type=\"button\" data-modal-close=\"true\" aria-label=\"Close\"><svg class=\"offset\" viewport=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(45 12 12)\"><line x1=\"0\" y1=\"12\" x2=\"24\" y2=\"12\"></line><line x1=\"12\" y1=\"0\" x2=\"12\" y2=\"24\"></line></g></svg></button>\n				<div class=\"mm-body\"></div>\n			</div>\n		</div>\n	</div>\n";
 function jn(e) {

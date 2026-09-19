@@ -1,6 +1,7 @@
 import type { RevealApi } from "reveal.js";
 
-// Sync modals with the speaker view over postMessage. Both windows are same-origin.
+// Sync modals with the speaker view over postMessage. Windows are paired by identity, not
+// by origin, so this also works from file://, where origins are opaque.
 
 const NAMESPACE = "multimodal";
 
@@ -158,7 +159,11 @@ export class SpeakerSync {
 		}
 
 		for (const peer of this.peers) {
-			if (peer.closed) this.peers.delete(peer);
+			try {
+				if (peer.closed) this.peers.delete(peer);
+			} catch {
+				this.peers.delete(peer);
+			}
 		}
 		return Array.from(this.peers);
 	}
@@ -182,7 +187,6 @@ export class SpeakerSync {
 	}
 
 	private onMessage = (event: MessageEvent): void => {
-		if (event.origin !== window.location.origin) return;
 		if (typeof event.data !== "string") return;
 
 		let message: SyncMessage;
@@ -194,14 +198,26 @@ export class SpeakerSync {
 
 		if (!message || message.namespace !== NAMESPACE) return;
 
+		const source = event.source as Window | null;
+
 		if (message.type === "hello") {
-			const source = event.source as Window | null;
 			if (this.isPreview || !source) return;
+
+			// Only a preview inside the speaker window this deck opened
+			try {
+				if (source.parent?.opener !== window.self) return;
+			} catch {
+				return;
+			}
 
 			this.peers.add(source);
 			if (this.openMessage) this.post(source, this.openMessage);
 			return;
 		}
+
+		// Only the window this deck is paired with
+		if (!source) return;
+		if (this.isPreview ? source !== this.mainWindow : !this.peers.has(source)) return;
 
 		if (message.type === "scroll") {
 			this.handlers.scroll(message.at);

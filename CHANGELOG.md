@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.7] - 2026-09-18
+
+### Fixed
+- Speaker view sync now also works in presentations opened from 'file://'
+
 ## [1.1.6] - 2026-09-16
 
 ### Added
